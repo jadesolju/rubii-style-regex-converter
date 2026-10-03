@@ -1,0 +1,30 @@
+[
+  {
+    "id": "rubii-styles-regex",
+    "title": "Goodbye <plot>, hello Styles & regex",
+    "url": "https://rubii.ai/blog/styles-and-regex",
+    "checkedAt": "2026-10-03",
+    "notes": "อ้างอิงชนิดของ Style tags, Global CSS, Regex, ลำดับประมวลผล และตัวอย่าง Regex; เนื้อหาตำราในโครงการเขียนสรุปใหม่"
+  },
+  {
+    "id": "rubii-styles-cookbook",
+    "title": "Styles & regex cookbook: 71 looks for your Moments",
+    "url": "https://rubii.ai/blog/styles-cookbook",
+    "checkedAt": "2026-10-03",
+    "notes": "อ้างอิงแนวคิดการประกอบสูตรกับคำสั่ง Moment และขั้นตอนติดตั้ง; ข้อความตัวอย่างในโครงการเขียนใหม่"
+  },
+  {
+    "id": "mdn-js-regex-guide",
+    "title": "Regular expressions — JavaScript Guide",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions",
+    "checkedAt": "2026-10-03",
+    "notes": "แหล่งหลักสำหรับพื้นฐาน pattern, flags, groups, quantifiers และการใช้ RegExp ใน JavaScript"
+  },
+  {
+    "id": "mdn-js-regex-reference",
+    "title": "Regular expressions — JavaScript Reference",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions",
+    "checkedAt": "2026-10-03",
+    "notes": "ใช้อ้างอิงไวยากรณ์และขอบเขตของ JavaScript RegExp; syntax อาจต่างจาก engine อื่น"
+  }
+]

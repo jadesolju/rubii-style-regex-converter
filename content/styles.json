@@ -1,0 +1,41 @@
+[
+  {
+    "id": "status-card-style",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "กล่องสถานะ",
+    "summary": "แสดงเนื้อหา status ภายในกรอบข้อความ",
+    "tagName": "status",
+    "template": "<section class=\"status-card\"><div class=\"status-body\">$1</div></section>",
+    "css": ".status-card{margin:12px 0;padding:12px 14px;border:1px solid rgba(192,160,255,.35);border-radius:12px;background:rgba(192,160,255,.08)}.status-body{white-space:pre-wrap}",
+    "applyTo": "character"
+  },
+  {
+    "id": "action-style",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "คำบรรยายการกระทำ",
+    "summary": "แสดงข้อความ action เป็นตัวเอียงสีจาง",
+    "tagName": "action",
+    "template": "<span class=\"action\">$1</span>",
+    "css": ".action{color:rgba(255,255,255,.6);font-style:italic}",
+    "applyTo": "character"
+  },
+  {
+    "id": "thought-style",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "ความคิดในใจ",
+    "summary": "แสดง thought เป็นตัวเอียงพร้อมเส้นด้านซ้าย",
+    "tagName": "thought",
+    "template": "<div class=\"thought\">$1</div>",
+    "css": ".thought{margin:8px 0;padding-left:12px;border-left:2px dotted rgba(192,160,255,.5);color:rgba(255,255,255,.55);font-style:italic}",
+    "applyTo": "character"
+  }
+]

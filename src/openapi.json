@@ -1,0 +1,105 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Styles & Regex Knowledge API",
+    "version": "0.1.0",
+    "description": "Thai learning content and a bounded JavaScript RegExp playground. Preview API; bind to loopback while authentication and shared rate limits are not configured."
+  },
+  "servers": [{ "url": "http://localhost:3000", "description": "Local development" }],
+  "tags": [
+    { "name": "Lessons", "description": "Thai learning material" },
+    { "name": "Patterns", "description": "Explained Regex patterns and examples" },
+    { "name": "Recipes", "description": "Complete Styles & Regex setups" },
+    { "name": "Tools", "description": "Bounded Regex preview" }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "healthCheck",
+        "summary": "Check whether the API is running",
+        "responses": { "200": { "description": "API is ready", "content": { "application/json": { "schema": { "type": "object", "properties": { "status": { "const": "ok" }, "contentVersion": { "type": "string" } }, "required": ["status", "contentVersion"] } } } } }
+      }
+    },
+    "/v1/openapi.json": {
+      "get": {
+        "operationId": "getOpenApiDocument",
+        "summary": "Get this API contract",
+        "responses": { "200": { "description": "OpenAPI 3.1 document", "content": { "application/json": { "schema": { "type": "object" } } } }
+      }
+      }
+    },
+    "/v1/lessons": { "$ref": "#/components/pathItems/listLessons" },
+    "/v1/patterns": { "$ref": "#/components/pathItems/listPatterns" },
+    "/v1/recipes": { "$ref": "#/components/pathItems/listRecipes" },
+    "/v1/lessons/{id}": { "$ref": "#/components/pathItems/getLesson" },
+    "/v1/patterns/{id}": { "$ref": "#/components/pathItems/getPattern" },
+    "/v1/recipes/{id}": { "$ref": "#/components/pathItems/getRecipe" },
+    "/v1/recipes/{id}/export": {
+      "get": {
+        "operationId": "exportRecipeBundle",
+        "tags": ["Recipes"],
+        "summary": "Get a recipe with its referenced patterns and styles",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": { "description": "Recipe bundle", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Success" } } } },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/v1/regex/test": {
+      "post": {
+        "operationId": "testRegex",
+        "tags": ["Tools"],
+        "summary": "Try a regular expression against sample text",
+        "description": "Uses the Node.js RegExp engine in an interruptible worker. Limits: 16 KiB input, 2 KiB pattern and replacement, 100 matches, 64 KiB output, 250 ms, and four concurrent workers. This does not emulate Rubii HTML parsing or displayed-text node boundaries. Request text is not logged.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegexTestRequest" }, "examples": { "number": { "value": { "pattern": "Affection[:：]\\s*(\\d{1,3})", "flags": "gi", "replacement": "Affection: $1", "input": "Affection: 72" } } } } }
+        },
+        "responses": {
+          "200": { "description": "Matches, captures, and replacement output", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegexTestResponse" } } } },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "413": { "$ref": "#/components/responses/InputTooLarge" },
+          "422": { "$ref": "#/components/responses/InvalidRegex" },
+          "429": { "$ref": "#/components/responses/RegexBusy" },
+          "503": { "$ref": "#/components/responses/RegexUnavailable" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Id": { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" } },
+      "Query": { "name": "q", "in": "query", "required": false, "schema": { "type": "string", "maxLength": 100 }, "description": "Search title and summary" },
+      "Audience": { "name": "audience", "in": "query", "required": false, "schema": { "type": "string", "enum": ["app_user", "developer"] }, "description": "Return only the requested reader note in lesson results" },
+      "Category": { "name": "category", "in": "query", "required": false, "schema": { "type": "string" } },
+      "Level": { "name": "level", "in": "query", "required": false, "schema": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] } },
+      "Locale": { "name": "locale", "in": "query", "required": false, "schema": { "type": "string", "example": "th-TH" } }
+    },
+    "pathItems": {
+      "listLessons": { "get": { "operationId": "listLessons", "tags": ["Lessons"], "summary": "List and filter published lessons", "parameters": [{ "$ref": "#/components/parameters/Query" }, { "$ref": "#/components/parameters/Category" }, { "$ref": "#/components/parameters/Level" }, { "$ref": "#/components/parameters/Locale" }, { "$ref": "#/components/parameters/Audience" }], "responses": { "200": { "$ref": "#/components/responses/ListSuccess" }, "400": { "$ref": "#/components/responses/InvalidRequest" } } } },
+      "listPatterns": { "get": { "operationId": "listPatterns", "tags": ["Patterns"], "summary": "List and filter published patterns", "parameters": [{ "$ref": "#/components/parameters/Query" }, { "$ref": "#/components/parameters/Category" }, { "$ref": "#/components/parameters/Level" }, { "$ref": "#/components/parameters/Locale" }], "responses": { "200": { "$ref": "#/components/responses/ListSuccess" }, "400": { "$ref": "#/components/responses/InvalidRequest" } } },
+      "listRecipes": { "get": { "operationId": "listRecipes", "tags": ["Recipes"], "summary": "List and filter published recipes", "parameters": [{ "$ref": "#/components/parameters/Query" }, { "$ref": "#/components/parameters/Category" }, { "$ref": "#/components/parameters/Level" }, { "$ref": "#/components/parameters/Locale" }], "responses": { "200": { "$ref": "#/components/responses/ListSuccess" }, "400": { "$ref": "#/components/responses/InvalidRequest" } } } },
+      "getLesson": { "get": { "operationId": "getLesson", "tags": ["Lessons"], "summary": "Get a lesson by ID", "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "$ref": "#/components/responses/ItemSuccess" }, "404": { "$ref": "#/components/responses/NotFound" } } } },
+      "getPattern": { "get": { "operationId": "getPattern", "tags": ["Patterns"], "summary": "Get a pattern with explanations and examples", "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "$ref": "#/components/responses/ItemSuccess" }, "404": { "$ref": "#/components/responses/NotFound" } } } },
+      "getRecipe": { "get": { "operationId": "getRecipe", "tags": ["Recipes"], "summary": "Get a recipe and installation steps", "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "$ref": "#/components/responses/ItemSuccess" }, "404": { "$ref": "#/components/responses/NotFound" } } } }
+    },
+    "schemas": {
+      "Error": { "type": "object", "properties": { "error": { "type": "object", "properties": { "code": { "type": "string" }, "message": { "type": "string" }, "requestId": { "type": "string" } }, "required": ["code", "message", "requestId"] } }, "required": ["error"] },
+      "Success": { "type": "object", "properties": { "data": {}, "meta": { "type": "object", "properties": { "count": { "type": "integer" }, "contentVersion": { "type": "string" } } } }, "required": ["data"] },
+      "RegexTestRequest": { "type": "object", "additionalProperties": false, "properties": { "pattern": { "type": "string", "minLength": 1, "maxLength": 2048 }, "flags": { "type": "string", "maxLength": 5, "pattern": "^[gimsu]*$" }, "replacement": { "type": "string", "maxLength": 2048 }, "input": { "type": "string", "maxLength": 16384 } }, "required": ["pattern", "flags", "replacement", "input"] },
+      "RegexTestResponse": { "type": "object", "properties": { "data": { "type": "object", "properties": { "matches": { "type": "array", "items": { "type": "object", "properties": { "match": { "type": "string" }, "captures": { "type": "array", "items": { "type": ["string", "null"] } }, "index": { "type": "integer" } }, "required": ["match", "captures", "index"] } }, "output": { "type": "string" }, "truncated": { "type": "boolean" } }, "required": ["matches", "output", "truncated"] }, "meta": { "type": "object", "properties": { "engine": { "type": "string" }, "contentVersion": { "type": "string" } } } }, "required": ["data", "meta"] }
+    },
+    "responses": {
+      "ListSuccess": { "description": "Published content list. Lesson lists optionally include the selected audience in metadata.", "content": { "application/json": { "schema": { "type": "object", "properties": { "data": { "type": "array", "items": { "type": "object" } }, "meta": { "type": "object", "properties": { "count": { "type": "integer" }, "contentVersion": { "type": "string" }, "audience": { "type": "string", "enum": ["app_user", "developer"] } }, "required": ["count", "contentVersion"] } }, "required": ["data", "meta"] } } } },
+      "ItemSuccess": { "description": "Content item", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Success" } } } },
+      "NotFound": { "description": "The requested item was not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "InvalidRequest": { "description": "The request does not match the schema", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "InputTooLarge": { "description": "Input exceeds the byte limit", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "InvalidRegex": { "description": "Pattern is invalid, timed out, or exceeded output limits", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "RegexBusy": { "description": "All Regex workers are busy", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "RegexUnavailable": { "description": "Regex worker is temporarily unavailable", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+    }
+  }
+}
+}
