@@ -1540,14 +1540,14 @@
   {
     "id": "key-value-generic",
     "schemaVersion": 1,
-    "revision": 4,
+    "revision": 5,
     "locale": "th-TH",
     "status": "published",
     "title": "Universal Key-Value Anchor",
-    "summary": "สูตรกลางจับบรรทัด ชื่อ: ค่า รองรับ : และ ： รับชื่อป้ายได้ถึง 500 ตัวโดยไม่ข้ามบรรทัด",
+    "summary": "สูตรกลางจับบรรทัด ชื่อ: ค่า รองรับ :, :: และ ： พร้อมเว้น HTML ที่แปลงแล้ว",
     "category": "status",
     "level": "beginner",
-    "pattern": "^([^:：\\r\\n]{1,500})[:：][ \\t]*([^\\r\\n]+)$",
+    "pattern": "^(?![ \\t]*<)([^:：\\r\\n]{1,500})(?:::|[:：])[ \\t]*([^\\r\\n]+)$",
     "flags": "gm",
     "replacement": "<div class=\"model-status-row\"><b>$1</b><span>$2</span></div>",
     "applyTo": "character",
@@ -1564,14 +1564,15 @@
     ],
     "explanation": [
       "^ และ $ ร่วมกับ m ยึดต้นและท้ายของแต่ละบรรทัด",
+      "(?![ \\t]*<) ข้ามบรรทัดที่เป็น HTML ซึ่งถูกแปลงมาจากกฎก่อนหน้า",
       "([^:：\\r\\n]{1,500}) เก็บชื่อป้าย/คีย์อะไรก็ได้ สูงสุด 500 ตัวอักษรโดยไม่จำกัดชื่อล่วงหน้า",
-      "[:：] รับทั้งโคลอนปกติและโคลอนเต็มความกว้าง",
+      "(?:::|[:：]) รับ :: ก่อน แล้วจึงรับ : หรือโคลอนเต็มความกว้าง",
       "[ \\t]* รองรับช่องว่างหรือ Tab หลังโคลอนโดยไม่ข้ามบรรทัด; $1 เป็นชื่อช่อง และ $2 เป็นค่า",
       "flags gm ค้นหาต่อจนครบทุกบรรทัดที่ตรงกัน"
     ],
     "instructions": [
       "ใช้เมื่อข้อความมีรูปแบบหนึ่งป้ายต่อหนึ่งบรรทัด เช่น Location: Station 4 หรือ สถานะ：พร้อมออกเดินทาง",
-      "ใช้นิพจน์แบบเต็ม /^([^:：\\r\\n]{1,500})[:：][ \\t]*([^\\r\\n]+)$/gm ใน Rubii ได้ทันที",
+      "ใช้นิพจน์แบบเต็ม /^(?![ \\t]*<)([^:：\\r\\n]{1,500})(?:::|[:：])[ \\t]*([^\\r\\n]+)$/gm ใน Rubii ได้ทันที",
       "ใช้ $1 เป็นชื่อช่อง และ $2 เป็นค่าใน HTML Replacement"
     ],
     "examples": [
@@ -1604,6 +1605,12 @@
           ["สถานะ", "พร้อมออกเดินทาง"]
         ],
         "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>สถานีรถไฟลอยฟ้า</span></div>\n<div class=\"model-status-row\"><b>Mood</b><span>ร่าเริงสดใส</span></div>\n<div class=\"model-status-row\"><b>Affection</b><span>98</span></div>\n<div class=\"model-status-row\"><b>สถานะ</b><span>พร้อมออกเดินทาง</span></div>"
+      },
+      {
+        "input": "Location:: Skyrail Observatory\nMood: Calm\nเวลา：19:42",
+        "expectedMatches": ["Location:: Skyrail Observatory", "Mood: Calm", "เวลา：19:42"],
+        "expectedCaptures": [["Location", "Skyrail Observatory"], ["Mood", "Calm"], ["เวลา", "19:42"]],
+        "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>Skyrail Observatory</span></div>\n<div class=\"model-status-row\"><b>Mood</b><span>Calm</span></div>\n<div class=\"model-status-row\"><b>เวลา</b><span>19:42</span></div>"
       }
     ],
     "limitations": [
@@ -1614,6 +1621,132 @@
       "mdn-js-regex-guide",
       "rubii-styles-regex"
     ]
+  },
+  {
+    "id": "affection-signed-integer",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "Affection · จำนวนเต็มติดลบถึงบวก",
+    "summary": "จับค่าจำนวนเต็มที่มีเครื่องหมายลบเป็นตัวเลือก และไม่จำกัดจำนวนหลัก",
+    "category": "status",
+    "level": "beginner",
+    "pattern": "^Affection[:：][ \\t]*(-?[0-9]+)[ \\t]*$",
+    "flags": "gim",
+    "replacement": "Affection: $1",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "จำนวนเต็มตั้งแต่ค่าติดลบ ไปจนถึงค่าบวก โดยไม่กำหนดจำนวนหลัก" }],
+    "explanation": [
+      "^ และ $ ร่วมกับ m จำกัดการจับไว้ในแต่ละบรรทัด",
+      "Affection จับชื่อช่องโดยไม่สนตัวพิมพ์เล็กหรือใหญ่ เพราะใช้ i",
+      "[:：] รับโคลอนปกติและโคลอนเต็มความกว้าง",
+      "(-?[0-9]+) รับเครื่องหมายลบได้ 0 หรือ 1 ตัว ตามด้วยเลขอารบิกอย่างน้อย 1 หลัก",
+      "[ \\t]* รับช่องว่างหรือ Tab รอบค่าโดยไม่ข้ามบรรทัด; g ค้นหาทุกบรรทัดที่ตรงกัน"
+    ],
+    "instructions": [
+      "ใช้เมื่อต้องรับจำนวนเต็มติดลบ ศูนย์ หรือบวก โดยไม่กำหนดจำนวนหลัก",
+      "ใช้ /pattern/flags ตามตัวอย่าง และใช้ $1 ใน Replacement",
+      "ถ้าต้องการจำกัดช่วง เช่น 0–100 ให้ใช้สูตรตรวจช่วงโดยเฉพาะ ไม่ใช่สูตรนี้"
+    ],
+    "examples": [
+      {
+        "input": "Affection: -42\nAFFECTION：0\naffection: 999999999999999999999999",
+        "expectedMatches": ["Affection: -42", "AFFECTION：0", "affection: 999999999999999999999999"],
+        "expectedCaptures": [["-42"], ["0"], ["999999999999999999999999"]],
+        "expectedOutput": "Affection: -42\nAffection: 0\nAffection: 999999999999999999999999"
+      }
+    ],
+    "limitations": [
+      "รับเฉพาะจำนวนเต็มเลขอารบิก; ไม่รับ + นำหน้า, ทศนิยม, เลขไทย หรือข้อความ inf",
+      "Regex เก็บค่าที่จับได้เป็นข้อความและไม่ตรวจความหมายหรือขอบเขตทางคณิตศาสตร์",
+      "จำนวนหลักยังถูกจำกัดด้วยขนาดข้อความสูงสุดที่ส่งเข้า Sandbox"
+    ],
+    "sourceRefs": ["rubii-styles-regex", "mdn-js-regex-guide"]
+  },
+  {
+    "id": "bracket-key-value",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "คีย์ในวงเล็บ · [หัวข้อ] ค่า",
+    "summary": "ดึงชื่อช่องจาก [หัวข้อ], 【หัวข้อ】 หรือ ［หัวข้อ］ และอ่านค่าได้หลังช่องว่างหรือ :, ::, ：",
+    "category": "status",
+    "level": "beginner",
+    "pattern": "^[ \\t]*[\\[【［]([^\\]】］\\r\\n]{1,80})[\\]】］](?:[ \\t]*(?:::|[:：])[ \\t]*|[ \\t]+)([^\\r\\n]{1,500})$",
+    "flags": "gm",
+    "replacement": "<div class=\"bracket-kv\"><b>$1</b><span>$2</span></div>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      { "index": 1, "meaning": "ชื่อหัวข้อภายในวงเล็บ" },
+      { "index": 2, "meaning": "ค่าหลังวงเล็บ" }
+    ],
+    "explanation": [
+      "^[ \\t]* เริ่มที่ต้นบรรทัดและยอมให้มีช่องว่างนำหน้า",
+      "[\\[【［] และ [\\]】］] รับวงเล็บ [], 【】 หรือ ［］",
+      "กลุ่มที่ 1 เก็บชื่อหัวข้อไม่เกิน 80 ตัวอักษร",
+      "หลังวงเล็บรับได้ทั้งช่องว่าง หรือ :, ::, ： แล้วเก็บค่าในกลุ่มที่ 2",
+      "gm ค้นหาทุกบรรทัดแยกกัน"
+    ],
+    "instructions": [
+      "ใช้กับบรรทัดอย่าง [สถานที่]:: สถานี หรือ 【เวลา】：19:42",
+      "ใช้ $1 เป็นป้ายชื่อและ $2 เป็นค่าใน Replacement",
+      "สูตรนี้ต้องมีค่าหลังหัวข้อ; ใช้ Bracket Heading สำหรับหัวข้อเดี่ยว"
+    ],
+    "examples": [
+      {
+        "input": "[สถานที่]:: สถานีลอยฟ้า\n【เวลา】：19:42\n［Mood］ Waiting for the last train",
+        "expectedMatches": ["[สถานที่]:: สถานีลอยฟ้า", "【เวลา】：19:42", "［Mood］ Waiting for the last train"],
+        "expectedCaptures": [["สถานที่", "สถานีลอยฟ้า"], ["เวลา", "19:42"], ["Mood", "Waiting for the last train"]],
+        "expectedOutput": "<div class=\"bracket-kv\"><b>สถานที่</b><span>สถานีลอยฟ้า</span></div>\n<div class=\"bracket-kv\"><b>เวลา</b><span>19:42</span></div>\n<div class=\"bracket-kv\"><b>Mood</b><span>Waiting for the last train</span></div>"
+      }
+    ],
+    "limitations": [
+      "ต้องมีค่าต่อท้ายหัวข้อ; หัวข้อเดี่ยวให้ใช้ bracket-heading",
+      "ไม่รองรับวงเล็บซ้อนหรือวงเล็บเปิด-ปิดคนละชนิด",
+      "หนึ่งหัวข้อและค่าต้องอยู่ในบรรทัดเดียวกัน"
+    ],
+    "sourceRefs": ["rubii-styles-regex", "mdn-js-regex-guide"]
+  },
+  {
+    "id": "bracket-heading",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "หัวข้อเดี่ยวในวงเล็บ · [หัวข้อ]",
+    "summary": "เปลี่ยนบรรทัดที่มีแต่หัวข้อในวงเล็บให้เป็น Style tag สำหรับทำหัวข้อ",
+    "category": "dialogue",
+    "level": "beginner",
+    "pattern": "^[ \\t]*[\\[【［]([^\\]】］\\r\\n]{1,80})[\\]】］][ \\t]*$",
+    "flags": "gm",
+    "replacement": "<topic>$1</topic>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "ชื่อหัวข้อภายในวงเล็บ" }],
+    "explanation": [
+      "จับเฉพาะบรรทัดที่มีหัวข้อในวงเล็บและไม่มีค่าอื่นต่อท้าย",
+      "รับ [], 【】 และ ［］",
+      "$1 เก็บข้อความด้านในเพื่อนำไปใส่ใน Style tag topic"
+    ],
+    "instructions": [
+      "ใช้กับบรรทัดหัวข้อเดี่ยว เช่น [ฉากคืนนี้]",
+      "สร้าง Style tag ชื่อ topic เพื่อกำหนด HTML และ CSS",
+      "ถ้ามีค่าในบรรทัดเดียวกัน ให้ใช้ bracket-key-value แทน"
+    ],
+    "examples": [
+      {
+        "input": "[ฉากคืนนี้]\nเนื้อเรื่องเริ่มต้น",
+        "expectedMatches": ["[ฉากคืนนี้]"],
+        "expectedCaptures": [["ฉากคืนนี้"]],
+        "expectedOutput": "<topic>ฉากคืนนี้</topic>\nเนื้อเรื่องเริ่มต้น"
+      }
+    ],
+    "limitations": ["หัวข้อต้องอยู่เดี่ยวในบรรทัด", "ไม่รองรับวงเล็บซ้อน"],
+    "sourceRefs": ["rubii-styles-regex", "mdn-js-regex-guide"]
   },
   {
     "id": "markdown-blockquote",

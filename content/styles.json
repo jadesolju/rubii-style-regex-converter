@@ -264,5 +264,21 @@
     "template": "<div class=\"markdown-list-item\"><span class=\"markdown-list-marker\">✦</span><span>$1</span></div>",
     "css": "",
     "applyTo": "all"
+  },
+  {
+    "id": "bracket-topic-style",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "category": "status",
+    "sourceRefs": ["rubii-styles-cookbook"],
+    "title": "Bracket Cookbook · หัวข้อและคีย์",
+    "summary": "ขยาย topic marker เป็นหัวข้อ HTML และกำหนดหน้าตา key-value ด้วย CSS กลาง",
+    "tagName": "topic",
+    "template": "<h2 class=\"bracket-topic\">$1</h2>",
+    "css": ".rubii-message-character .bracket-topic,.rubii-message-user .bracket-topic{margin:14px 0 8px;padding:8px 12px;border-left:3px solid #a78bfa;border-radius:0 12px 12px 0;background:linear-gradient(90deg,rgba(139,92,246,.18),rgba(139,92,246,0));color:#ddd6fe;font-size:1.12em;font-weight:700;letter-spacing:.02em}.rubii-message-character .bracket-kv,.rubii-message-user .bracket-kv,.rubii-message-character .model-status-row,.rubii-message-user .model-status-row{display:grid;grid-template-columns:minmax(96px,auto) 1fr;gap:8px;margin:5px 0;padding:8px 11px;border:1px solid rgba(125,211,252,.14);border-radius:10px;background:rgba(15,23,42,.62)}.rubii-message-character .bracket-kv b,.rubii-message-user .bracket-kv b,.rubii-message-character .model-status-row b,.rubii-message-user .model-status-row b{color:#67e8f9}.rubii-message-character .bracket-kv span,.rubii-message-user .bracket-kv span,.rubii-message-character .model-status-row span,.rubii-message-user .model-status-row span{color:#e2e8f0;white-space:pre-wrap}",
+    "applyTo": "all"
   }
 ]

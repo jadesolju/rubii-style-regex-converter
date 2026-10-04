@@ -143,6 +143,32 @@ describe("content API", () => {
     assert.match(bundle.styles[0].css, /\.rubii-message-character \.markdown-guide/);
     assert.match(bundle.styles[0].css, /\.rubii-message-user \.markdown-guide/);
   });
+
+  it("exports key-value, double-colon, bracket heading, and signed Affection cases", async () => {
+    const response = await app.inject({ method: "GET", url: "/v1/recipes/key-value-bracket-cookbook/export" });
+    assert.equal(response.statusCode, 200);
+    const bundle = response.json().data;
+    assert.deepEqual(bundle.styles.filter((style: { css: string }) => style.css.trim()).map((style: { id: string }) => style.id), ["bracket-topic-style"]);
+
+    let text = bundle.recipe.openingExample;
+    for (const rule of bundle.recipe.ruleOrder.filter((entry: { kind: string }) => entry.kind === "pattern")) {
+      const pattern = bundle.patterns.find((entry: { id: string }) => entry.id === rule.id);
+      const result = await app.inject({ method: "POST", url: "/v1/regex/test", payload: { pattern: pattern.pattern, flags: pattern.flags, replacement: pattern.replacement, input: text } });
+      assert.equal(result.statusCode, 200, pattern.id);
+      assert.ok(result.json().data.matches.length > 0, pattern.id);
+      text = result.json().data.output;
+    }
+    for (const rule of bundle.recipe.ruleOrder.filter((entry: { kind: string }) => entry.kind === "style")) {
+      const style = bundle.styles.find((entry: { id: string }) => entry.id === rule.id);
+      text = text.replace(new RegExp(`<${style.tagName}>([\\s\\S]*?)</${style.tagName}>`, "g"), (_match: string, body: string) => style.template.split("$1").join(body));
+    }
+    assert.ok(text.includes('<div class="bracket-kv"><b>สถานที่</b><span>สถานีลอยฟ้า</span></div>'));
+    assert.ok(text.includes('<div class="model-status-row"><b>Mood</b><span>Calm before departure</span></div>'));
+    assert.ok(text.includes('<div class="model-status-row"><b>Affection</b><span>-42</span></div>'));
+    assert.ok(text.includes('<h2 class="bracket-topic">ฉากคืนนี้</h2>'));
+    assert.match(bundle.styles[0].css, /\.rubii-message-character \.bracket-topic/);
+    assert.match(bundle.styles[0].css, /\.rubii-message-user \.bracket-topic/);
+  });
 });
 
 describe("Regex preview", () => {

@@ -356,6 +356,42 @@
     ]
   },
   {
+    "id": "key-value-bracket-cookbook",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "category": "status",
+    "sourceRefs": ["rubii-styles-cookbook", "rubii-styles-regex", "mdn-js-regex-guide"],
+    "title": "Key–Value & Bracket Cookbook · คีย์ หัวข้อ และตัวเลข",
+    "summary": "รองรับ :, ::, Affection ติดลบถึงบวก, [หัวข้อ] ค่า, 【หัวข้อ】：ค่า และหัวข้อเดี่ยวในวงเล็บ ด้วย Regex หลายกฎและ CSS กลางชุดเดียว",
+    "settingInstructions": [
+      "ข้อมูลทั่วไปเขียนหนึ่งช่องต่อบรรทัด เช่น Location: Station, Mood:: Calm หรือ เวลา：19:42",
+      "Affection รับจำนวนเต็มติดลบถึงบวกโดยไม่กำหนดจำนวนหลัก เช่น Affection: -42",
+      "ข้อมูลแบบติดป้ายเขียน [สถานที่]:: สถานี หรือ 【เวลา】：19:42",
+      "หัวข้อเดี่ยวให้เขียน [ฉากคืนนี้] แล้วเริ่มเนื้อหาบรรทัดถัดไป",
+      "ไม่ต้องเขียน HTML เอง; วางข้อความตามตัวอย่างและให้ Regex แปลงให้"
+    ],
+    "openingExample": "[สถานที่]:: สถานีลอยฟ้า\n【เวลา】：19:42\nMood: Waiting for the last train\nMood:: Calm before departure\nAffection: -42\n[ฉากคืนนี้]\nฝนเริ่มหยุดตก มองเห็นแสงไฟเหนือชานชาลา",
+    "patternRefs": ["bracket-key-value", "bracket-heading", "affection-signed-integer", "key-value-generic"],
+    "styleRefs": ["bracket-topic-style"],
+    "ruleOrder": [
+      { "kind": "pattern", "id": "bracket-key-value" },
+      { "kind": "pattern", "id": "bracket-heading" },
+      { "kind": "pattern", "id": "affection-signed-integer" },
+      { "kind": "pattern", "id": "key-value-generic" },
+      { "kind": "style", "id": "bracket-topic-style" }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ใช้ Style tag topic สำหรับบรรทัดหัวข้อเดี่ยว",
+      "แท็บ CSS ส่วนกลาง: ใช้ CSS กลางชุดเดียว ซึ่งแต่ง bracket-kv, model-status-row และหัวข้อทั้งข้อความตัวละคร/ผู้ใช้",
+      "แท็บ Regex: รักษาลำดับ bracket-key-value → bracket-heading → Universal Key-Value Anchor",
+      "ทดสอบทั้ง : และ :: รวมถึงวงเล็บ [], 【】 และ ［］ ใน Preview ก่อนนำไปใช้",
+      "สูตร Affection จับเลขเต็มไม่จำกัดหลัก ไม่รับทศนิยมหรือข้อความ inf และไม่ได้ตรวจขอบเขตคะแนน"
+    ]
+  },
+  {
     "id": "markdown-cookbook",
     "schemaVersion": 1,
     "revision": 1,
