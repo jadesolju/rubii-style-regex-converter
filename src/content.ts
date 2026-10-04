@@ -7,12 +7,29 @@ import sources from "../content/sources.json" with { type: "json" };
 
 export type Lesson = {
   id: string;
+  courseOrder: number;
+  courseStage: string;
   schemaVersion: number;
   revision: number;
   locale: string;
   status: "published" | "draft";
   title: string;
   summary: string;
+  tldr?: string;
+  intro?: string;
+  context?: {
+    who?: string;
+    what?: string;
+    where?: string;
+    when?: string;
+    why?: string;
+    how?: string[];
+  };
+  beforeAfter?: {
+    before: string;
+    after: string;
+    explanation?: string;
+  };
   level: "beginner" | "intermediate" | "advanced";
   category: string;
   audiences: Array<"app_user" | "developer">;
@@ -166,7 +183,13 @@ export function validateContent(): void {
 
 export function getCollection(kind: "lessons" | "patterns" | "recipes") {
   const published = content[kind].filter((item) => item.status === "published");
-  if (kind === "patterns") {
+  if (kind === "lessons") {
+    published.sort((a, b) => {
+      const firstOrder = (a as Lesson).courseOrder ?? Number.MAX_SAFE_INTEGER;
+      const secondOrder = (b as Lesson).courseOrder ?? Number.MAX_SAFE_INTEGER;
+      return firstOrder - secondOrder;
+    });
+  } else if (kind === "patterns") {
     published.sort((a, b) => Number(b.id === "key-value-generic") - Number(a.id === "key-value-generic"));
   }
   return published;

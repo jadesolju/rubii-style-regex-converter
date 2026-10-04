@@ -237,11 +237,11 @@
       "[“\"] ยอมรับเครื่องหมายเปิดสองแบบ",
       "([^”\"\\n]{1,160}) เก็บเนื้อหาที่ไม่รวมเครื่องหมายปิดและไม่ข้ามบรรทัด",
       "[”\"] ยอมรับเครื่องหมายปิดสองแบบ",
-        "ใช้ $1 ใน Style tag เพื่อเก็บเฉพาะข้อความบทพูด"
+      "ใช้ $1 ใน Style tag เพื่อเก็บเฉพาะข้อความบทพูด"
     ],
     "instructions": [
-        "สร้าง Style tag ชื่อ dialogue แล้วกำหนด HTML template และ CSS ให้ตรงกับแท็ก",
-        "Raw content เหมาะกับข้อความที่ยังไม่ถูกแปลงเป็น HTML",
+      "สร้าง Style tag ชื่อ dialogue แล้วกำหนด HTML template และ CSS ให้ตรงกับแท็ก",
+      "Raw content เหมาะกับข้อความที่ยังไม่ถูกแปลงเป็น HTML",
       "ทดสอบเมื่อข้อความถูกแบ่งด้วยตัวหนาหรือองค์ประกอบ HTML"
     ],
     "examples": [
@@ -734,7 +734,7 @@
             "บทสอง"
           ]
         ],
-      "expectedOutput": "<heading>บทแรก</heading>\n<heading>บทสอง</heading>"
+        "expectedOutput": "<heading>บทแรก</heading>\n<heading>บทสอง</heading>"
       },
       {
         "input": "ข้อความ # ไม่ใช่หัวข้อ\n#ไม่มีช่องว่าง",
@@ -1423,7 +1423,12 @@
     "replacement": "<ooc>$1</ooc>",
     "applyTo": "character",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความ OOC โดยไม่รวม marker" }],
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความ OOC โดยไม่รวม marker"
+      }
+    ],
     "explanation": [
       "^ และ $ กับ m จำกัดการจับไว้หนึ่งบรรทัด",
       "(?:...) รับ marker ได้สามแบบ: [OOC], (OOC) หรือ OOC",
@@ -1438,8 +1443,18 @@
     "examples": [
       {
         "input": "[OOC] พักฉากตรงนี้ได้เลย\nOOC: เดี๋ยวมาต่อพรุ่งนี้\nบทสนทนาปกติ",
-        "expectedMatches": ["[OOC] พักฉากตรงนี้ได้เลย", "OOC: เดี๋ยวมาต่อพรุ่งนี้"],
-        "expectedCaptures": [["พักฉากตรงนี้ได้เลย"], ["เดี๋ยวมาต่อพรุ่งนี้"]],
+        "expectedMatches": [
+          "[OOC] พักฉากตรงนี้ได้เลย",
+          "OOC: เดี๋ยวมาต่อพรุ่งนี้"
+        ],
+        "expectedCaptures": [
+          [
+            "พักฉากตรงนี้ได้เลย"
+          ],
+          [
+            "เดี๋ยวมาต่อพรุ่งนี้"
+          ]
+        ],
         "expectedOutput": "<ooc>พักฉากตรงนี้ได้เลย</ooc>\n<ooc>เดี๋ยวมาต่อพรุ่งนี้</ooc>\nบทสนทนาปกติ"
       }
     ],
@@ -1447,7 +1462,10 @@
       "จับเฉพาะ OOC แบบหนึ่งบรรทัด ไม่จับบล็อกหลายบรรทัด",
       "ใช้ raw content จึงควรสงวน marker นี้ไว้ให้ข้อความ OOC จริง"
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "rubii-styles-regex"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "markdown-bullet",
@@ -1464,12 +1482,46 @@
     "replacement": "<listitem>$1</listitem>",
     "applyTo": "all",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความของรายการ" }],
-    "explanation": ["^ และ m เริ่มตรวจที่ต้นบรรทัด", "[-*•] รับสัญลักษณ์รายการสามแบบ", "กลุ่มจับเก็บข้อความรายการโดยไม่รวม marker"],
-    "instructions": ["ใช้กับรายการทีละบรรทัด", "ค่าเริ่มต้นจะสร้าง <listitem> ให้ใช้กับ Style tag ชื่อ listitem"],
-    "examples": [{ "input": "- แวะซื้อกาแฟ\n• ส่งข้อความถึงเพื่อน\nประโยคธรรมดา", "expectedMatches": ["- แวะซื้อกาแฟ", "• ส่งข้อความถึงเพื่อน"], "expectedCaptures": [["แวะซื้อกาแฟ"], ["ส่งข้อความถึงเพื่อน"]], "expectedOutput": "<listitem>แวะซื้อกาแฟ</listitem>\n<listitem>ส่งข้อความถึงเพื่อน</listitem>\nประโยคธรรมดา" }],
-    "limitations": ["ไม่อ่าน nesting หรือ code fence; ใช้ Markdown parser สำหรับเอกสารซับซ้อน"],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความของรายการ"
+      }
+    ],
+    "explanation": [
+      "^ และ m เริ่มตรวจที่ต้นบรรทัด",
+      "[-*•] รับสัญลักษณ์รายการสามแบบ",
+      "กลุ่มจับเก็บข้อความรายการโดยไม่รวม marker"
+    ],
+    "instructions": [
+      "ใช้กับรายการทีละบรรทัด",
+      "ค่าเริ่มต้นจะสร้าง <listitem> ให้ใช้กับ Style tag ชื่อ listitem"
+    ],
+    "examples": [
+      {
+        "input": "- แวะซื้อกาแฟ\n• ส่งข้อความถึงเพื่อน\nประโยคธรรมดา",
+        "expectedMatches": [
+          "- แวะซื้อกาแฟ",
+          "• ส่งข้อความถึงเพื่อน"
+        ],
+        "expectedCaptures": [
+          [
+            "แวะซื้อกาแฟ"
+          ],
+          [
+            "ส่งข้อความถึงเพื่อน"
+          ]
+        ],
+        "expectedOutput": "<listitem>แวะซื้อกาแฟ</listitem>\n<listitem>ส่งข้อความถึงเพื่อน</listitem>\nประโยคธรรมดา"
+      }
+    ],
+    "limitations": [
+      "ไม่อ่าน nesting หรือ code fence; ใช้ Markdown parser สำหรับเอกสารซับซ้อน"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   },
   {
     "id": "markdown-bold",
@@ -1486,12 +1538,42 @@
     "replacement": "<strong class=\"premium-strong\">$1</strong>",
     "applyTo": "all",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความตัวหนา" }],
-    "explanation": ["\\* จับเครื่องหมายดอกจันตามตัวอักษร", "กลุ่มจับเก็บข้อความด้านใน โดยจำกัดไว้บรรทัดเดียว", "$1 นำเนื้อหาไปใช้ต่อใน Replacement"],
-    "instructions": ["ใน Replacement ใช้ <strong>$1</strong> เพื่อเปลี่ยนเป็น HTML", "ทดสอบกับ Markdown ที่มีเครื่องหมาย * ซ้อนก่อนนำไปใช้จริง"],
-    "examples": [{ "input": "นี่คือ **จุดสำคัญ** ของฉาก", "expectedMatches": ["**จุดสำคัญ**"], "expectedCaptures": [["จุดสำคัญ"]], "expectedOutput": "นี่คือ <strong class=\"premium-strong\">จุดสำคัญ</strong> ของฉาก" }],
-    "limitations": ["รองรับเฉพาะ **ตัวหนา** แบบบรรทัดเดียว ไม่ได้ parse Markdown ทั้งภาษา"],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความตัวหนา"
+      }
+    ],
+    "explanation": [
+      "\\* จับเครื่องหมายดอกจันตามตัวอักษร",
+      "กลุ่มจับเก็บข้อความด้านใน โดยจำกัดไว้บรรทัดเดียว",
+      "$1 นำเนื้อหาไปใช้ต่อใน Replacement"
+    ],
+    "instructions": [
+      "ใน Replacement ใช้ <strong>$1</strong> เพื่อเปลี่ยนเป็น HTML",
+      "ทดสอบกับ Markdown ที่มีเครื่องหมาย * ซ้อนก่อนนำไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "นี่คือ **จุดสำคัญ** ของฉาก",
+        "expectedMatches": [
+          "**จุดสำคัญ**"
+        ],
+        "expectedCaptures": [
+          [
+            "จุดสำคัญ"
+          ]
+        ],
+        "expectedOutput": "นี่คือ <strong class=\"premium-strong\">จุดสำคัญ</strong> ของฉาก"
+      }
+    ],
+    "limitations": [
+      "รองรับเฉพาะ **ตัวหนา** แบบบรรทัดเดียว ไม่ได้ parse Markdown ทั้งภาษา"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   },
   {
     "id": "markdown-italic",
@@ -1508,12 +1590,42 @@
     "replacement": "<em class=\"premium-em\">$1</em>",
     "applyTo": "all",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความตัวเอียง" }],
-    "explanation": ["\\* จับเครื่องหมายดอกจันตามตัวอักษร", "([^*\\r\\n]{1,160}) เก็บข้อความด้านในโดยไม่ข้ามบรรทัด", "$1 คือข้อความที่นำไปจัดรูปแบบต่อได้"],
-    "instructions": ["ใน Replacement ใช้ <em>$1</em> เพื่อเปลี่ยนเป็น HTML", "วางกฎนี้หลัง Pattern ตัวหนาเพื่อไม่ให้แย่งเครื่องหมาย **"],
-    "examples": [{ "input": "เสียง *แผ่วเบา* ลอยมา", "expectedMatches": ["*แผ่วเบา*"], "expectedCaptures": [["แผ่วเบา"]], "expectedOutput": "เสียง <em class=\"premium-em\">แผ่วเบา</em> ลอยมา" }],
-    "limitations": ["รองรับ Markdown ตัวเอียงแบบ *...* เท่านั้น ไม่รองรับ underscore หรือซ้อนรูปแบบ"],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความตัวเอียง"
+      }
+    ],
+    "explanation": [
+      "\\* จับเครื่องหมายดอกจันตามตัวอักษร",
+      "([^*\\r\\n]{1,160}) เก็บข้อความด้านในโดยไม่ข้ามบรรทัด",
+      "$1 คือข้อความที่นำไปจัดรูปแบบต่อได้"
+    ],
+    "instructions": [
+      "ใน Replacement ใช้ <em>$1</em> เพื่อเปลี่ยนเป็น HTML",
+      "วางกฎนี้หลัง Pattern ตัวหนาเพื่อไม่ให้แย่งเครื่องหมาย **"
+    ],
+    "examples": [
+      {
+        "input": "เสียง *แผ่วเบา* ลอยมา",
+        "expectedMatches": [
+          "*แผ่วเบา*"
+        ],
+        "expectedCaptures": [
+          [
+            "แผ่วเบา"
+          ]
+        ],
+        "expectedOutput": "เสียง <em class=\"premium-em\">แผ่วเบา</em> ลอยมา"
+      }
+    ],
+    "limitations": [
+      "รองรับ Markdown ตัวเอียงแบบ *...* เท่านั้น ไม่รองรับ underscore หรือซ้อนรูปแบบ"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   },
   {
     "id": "markdown-inline-code",
@@ -1530,12 +1642,42 @@
     "replacement": "<code class=\"premium-code\">$1</code>",
     "applyTo": "all",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความหรือโค้ดภายใน backtick" }],
-    "explanation": ["` จับ backtick ตามตัวอักษร", "กลุ่มจับเก็บข้อความด้านในโดยไม่ข้ามบรรทัด", "$1 นำข้อความไปใช้ใน Replacement"],
-    "instructions": ["ใช้กับโค้ดสั้น เช่น `Platform 04`", "ใน Replacement ใช้ <code>$1</code> เพื่อให้ CSS จัดรูปแบบได้"],
-    "examples": [{ "input": "ชานชาลา `Platform 04` ปิดแล้ว", "expectedMatches": ["`Platform 04`"], "expectedCaptures": [["Platform 04"]], "expectedOutput": "ชานชาลา <code class=\"premium-code\">Platform 04</code> ปิดแล้ว" }],
-    "limitations": ["รองรับ inline code บรรทัดเดียว ไม่รองรับ code fence หลายบรรทัด"],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความหรือโค้ดภายใน backtick"
+      }
+    ],
+    "explanation": [
+      "` จับ backtick ตามตัวอักษร",
+      "กลุ่มจับเก็บข้อความด้านในโดยไม่ข้ามบรรทัด",
+      "$1 นำข้อความไปใช้ใน Replacement"
+    ],
+    "instructions": [
+      "ใช้กับโค้ดสั้น เช่น `Platform 04`",
+      "ใน Replacement ใช้ <code>$1</code> เพื่อให้ CSS จัดรูปแบบได้"
+    ],
+    "examples": [
+      {
+        "input": "ชานชาลา `Platform 04` ปิดแล้ว",
+        "expectedMatches": [
+          "`Platform 04`"
+        ],
+        "expectedCaptures": [
+          [
+            "Platform 04"
+          ]
+        ],
+        "expectedOutput": "ชานชาลา <code class=\"premium-code\">Platform 04</code> ปิดแล้ว"
+      }
+    ],
+    "limitations": [
+      "รองรับ inline code บรรทัดเดียว ไม่รองรับ code fence หลายบรรทัด"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   },
   {
     "id": "key-value-generic",
@@ -1584,9 +1726,18 @@
           "อารมณ์：สงบ"
         ],
         "expectedCaptures": [
-          ["Location", "Station 4"],
-          ["Time", "19:42"],
-          ["อารมณ์", "สงบ"]
+          [
+            "Location",
+            "Station 4"
+          ],
+          [
+            "Time",
+            "19:42"
+          ],
+          [
+            "อารมณ์",
+            "สงบ"
+          ]
         ],
         "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>Station 4</span></div>\n<div class=\"model-status-row\"><b>Time</b><span>19:42</span></div>\n<div class=\"model-status-row\"><b>อารมณ์</b><span>สงบ</span></div>\nบรรทัดนี้ไม่มีตัวคั่น"
       },
@@ -1599,17 +1750,46 @@
           "สถานะ：พร้อมออกเดินทาง"
         ],
         "expectedCaptures": [
-          ["Location", "สถานีรถไฟลอยฟ้า"],
-          ["Mood", "ร่าเริงสดใส"],
-          ["Affection", "98"],
-          ["สถานะ", "พร้อมออกเดินทาง"]
+          [
+            "Location",
+            "สถานีรถไฟลอยฟ้า"
+          ],
+          [
+            "Mood",
+            "ร่าเริงสดใส"
+          ],
+          [
+            "Affection",
+            "98"
+          ],
+          [
+            "สถานะ",
+            "พร้อมออกเดินทาง"
+          ]
         ],
         "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>สถานีรถไฟลอยฟ้า</span></div>\n<div class=\"model-status-row\"><b>Mood</b><span>ร่าเริงสดใส</span></div>\n<div class=\"model-status-row\"><b>Affection</b><span>98</span></div>\n<div class=\"model-status-row\"><b>สถานะ</b><span>พร้อมออกเดินทาง</span></div>"
       },
       {
         "input": "Location:: Skyrail Observatory\nMood: Calm\nเวลา：19:42",
-        "expectedMatches": ["Location:: Skyrail Observatory", "Mood: Calm", "เวลา：19:42"],
-        "expectedCaptures": [["Location", "Skyrail Observatory"], ["Mood", "Calm"], ["เวลา", "19:42"]],
+        "expectedMatches": [
+          "Location:: Skyrail Observatory",
+          "Mood: Calm",
+          "เวลา：19:42"
+        ],
+        "expectedCaptures": [
+          [
+            "Location",
+            "Skyrail Observatory"
+          ],
+          [
+            "Mood",
+            "Calm"
+          ],
+          [
+            "เวลา",
+            "19:42"
+          ]
+        ],
         "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>Skyrail Observatory</span></div>\n<div class=\"model-status-row\"><b>Mood</b><span>Calm</span></div>\n<div class=\"model-status-row\"><b>เวลา</b><span>19:42</span></div>"
       }
     ],
@@ -1637,7 +1817,12 @@
     "replacement": "Affection: $1",
     "applyTo": "character",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "จำนวนเต็มตั้งแต่ค่าติดลบ ไปจนถึงค่าบวก โดยไม่กำหนดจำนวนหลัก" }],
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "จำนวนเต็มตั้งแต่ค่าติดลบ ไปจนถึงค่าบวก โดยไม่กำหนดจำนวนหลัก"
+      }
+    ],
     "explanation": [
       "^ และ $ ร่วมกับ m จำกัดการจับไว้ในแต่ละบรรทัด",
       "Affection จับชื่อช่องโดยไม่สนตัวพิมพ์เล็กหรือใหญ่ เพราะใช้ i",
@@ -1653,8 +1838,22 @@
     "examples": [
       {
         "input": "Affection: -42\nAFFECTION：0\naffection: 999999999999999999999999",
-        "expectedMatches": ["Affection: -42", "AFFECTION：0", "affection: 999999999999999999999999"],
-        "expectedCaptures": [["-42"], ["0"], ["999999999999999999999999"]],
+        "expectedMatches": [
+          "Affection: -42",
+          "AFFECTION：0",
+          "affection: 999999999999999999999999"
+        ],
+        "expectedCaptures": [
+          [
+            "-42"
+          ],
+          [
+            "0"
+          ],
+          [
+            "999999999999999999999999"
+          ]
+        ],
         "expectedOutput": "Affection: -42\nAffection: 0\nAffection: 999999999999999999999999"
       }
     ],
@@ -1663,7 +1862,10 @@
       "Regex เก็บค่าที่จับได้เป็นข้อความและไม่ตรวจความหมายหรือขอบเขตทางคณิตศาสตร์",
       "จำนวนหลักยังถูกจำกัดด้วยขนาดข้อความสูงสุดที่ส่งเข้า Sandbox"
     ],
-    "sourceRefs": ["rubii-styles-regex", "mdn-js-regex-guide"]
+    "sourceRefs": [
+      "rubii-styles-regex",
+      "mdn-js-regex-guide"
+    ]
   },
   {
     "id": "bracket-key-value",
@@ -1681,8 +1883,14 @@
     "applyTo": "all",
     "matchStage": "raw",
     "captureGroups": [
-      { "index": 1, "meaning": "ชื่อหัวข้อภายในวงเล็บ" },
-      { "index": 2, "meaning": "ค่าหลังวงเล็บ" }
+      {
+        "index": 1,
+        "meaning": "ชื่อหัวข้อภายในวงเล็บ"
+      },
+      {
+        "index": 2,
+        "meaning": "ค่าหลังวงเล็บ"
+      }
     ],
     "explanation": [
       "^[ \\t]* เริ่มที่ต้นบรรทัดและยอมให้มีช่องว่างนำหน้า",
@@ -1699,8 +1907,25 @@
     "examples": [
       {
         "input": "[สถานที่]:: สถานีลอยฟ้า\n【เวลา】：19:42\n［Mood］ Waiting for the last train",
-        "expectedMatches": ["[สถานที่]:: สถานีลอยฟ้า", "【เวลา】：19:42", "［Mood］ Waiting for the last train"],
-        "expectedCaptures": [["สถานที่", "สถานีลอยฟ้า"], ["เวลา", "19:42"], ["Mood", "Waiting for the last train"]],
+        "expectedMatches": [
+          "[สถานที่]:: สถานีลอยฟ้า",
+          "【เวลา】：19:42",
+          "［Mood］ Waiting for the last train"
+        ],
+        "expectedCaptures": [
+          [
+            "สถานที่",
+            "สถานีลอยฟ้า"
+          ],
+          [
+            "เวลา",
+            "19:42"
+          ],
+          [
+            "Mood",
+            "Waiting for the last train"
+          ]
+        ],
         "expectedOutput": "<div class=\"bracket-kv\"><b>สถานที่</b><span>สถานีลอยฟ้า</span></div>\n<div class=\"bracket-kv\"><b>เวลา</b><span>19:42</span></div>\n<div class=\"bracket-kv\"><b>Mood</b><span>Waiting for the last train</span></div>"
       }
     ],
@@ -1709,7 +1934,10 @@
       "ไม่รองรับวงเล็บซ้อนหรือวงเล็บเปิด-ปิดคนละชนิด",
       "หนึ่งหัวข้อและค่าต้องอยู่ในบรรทัดเดียวกัน"
     ],
-    "sourceRefs": ["rubii-styles-regex", "mdn-js-regex-guide"]
+    "sourceRefs": [
+      "rubii-styles-regex",
+      "mdn-js-regex-guide"
+    ]
   },
   {
     "id": "bracket-heading",
@@ -1726,7 +1954,12 @@
     "replacement": "<topic>$1</topic>",
     "applyTo": "all",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ชื่อหัวข้อภายในวงเล็บ" }],
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ชื่อหัวข้อภายในวงเล็บ"
+      }
+    ],
     "explanation": [
       "จับเฉพาะบรรทัดที่มีหัวข้อในวงเล็บและไม่มีค่าอื่นต่อท้าย",
       "รับ [], 【】 และ ［］",
@@ -1740,13 +1973,25 @@
     "examples": [
       {
         "input": "[ฉากคืนนี้]\nเนื้อเรื่องเริ่มต้น",
-        "expectedMatches": ["[ฉากคืนนี้]"],
-        "expectedCaptures": [["ฉากคืนนี้"]],
+        "expectedMatches": [
+          "[ฉากคืนนี้]"
+        ],
+        "expectedCaptures": [
+          [
+            "ฉากคืนนี้"
+          ]
+        ],
         "expectedOutput": "<topic>ฉากคืนนี้</topic>\nเนื้อเรื่องเริ่มต้น"
       }
     ],
-    "limitations": ["หัวข้อต้องอยู่เดี่ยวในบรรทัด", "ไม่รองรับวงเล็บซ้อน"],
-    "sourceRefs": ["rubii-styles-regex", "mdn-js-regex-guide"]
+    "limitations": [
+      "หัวข้อต้องอยู่เดี่ยวในบรรทัด",
+      "ไม่รองรับวงเล็บซ้อน"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex",
+      "mdn-js-regex-guide"
+    ]
   },
   {
     "id": "markdown-blockquote",
@@ -2262,6 +2507,62 @@
     "sourceRefs": [
       "mdn-js-regex-guide",
       "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "digit-run",
+    "title": "ค้นหาชุดตัวเลขทุกความยาว",
+    "summary": "ใช้ \\d+ หาเลขที่ติดกันโดยไม่ต้องระบุค่าล่วงหน้า",
+    "category": "regex-foundations",
+    "pattern": "\\d+",
+    "flags": "g",
+    "replacement": "$&",
+    "captureGroups": [],
+    "explanation": [
+      "\\d รับตัวเลขหนึ่งตัวตั้งแต่ 0 ถึง 9",
+      "+ ให้รับตัวเลขที่ติดกันอย่างน้อยหนึ่งตัว",
+      "g ให้ค้นต่อจนพบเลขทุกชุดในข้อความ"
+    ],
+    "instructions": [
+      "ใส่ \\d+ ในช่อง Pattern และ g ในช่อง flags",
+      "ลองกับข้อความที่มีเลขหลายชุด",
+      "เปลี่ยนตัวเลขใน Input โดยไม่ต้องแก้ Pattern"
+    ],
+    "examples": [
+      {
+        "input": "Order 84\nชั้น 3\nปี 2026",
+        "expectedMatches": [
+          "84",
+          "3",
+          "2026"
+        ],
+        "expectedCaptures": [
+          [],
+          [],
+          []
+        ],
+        "expectedOutput": "Order 84\nชั้น 3\nปี 2026"
+      },
+      {
+        "input": "Order none",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "Order none"
+      }
+    ],
+    "limitations": [
+      "ค้นเฉพาะเลขอารบิก 0–9 ที่ติดกัน ไม่ได้รู้ว่าเลขนั้นเป็นเลขคำสั่งซื้อ ชั้น หรือปี"
     ]
   }
 ]

@@ -45,6 +45,20 @@ describe("content API", () => {
     assert.equal(detail.json().data.id, "regex-introduction");
   });
 
+  it("serves the handbook in a clear, numbered learning path", async () => {
+    const response = await app.inject({ method: "GET", url: "/v1/lessons?audience=app_user" });
+    assert.equal(response.statusCode, 200);
+    const lessons = response.json().data;
+    assert.equal(lessons[0].id, "regex-introduction");
+    assert.deepEqual(lessons.map((lesson: { courseOrder: number }) => lesson.courseOrder), lessons.map((_: unknown, index: number) => index + 1));
+    assert.deepEqual([...new Set(lessons.map((lesson: { courseStage: string }) => lesson.courseStage))], [
+      "เริ่มจากศูนย์",
+      "รู้จักชิ้นส่วน",
+      "ลองใช้และแก้ปัญหา",
+      "นำไปใช้กับแชต",
+    ]);
+  });
+
   it("puts Universal Key-Value Anchor first in the pattern library", async () => {
     const response = await app.inject({ method: "GET", url: "/v1/patterns" });
     assert.equal(response.statusCode, 200);
