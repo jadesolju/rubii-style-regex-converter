@@ -45,6 +45,12 @@ describe("content API", () => {
     assert.equal(detail.json().data.id, "regex-introduction");
   });
 
+  it("puts Universal Key-Value Anchor first in the pattern library", async () => {
+    const response = await app.inject({ method: "GET", url: "/v1/patterns" });
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.json().data[0].id, "key-value-generic");
+  });
+
   it("returns a recipe bundle with all referenced content", async () => {
     const response = await app.inject({ method: "GET", url: "/v1/recipes/dialogue-and-actions/export" });
     assert.equal(response.statusCode, 200);
@@ -59,6 +65,83 @@ describe("content API", () => {
     assert.equal(response.statusCode, 404);
     assert.equal(response.json().error.code, "NOT_FOUND");
     assert.ok(response.json().error.requestId);
+  });
+  it("exports complete cookbook kits and applies their raw rules in order", async () => {
+    for (const id of ["cookbook-private-chat", "cookbook-live-room", "cookbook-phone-alerts", "cookbook-quest-log"]) {
+      const response = await app.inject({ method: "GET", url: `/v1/recipes/${id}/export` });
+      assert.equal(response.statusCode, 200);
+      const bundle = response.json().data;
+      let text = bundle.recipe.openingExample;
+      for (const rule of bundle.recipe.ruleOrder.filter((rule: { kind: string }) => rule.kind === "pattern")) {
+        const pattern = bundle.patterns.find((pattern: { id: string }) => pattern.id === rule.id);
+        const preview = await app.inject({ method: "POST", url: "/v1/regex/test", payload: { pattern: pattern.pattern, flags: pattern.flags, replacement: pattern.replacement, input: text } });
+        assert.equal(preview.statusCode, 200);
+        assert.ok(preview.json().data.matches.length > 0, pattern.id);
+        text = preview.json().data.output;
+      }
+      assert.ok(text.includes('class="cb-'), id);
+      assert.equal(/\[(?:รับ|ส่ง|คนดู|ของขวัญ|แจ้งเตือน|ทำแล้ว|รอทำ)/.test(text), false, id);
+      for (const style of bundle.styles) {
+        assert.ok(style.template.includes("$1"));
+        assert.ok(style.css.length > 0);
+        assert.ok(text.includes(`<${style.tagName}>`));
+      }
+    }
+    const script = await app.inject({ method: "GET", url: "/cookbook.js" });
+    assert.equal(script.statusCode, 200);
+    assert.match(script.headers["content-type"] as string, /javascript/);
+  });
+
+  it("exports the Premium Scene Profile with one shared stylesheet and a complete HTML preview", async () => {
+    const response = await app.inject({ method: "GET", url: "/v1/recipes/premium-scene-profile/export" });
+    assert.equal(response.statusCode, 200);
+    const bundle = response.json().data;
+    assert.equal(bundle.recipe.patternRefs.length, 9);
+    assert.deepEqual(bundle.styles.filter((style: { css: string }) => style.css.trim()).map((style: { id: string }) => style.id), ["premium-profile-style"]);
+
+    let text = bundle.recipe.openingExample;
+    for (const rule of bundle.recipe.ruleOrder.filter((entry: { kind: string }) => entry.kind === "pattern")) {
+      const pattern = bundle.patterns.find((entry: { id: string }) => entry.id === rule.id);
+      const result = await app.inject({ method: "POST", url: "/v1/regex/test", payload: { pattern: pattern.pattern, flags: pattern.flags, replacement: pattern.replacement, input: text } });
+      assert.equal(result.statusCode, 200, pattern.id);
+      assert.ok(result.json().data.matches.length > 0, pattern.id);
+      text = result.json().data.output;
+    }
+
+    for (const rule of bundle.recipe.ruleOrder.filter((entry: { kind: string }) => entry.kind === "style")) {
+      const style = bundle.styles.find((entry: { id: string }) => entry.id === rule.id);
+      text = text.replace(new RegExp(`<${style.tagName}>([\\s\\S]*?)</${style.tagName}>`, "g"), (_match: string, body: string) => style.template.split("$1").join(body));
+    }
+    for (const expected of ["premium-profile", "model-status-row", "premium-action", "premium-dialogue", "premium-ooc", "premium-heading", "premium-list-item", "premium-strong", "premium-em", "premium-code"]) {
+      assert.ok(text.includes(expected), expected);
+    }
+    assert.match(bundle.styles[0].css, /\.premium-profile/);
+  });
+
+  it("exports a Markdown cookbook for common block syntax with one shared stylesheet", async () => {
+    const response = await app.inject({ method: "GET", url: "/v1/recipes/markdown-cookbook/export" });
+    assert.equal(response.statusCode, 200);
+    const bundle = response.json().data;
+    assert.equal(bundle.recipe.patternRefs.length, 9);
+    assert.deepEqual(bundle.styles.filter((style: { css: string }) => style.css.trim()).map((style: { id: string }) => style.id), ["markdown-cookbook-style"]);
+
+    let text = bundle.recipe.openingExample;
+    for (const rule of bundle.recipe.ruleOrder.filter((entry: { kind: string }) => entry.kind === "pattern")) {
+      const pattern = bundle.patterns.find((entry: { id: string }) => entry.id === rule.id);
+      const result = await app.inject({ method: "POST", url: "/v1/regex/test", payload: { pattern: pattern.pattern, flags: pattern.flags, replacement: pattern.replacement, input: text } });
+      assert.equal(result.statusCode, 200, pattern.id);
+      assert.ok(result.json().data.matches.length > 0, pattern.id);
+      text = result.json().data.output;
+    }
+    for (const rule of bundle.recipe.ruleOrder.filter((entry: { kind: string }) => entry.kind === "style")) {
+      const style = bundle.styles.find((entry: { id: string }) => entry.id === rule.id);
+      text = text.replace(new RegExp(`<${style.tagName}>([\\s\\S]*?)</${style.tagName}>`, "g"), (_match: string, body: string) => style.template.split("$1").join(body));
+    }
+    for (const expected of ["markdown-guide", "<blockquote", "<hr", "<pre", "<table", "<tbody>", "<details", "<summary", "premium-code"]) {
+      assert.ok(text.includes(expected), expected);
+    }
+    assert.match(bundle.styles[0].css, /\.rubii-message-character \.markdown-guide/);
+    assert.match(bundle.styles[0].css, /\.rubii-message-user \.markdown-guide/);
   });
 });
 
@@ -100,6 +183,16 @@ describe("Regex preview", () => {
       payload: { pattern: "a", flags: "gg", replacement: "b", input: "a" },
     });
     assert.equal(badFlags.statusCode, 400);
+
+    const oversizedReplacement = await app.inject({
+      method: "POST", url: "/v1/regex/test",
+      payload: { pattern: "a", flags: "", replacement: "x".repeat(2049), input: "a" },
+    });
+    assert.equal(oversizedReplacement.statusCode, 400);
+    assert.equal(oversizedReplacement.json().error.code, "INVALID_REQUEST");
+    assert.deepEqual(oversizedReplacement.json().error.details, [
+      { field: "replacement", rule: "maxLength", limit: 2048 },
+    ]);
 
     const invalidRegex = await app.inject({
       method: "POST", url: "/v1/regex/test",

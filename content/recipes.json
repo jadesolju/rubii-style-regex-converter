@@ -9,13 +9,32 @@
     "summary": "แสดงตำแหน่ง เวลา และอารมณ์ในกล่องสถานะอ่านง่าย",
     "category": "status",
     "level": "beginner",
-    "settingInstructions": ["จบคำตอบด้วยข้อมูลสถานะภายใน <status> และ </status>", "ใส่ Location, Time, Mood และ Affection อย่างละหนึ่งบรรทัด", "อย่าเขียน HTML และอย่าใส่ status tag ซ้อนกัน"],
+    "settingInstructions": [
+      "จบคำตอบด้วยข้อมูลสถานะภายใน <status> และ </status>",
+      "ใส่ Location, Time, Mood และ Affection อย่างละหนึ่งบรรทัด",
+      "อย่าเขียน HTML และอย่าใส่ status tag ซ้อนกัน"
+    ],
     "openingExample": "ฝนเพิ่งหยุดตก Mira มองไปยังชานชาลา\n\n<status>Location: Station\nTime: 19:42\nMood: Hopeful\nAffection: 68</status>",
     "patternRefs": [],
-    "styleRefs": ["status-card-style"],
-    "ruleOrder": [{ "kind": "style", "id": "status-card-style" }],
-    "installationSteps": ["เพิ่ม Style tag ชื่อ status", "วาง template และ CSS จากส่วน Styles", "เพิ่มคำสั่งรูปแบบ status ใน Moment setting", "ตรวจ Preview ด้วยข้อความเปิดที่มีค่าจริง"],
-    "sourceRefs": ["rubii-styles-regex", "rubii-styles-cookbook"]
+    "styleRefs": [
+      "status-card-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "style",
+        "id": "status-card-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: วาง CSS และตรวจชื่อ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex",
+      "rubii-styles-cookbook"
+    ]
   },
   {
     "id": "muted-inner-thought",
@@ -27,13 +46,32 @@
     "summary": "แยกความคิดส่วนตัวจากบทพูดด้วย Style tag",
     "category": "dialogue",
     "level": "beginner",
-    "settingInstructions": ["ใส่ความคิดที่ไม่ได้พูดออกเสียงไว้ใน <thought> และ </thought>", "ใช้หนึ่งแท็กต่อหนึ่งย่อหน้า", "คงบทพูดและคำบรรยายไว้ด้านนอกแท็ก"],
+    "settingInstructions": [
+      "ใส่ความคิดที่ไม่ได้พูดออกเสียงไว้ใน <thought> และ </thought>",
+      "ใช้หนึ่งแท็กต่อหนึ่งย่อหน้า",
+      "คงบทพูดและคำบรรยายไว้ด้านนอกแท็ก"
+    ],
     "openingExample": "เธอยิ้มแล้วพูดว่า “ยินดีที่ได้เจอ”\n\n<thought>เขามาจริงด้วย ฉันนึกว่าจะเปลี่ยนใจเสียแล้ว</thought>",
     "patternRefs": [],
-    "styleRefs": ["thought-style"],
-    "ruleOrder": [{ "kind": "style", "id": "thought-style" }],
-    "installationSteps": ["เพิ่ม Style tag ชื่อ thought", "วาง template และ CSS จากส่วน Styles", "บอกโมเดลให้ใช้แท็กเฉพาะกับความคิดในใจ", "ตรวจว่าข้อความอื่นยังอยู่นอกแท็ก"],
-    "sourceRefs": ["rubii-styles-regex", "rubii-styles-cookbook"]
+    "styleRefs": [
+      "thought-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "style",
+        "id": "thought-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: วาง CSS และตรวจชื่อ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex",
+      "rubii-styles-cookbook"
+    ]
   },
   {
     "id": "dialogue-and-actions",
@@ -45,12 +83,364 @@
     "summary": "ใช้ Regex จับข้อความในวงเล็บ แล้วแสดงเป็นตัวเอียง",
     "category": "dialogue",
     "level": "intermediate",
-    "settingInstructions": ["เขียนการกระทำสั้น ๆ ในวงเล็บกลม เช่น (Mira lifts the cup.)", "อย่าใช้วงเล็บซ้อนในประโยคการกระทำ", "แยกคำบรรยายยาวออกเป็นประโยคธรรมดา"],
+    "settingInstructions": [
+      "เขียนการกระทำสั้น ๆ ในวงเล็บกลม เช่น (Mira lifts the cup.)",
+      "อย่าใช้วงเล็บซ้อนในประโยคการกระทำ",
+      "แยกคำบรรยายยาวออกเป็นประโยคธรรมดา"
+    ],
     "openingExample": "(Mira slides the cup across the table.)\n\n“ดื่มตอนที่ยังอุ่นนะ”",
-    "patternRefs": ["parenthetical-action"],
-    "styleRefs": ["action-style"],
-    "ruleOrder": [{ "kind": "pattern", "id": "parenthetical-action" }, { "kind": "style", "id": "action-style" }],
-    "installationSteps": ["เพิ่ม Style tag ชื่อ action", "เพิ่ม Regex parenthetical-action ใน Raw content", "วาง CSS ของ action ใน Global CSS", "ตรวจว่ากฎ Regex อยู่ก่อนการขยาย Style tag"],
-    "sourceRefs": ["rubii-styles-regex", "rubii-styles-cookbook"]
+    "patternRefs": [
+      "parenthetical-action"
+    ],
+    "styleRefs": [
+      "action-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "pattern",
+        "id": "parenthetical-action"
+      },
+      {
+        "kind": "style",
+        "id": "action-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: วาง CSS และตรวจชื่อ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex",
+      "rubii-styles-cookbook"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-private-chat",
+    "title": "แชตส่วนตัวสองฝั่ง",
+    "summary": "ทดลองครบ: ข้อความ → Raw Regex → Style tag → Global CSS",
+    "settingInstructions": [
+      "เมื่อแสดงแชตให้เปิดด้วย <chathead>ชื่อ · สถานะ</chathead> แล้วใช้ [รับ HH:mm] ข้อความ หรือ [ส่ง HH:mm] ข้อความ",
+      "เขียน marker ตรงรูปแบบ แยกบรรทัด และอย่าใส่ HTML ในเนื้อหา"
+    ],
+    "openingExample": "<chathead>มะลิ · ออนไลน์</chathead>\n[รับ 19:42] ถึงสถานีแล้วนะ\n[ส่ง 19:43] รอหน้าร้านกาแฟได้เลย",
+    "patternRefs": [
+      "cookbook-message-in",
+      "cookbook-message-out"
+    ],
+    "styleRefs": [
+      "cookbook-private-chat-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "pattern",
+        "id": "cookbook-message-in"
+      },
+      {
+        "kind": "pattern",
+        "id": "cookbook-message-out"
+      },
+      {
+        "kind": "style",
+        "id": "cookbook-private-chat-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: ใส่ selector เช่น .rubii-message-character .cb-msg และตรวจ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-live-room",
+    "title": "ไลฟ์สดพร้อมความคิดเห็นและของขวัญ",
+    "summary": "ทดลองครบ: ข้อความ → Raw Regex → Style tag → Global CSS",
+    "settingInstructions": [
+      "ช่วงไลฟ์ใช้ <stream>หัวข้อ · จำนวนผู้ชม</stream> ตามด้วย [คนดู] ชื่อ: ข้อความ และ [ของขวัญ] รายละเอียด",
+      "เขียน marker ตรงรูปแบบ แยกบรรทัด และอย่าใส่ HTML ในเนื้อหา"
+    ],
+    "openingExample": "<stream>คอนเสิร์ตคืนนี้ · ผู้ชม 2,430 คน</stream>\n[คนดู] พลอย: เพลงนี้เพราะมาก\n[ของขวัญ] ต้นส่งดาว 5 ดวง",
+    "patternRefs": [
+      "cookbook-live-comment",
+      "cookbook-live-gift"
+    ],
+    "styleRefs": [
+      "cookbook-live-room-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "pattern",
+        "id": "cookbook-live-comment"
+      },
+      {
+        "kind": "pattern",
+        "id": "cookbook-live-gift"
+      },
+      {
+        "kind": "style",
+        "id": "cookbook-live-room-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: ใส่ selector เช่น .rubii-message-character .cb-msg และตรวจ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-phone-alerts",
+    "title": "หน้าจอโทรศัพท์และการแจ้งเตือน",
+    "summary": "ทดลองครบ: ข้อความ → Raw Regex → Style tag → Global CSS",
+    "settingInstructions": [
+      "เมื่อดูโทรศัพท์ ใช้ <clock>HH:mm</clock> ตามด้วย [แจ้งเตือน แอป|หัวข้อ|ข้อความ] ไม่ใช้ | ในแต่ละช่อง",
+      "เขียน marker ตรงรูปแบบ แยกบรรทัด และอย่าใส่ HTML ในเนื้อหา"
+    ],
+    "openingExample": "<clock>19:44</clock>\n[แจ้งเตือน แชต|มะลิ|ฉันถึงแล้ว เปิดประตูหน่อย]\n[แจ้งเตือน ปฏิทิน|นัดหมาย|ซ้อมดนตรีในอีก 15 นาที]",
+    "patternRefs": [
+      "cookbook-notification"
+    ],
+    "styleRefs": [
+      "cookbook-phone-alerts-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "pattern",
+        "id": "cookbook-notification"
+      },
+      {
+        "kind": "style",
+        "id": "cookbook-phone-alerts-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: ใส่ selector เช่น .rubii-message-character .cb-msg และตรวจ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-quest-log",
+    "title": "บันทึกภารกิจและสถานะงาน",
+    "summary": "ทดลองครบ: ข้อความ → Raw Regex → Style tag → Global CSS",
+    "settingInstructions": [
+      "แสดงชื่อภารกิจใน <quest>ชื่อ</quest> และรายการทีละบรรทัดด้วย [ทำแล้ว] รายละเอียด หรือ [รอทำ] รายละเอียด",
+      "เขียน marker ตรงรูปแบบ แยกบรรทัด และอย่าใส่ HTML ในเนื้อหา"
+    ],
+    "openingExample": "<quest>คืนสัญญาณให้เมือง</quest>\n[ทำแล้ว] พบผู้ดูแลสถานี\n[รอทำ] ตามหาเครื่องส่งสัญญาณ",
+    "patternRefs": [
+      "cookbook-task-item"
+    ],
+    "styleRefs": [
+      "cookbook-quest-log-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "pattern",
+        "id": "cookbook-task-item"
+      },
+      {
+        "kind": "style",
+        "id": "cookbook-quest-log-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อแท็ก กำหนด Apply to และ HTML template",
+      "แท็บ CSS ส่วนกลาง: ใส่ selector เช่น .rubii-message-character .cb-msg และตรวจ class ให้ตรงกับ template/Replacement",
+      "แท็บ Regex: ตั้ง Name, Apply to, Matches in, Expression /pattern/flags และ Replacement ตามลำดับกฎ",
+      "ใส่คำสั่ง marker ใน Moment setting แล้วทดลอง Preview ก่อนใช้จริง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": ["rubii-styles-cookbook", "rubii-styles-regex", "mdn-js-regex-guide"],
+    "id": "premium-scene-profile",
+    "title": "Premium Scene Profile · โปรไฟล์ฉาก",
+    "summary": "ชุดตัวอย่างครบ: Key–Value, บทพูด, การกระทำ, OOC และ Markdown พร้อม HTML/CSS กลางโทนหรู",
+    "settingInstructions": [
+      "ครอบส่วนที่ต้องการตกแต่งด้วย <premium> และ </premium>",
+      "เขียนข้อมูลสถานะหนึ่งช่องต่อบรรทัด เช่น Location: สถานี หรือ Mood: สงบ",
+      "ใช้วงเล็บรอบการกระทำ, อัญประกาศรอบบทพูด, [OOC] นำหน้าหมายเหตุนอกบท และ Markdown แบบพื้นฐานตามตัวอย่าง",
+      "ส่งข้อความเป็น marker หรือ Markdown ตามตัวอย่าง ไม่ต้องเขียน HTML เอง"
+    ],
+    "openingExample": "<premium>\nCharacter: Mira\nRole: Night Concierge\nLocation: Skyrail Observatory\nTime: 19:42\nMood: Waiting for the last train\n\n(Mira turns from the rain-lit window and places a warm cup beside you.)\n\n“รถเที่ยวสุดท้ายอาจช้า แต่คืนนี้ฉันยังอยู่ตรงนี้นะ”\n\n[OOC] พักฉากตรงนี้ได้ แล้วค่อยกลับมาต่อเมื่อพร้อม\n\n## TONIGHT'S SCENE\nเสียง *แผ่วเบา* ดังจากปลายชานชาลา\n- เธอเว้นที่นั่งข้างหน้าต่างไว้ให้\n- กาแฟแก้วนี้ยัง **อุ่นอยู่**\nบัตรโดยสารเขียนว่า `Platform 04`\n</premium>",
+    "patternRefs": [
+      "ooc-line",
+      "parenthetical-action",
+      "quoted-dialogue",
+      "markdown-heading",
+      "markdown-bold",
+      "markdown-italic",
+      "markdown-inline-code",
+      "markdown-bullet",
+      "key-value-generic"
+    ],
+    "styleRefs": [
+      "premium-profile-style",
+      "premium-action-style",
+      "premium-dialogue-style",
+      "premium-ooc-style",
+      "premium-heading-style",
+      "premium-list-item-style"
+    ],
+    "ruleOrder": [
+      { "kind": "pattern", "id": "ooc-line" },
+      { "kind": "pattern", "id": "parenthetical-action" },
+      { "kind": "pattern", "id": "quoted-dialogue" },
+      { "kind": "pattern", "id": "markdown-heading" },
+      { "kind": "pattern", "id": "markdown-bold" },
+      { "kind": "pattern", "id": "markdown-italic" },
+      { "kind": "pattern", "id": "markdown-inline-code" },
+      { "kind": "pattern", "id": "markdown-bullet" },
+      { "kind": "pattern", "id": "key-value-generic" },
+      { "kind": "style", "id": "premium-action-style" },
+      { "kind": "style", "id": "premium-dialogue-style" },
+      { "kind": "style", "id": "premium-ooc-style" },
+      { "kind": "style", "id": "premium-heading-style" },
+      { "kind": "style", "id": "premium-list-item-style" },
+      { "kind": "style", "id": "premium-profile-style" }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ตั้งชื่อ premium, action, dialogue, ooc, heading และ listitem พร้อม HTML template ตามตัวอย่าง",
+      "แท็บ CSS ส่วนกลาง: ใช้ CSS Premium รวมในช่องเดียว โดย selector หลักคือ .rubii-message-character .premium-profile",
+      "แท็บ Regex: ตั้งกฎตามลำดับ; พิมพ์นิพจน์เต็ม /pattern/flags ในช่องเดียว และแก้ Replacement ได้ตามต้องการ",
+      "วางข้อความตัวอย่างใน Moment แล้วใช้ Preview เพื่อตรวจทั้ง HTML ที่ได้และหน้าตาหลังใช้ CSS"
+    ]
+  },
+  {
+    "id": "markdown-cookbook",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "cleanup",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex",
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "title": "Markdown Cookbook · บล็อกและข้อความ",
+    "summary": "ทดลอง Markdown ที่ใช้จริง: >, ---, code fence, inline code, ตาราง, details, รายการ และขีดฆ่า พร้อม CSS กลางชุดเดียว",
+    "settingInstructions": [
+      "ใช้ > สำหรับ quote, --- สำหรับเส้นคั่น, `ข้อความ` สำหรับ inline code และ ```lang ... ``` สำหรับ code block",
+      "ตารางตัวอย่างนี้รองรับ 2 คอลัมน์และต้องมีแถวหัวข้อกับแถว --- คั่น",
+      "ใช้ <details><summary>หัวข้อ</summary>เนื้อหา</details> เมื่อต้องการส่วนพับได้",
+      "ชุดนี้สาธิตรูปแบบพื้นฐาน; syntax ซ้อน, ตารางซับซ้อน หรือ fence ภายในกันควรใช้ Markdown parser",
+      "เลือก Preview เป็นข้อความตัวละครหรือผู้ใช้ได้; CSS กลางมี selector สำหรับ .rubii-message-character และ .rubii-message-user"
+    ],
+    "openingExample": "<markdown-root>\nMARKDOWN FIELD GUIDE\n> บันทึก: รถเที่ยวสุดท้ายกำลังมา\n---\nสถานะสั้น: `PLATFORM-04`\n\n```js\nconst platform = ready;\n```\n\n| สนาม | ค่า |\n| --- | --- |\n| ชานชาลา | 04 |\n| สถานะ | เปิด |\n\n<details><summary>อ่านบันทึกฉาก</summary>\nมีฝนตกบริเวณทางเข้า\n</details>\n</markdown-root>",
+    "patternRefs": [
+      "markdown-table-header",
+      "markdown-table-separator",
+      "markdown-table-row",
+      "markdown-table-close",
+      "markdown-blockquote",
+      "markdown-horizontal-rule",
+      "markdown-fenced-code",
+      "markdown-details-summary",
+      "markdown-inline-code"
+    ],
+    "styleRefs": [
+      "markdown-cookbook-style"
+    ],
+    "ruleOrder": [
+      {
+        "kind": "pattern",
+        "id": "markdown-table-header"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-table-separator"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-table-row"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-table-close"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-blockquote"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-horizontal-rule"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-fenced-code"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-details-summary"
+      },
+      {
+        "kind": "pattern",
+        "id": "markdown-inline-code"
+      },
+      {
+        "kind": "style",
+        "id": "markdown-cookbook-style"
+      }
+    ],
+    "installationSteps": [
+      "แท็บแท็กตกแต่ง: ใช้ Style tag markdown-root ที่ครอบข้อความทั้งหมด",
+      "แท็บ CSS ส่วนกลาง: ใช้ stylesheet กลางหนึ่งชุดสำหรับ blockquote, เส้นคั่น, code, ตาราง และ details",
+      "แท็บ Regex: แต่ละกฎใส่ expression เต็ม /pattern/flags ในช่องเดียว; รักษาลำดับ Table header → separator → row → close",
+      "ตรวจ HTML ใน Preview โดยเฉพาะ code fence และตารางก่อนนำไปใช้กับข้อความจริง",
+      "ถ้าหน้าตาไม่ติด ให้ตรวจว่า wrapper ของ Preview เป็น .rubii-message-character หรือ .rubii-message-user และ CSS เลือก class เดียวกัน"
+    ]
   }
 ]

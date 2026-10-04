@@ -1,5 +1,437 @@
 [
   {
+    "id": "regex-model-neutral-format",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "รูปแบบกลางให้หลายโมเดลเขียนเหมือนกัน",
+    "summary": "กำหนดสัญญารูปแบบข้อความก่อน แล้วใช้ Regex ตัวเดียวกับทุกโมเดล",
+    "level": "beginner",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "ใส่คำสั่งให้ทุกโมเดลใช้ชื่อป้ายและ marker แบบเดียวกัน สูตรกลางจึงไม่ต้องเดาสำนวน",
+      "developer": "Regex ใช้ JavaScript syntax; รายชื่อ alias เป็น allowlist และต้องเพิ่มตามตัวอย่างจริง"
+    },
+    "sections": [
+      {
+        "heading": "ไม่มี Regex ที่เข้าใจทุกสำนวน",
+        "body": "Regex จับโครงสร้างตัวอักษร ไม่รู้ว่าประโยค “นางยืนรอ”, “รออยู่ที่สถานี” และ “Location: Station” หมายถึง field เดียวกัน การขยาย pattern ให้เดาข้อความอิสระมักทำให้จับเนื้อเรื่องผิด"
+      },
+      {
+        "heading": "กำหนดสัญญาข้อความครั้งเดียว",
+        "body": "สั่งทุกโมเดลให้ใช้ key เดิม หนึ่งรายการต่อบรรทัด เช่น Location: …, Time: …, Mood: … และงด bullet หรือ Markdown ถ้าไม่จำเป็น นี่คือรูปแบบกลาง; คุมรูปแบบต้นทางแล้ว Regex จะสั้นและคาดเดาได้"
+      },
+      {
+        "heading": "ยอมรับความต่างที่รู้จักอย่างจำกัด",
+        "body": "ตัวอย่างในคลังรองรับ Location/Place/สถานที่, ตัวหนา Markdown, bullet และ : หรือ ： แต่จับเฉพาะป้ายที่ระบุ ค่าหนึ่งบรรทัด และไม่เดาประโยคอิสระ ให้เพิ่ม alias เมื่อมีตัวอย่างจากโมเดลจริงที่ยังไม่ผ่าน"
+      },
+      {
+        "heading": "เช็กรูปแบบก่อนใช้",
+        "body": "ลองตัวอย่างจากอย่างน้อยสองโมเดล: รูปแบบที่ต้องผ่าน, รูปแบบที่ต้องถูกละไว้ และบรรทัดคล้ายกันที่ไม่ใช่ข้อมูลสถานะ ตรวจ Match, กลุ่มจับ และ output; ถ้ารูปแบบต้นทางควบคุมได้ ให้แก้คำสั่งโมเดลก่อนทำ Regex ให้ซับซ้อน"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "โมเดลเขียน “ฉันรออยู่ที่สถานี” แทน “Location: Station” สูตรกลางนี้ควรเดาความหมายไหม?",
+        "answer": "ไม่ควร ให้โมเดลส่ง key ที่ตกลงไว้เหมือนกัน หรือทำตัวแปลงเฉพาะเมื่อมีตัวอย่างและกติกาชัดเจน"
+      }
+    ],
+    "practicePatternId": "model-neutral-status-fields",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-start",
+    "title": "101: เริ่มจากศูนย์ใน 5 นาที",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "กำหนดโจทย์ก่อน",
+        "body": "วันนี้เราจะเปลี่ยนช่องว่างซ้ำให้เหลือหนึ่งช่อง ไม่ต้องจำทุกสัญลักษณ์ เริ่มจากข้อความ Hello   world แล้วเลือกสูตรจัดช่องว่าง"
+      },
+      {
+        "heading": "ทดลองทีละช่อง",
+        "body": "Pattern คือกฎค้น; Flags คือตัวเลือก; Input คือข้อความเดิม; Replacement คือสิ่งที่ใส่แทน คาดว่าจะพบช่องว่างสามตัวหนึ่งจุด และผลเป็น Hello world"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "ถ้าลบ g ออกแล้วมีช่องว่างซ้ำสองตำแหน่งจะเกิดอะไร?",
+        "answer": "แทนเพียงตำแหน่งแรก ให้เปิด g หากต้องการทุกตำแหน่ง"
+      }
+    ],
+    "practicePatternId": "horizontal-spaces"
+  },
+  {
+    "id": "regex-101-pattern-flags",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "101: อ่าน /pattern/flags และสัญลักษณ์สำคัญ",
+    "summary": "ชื่อกฎตั้งให้จำได้ ส่วน Pattern กับ flags ต้องตรงโจทย์",
+    "level": "beginner",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เปิดตัวอย่างแล้วอ่าน Pattern แยกสีใน Sandbox สีแต่ละแบบมีชื่อและคำอธิบาย ไม่ต้องท่องทุกอย่างพร้อมกัน",
+      "developer": "โครงสร้าง /pattern/flags เป็น JavaScript literal; API รับ pattern กับ flags แยกกัน"
+    },
+    "sections": [
+      {
+        "heading": "โครงสร้าง /pattern/flags",
+        "body": "/ เป็นตัวคั่นของ literal ไม่ใช่ตัว Pattern ทุกเครื่องมือไม่ได้รับรูปแบบเดียวกัน ช่องที่แยก Pattern/Flags ให้ใส่เฉพาะเนื้อหา ชื่อกฎมีไว้จำและไม่มีผลต่อการค้น"
+      },
+      {
+        "heading": "Flags ที่ต้องรู้",
+        "body": "g ค้นหรือแทนต่อทุก match; i ไม่แยกตัวพิมพ์; m เปลี่ยน ^/$ ให้มองแต่ละบรรทัด; s ทำให้ . รวม line terminators; u เปิด semantics Unicode ไม่ได้จำเป็นสำหรับค้นคำไทยตรงตัว; y จับตรง lastIndex โดยไม่ข้ามไปค้นตำแหน่งหลัง; d เพิ่ม indices โดยไม่เปลี่ยนข้อความที่จับ Sandbox รองรับ g/i/m/s/u"
+      },
+      {
+        "heading": "ชุดอักขระและจำนวนซ้ำ",
+        "body": "\\d = 0–9; \\w = ตัวอักษรอังกฤษ ตัวเลข _ เป็นหลัก; \\s รวมเว้นวรรค Tab และขึ้นบรรทัดใหม่; \\D/\\W/\\S คือชุดตรงข้าม (ไม่ได้แปลว่าทุก escape เปลี่ยนเป็นตัวใหญ่ได้) \\n = newline; . ไม่จับ line terminators หากไม่มี s\n+ อย่างน้อย 1; * ตั้งแต่ 0; ? 0 หรือ 1; {4} สี่ตัวเป๊ะ; {3,8} สามถึงแปดตัว จำนวนซ้ำใช้กับส่วนที่อยู่ติดก่อนหน้า"
+      },
+      {
+        "heading": "ตัวเลือก ขอบเขต และกลุ่มจับ",
+        "body": "[abc] รับหนึ่งตัว a/b/c; [a-z] รับตัวพิมพ์เล็ก; [^0-9] รับตัวที่ไม่ใช่ 0–9; cat|dog เลือกคำ; ^ ต้นและ $ ท้าย; \\bcat\\b ไม่รับ bobcat แต่ \\b ไม่ใช่ขอบคำไทย; (\\d{2})-(\\d{2}) เก็บสองกลุ่ม Replacement $2/$1 สลับได้ เช่น 12-05 → 05/12 ไม่ได้ตรวจปฏิทิน"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "เปิด m แล้วจุด . จะจับ newline ได้ทันทีไหม?",
+        "answer": "ไม่ ต้องใช้ s หากต้องการให้จุดจับ newline; m เปลี่ยนขอบเขต ^/$"
+      }
+    ],
+    "practicePatternId": "score-range",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-escape",
+    "title": "101: จุด วงเล็บ และ backslash",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "จุดที่ต่างกัน",
+        "body": "99.00 ยอมให้จุดเป็นอักขระอื่นได้ แต่ 99\\.00 ต้องเป็นจุดจริง ลองราคา: 99x00 เพื่อเห็นความต่าง"
+      },
+      {
+        "heading": "คัดลอกให้ถูกชั้น",
+        "body": "ช่อง Pattern ใช้ \\. หนึ่ง backslash ส่วน JSON source ต้องใช้ \\\\. อย่าคัดลอก / ครอบลงช่องที่แยก Flags"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "จะหาวงเล็บเปิดจริงใช้ pattern อะไร?",
+        "answer": "ใช้ \\( เพราะ ( เปล่าเป็นจุดเริ่มกลุ่มจับ"
+      }
+    ],
+    "practicePatternId": "literal-price"
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-boundaries",
+    "title": "101: ค้นบางส่วนกับตรวจทั้งค่า",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "จับได้ไม่ได้แปลว่าถูกทั้งหมด",
+        "body": "\\d{1,3} อาจจับ 100 จาก 1000 การตรวจคะแนนต้องกำหนดช่วงและขอบเขต สูตรนี้รับทั้งบรรทัด Affection: 0 ถึง Affection: 100"
+      },
+      {
+        "heading": "ทดสอบกรณีที่ต้องไม่ผ่าน",
+        "body": "ลอง 1000, -1, 01 และไม่มีค่า ทุกกรณีควรไม่ match; m ให้ ^ และ $ ทำงานรายบรรทัด"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "ทำไม Affection: 1000 ต้องไม่ผ่าน?",
+        "answer": "เกินช่วง 0–100 และต้องไม่ยอมจับเฉพาะบางส่วน"
+      }
+    ],
+    "practicePatternId": "score-range"
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-thai",
+    "title": "101: ภาษาไทยและ Unicode",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "อย่าใช้ \\w แทนตัวอักษรไทยทั้งหมด",
+        "body": "\\w ไม่ใช่ชุดตัวอักษรทุกภาษา ภาษาไทยใช้ literal ได้ตรง ๆ หรือใช้ Unicode properties พร้อม u; \\d รับเลข 0–9 ไม่ใช่เลขไทย"
+      },
+      {
+        "heading": "สระและวรรณยุกต์",
+        "body": "แฮชแท็กไทยควรรวม \\p{M} เพื่อเก็บเครื่องหมายประกอบ ตัวอย่าง #สวัสดี ต้องได้ทั้งแท็ก"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "ถ้าใช้ \\d จะจับ ๑๒ หรือไม่?",
+        "answer": "ไม่จับ; ใช้ [๐-๙] เพื่อค้นเลขไทย แต่การแปลงเป็นค่าเลขต้องทำเพิ่ม"
+      }
+    ],
+    "practicePatternId": "hashtag-thai"
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-lines",
+    "title": "101: ช่องว่างและหลายบรรทัด",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "m กับ s คนละหน้าที่",
+        "body": "m เปลี่ยน ^ และ $ ให้มองแต่ละบรรทัด ส่วน s ให้ . จับบรรทัดใหม่ [\\s\\S] ใช้รับทุกอักขระได้โดยไม่ต้องเปิด s"
+      },
+      {
+        "heading": "อย่ากินหลายก้อนรวมกัน",
+        "body": "*? หยุดที่ marker ปิดแรก ต่างจาก * ที่พยายามกินยาวก่อน สูตรตัวอย่างไม่รองรับ marker ซ้อน"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "ถ้าต้องการช่องว่างแต่ไม่ข้ามบรรทัดใช้แบบใด?",
+        "answer": "ใช้ [ \\t]* แทน \\s* ซึ่งอาจรวมบรรทัดใหม่"
+      }
+    ],
+    "practicePatternId": "bracket-marker"
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-choices",
+    "title": "101: ทางเลือกและวงเล็บ",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "เลือกคำที่อนุญาต",
+        "body": "idle|busy|offline รับทางเลือก; (idle|busy|offline) จับไว้เป็น $1 ส่วน (?:...) รวมกลุ่มโดยไม่เพิ่มเลขกลุ่ม"
+      },
+      {
+        "heading": "อ่านผลให้ครบ",
+        "body": "match คือทั้งบรรทัด กลุ่ม 1 คือคำสถานะ และผลแทนที่ใช้ $1; เปิด i ไม่ได้ทำให้ผล BUSY กลายเป็น busy"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "busywork ควรผ่านสูตรนี้ไหม?",
+        "answer": "ไม่ควร เพราะกำหนดทั้งบรรทัดและรับสถานะจากรายการเท่านั้น"
+      }
+    ],
+    "practicePatternId": "status-choice"
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-debug",
+    "title": "101: ไล่ปัญหาเมื่อจับไม่ได้",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "ตรวจจากเรื่องง่ายก่อน",
+        "body": "เช็กคำป้าย โคลอน : กับ ： ช่องว่าง flags และข้อความจริง แล้วลด Input ให้เหลือหนึ่งบรรทัด ก่อนแก้ Pattern ทีละจุด"
+      },
+      {
+        "heading": "ทดสอบสามกลุ่ม",
+        "body": "เตรียมกรณีควรจับ ไม่ควรจับ และขอบเขต เช่น ค่าว่าง หลายบรรทัด หรือป้ายคล้ายกัน ตรวจทั้ง match กลุ่มจับ และ output ไม่ใช่แค่จำนวนจุดที่พบ"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "มี match แต่ output หายไป เกิดจากอะไรได้บ้าง?",
+        "answer": "Replacement ว่างจะลบ match หรืออ้างกลุ่มผิดหมายเลข ให้ตรวจ $1 และวงเล็บ"
+      }
+    ],
+    "practicePatternId": "thai-label"
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "regex-101-limits",
+    "title": "101: เลือกใช้ Regex ให้เหมาะ",
+    "summary": "อ่านสั้น → ลองตัวอย่าง → เปลี่ยนโจทย์ → ตรวจผล",
+    "category": "regex-foundations",
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
+    "audienceNotes": {
+      "app_user": "เริ่มจากปุ่มทดลองท้ายบท แล้วเปลี่ยน Input ทีละจุด อ่านผลที่ควรได้ก่อนลองเอง",
+      "developer": "ตัวอย่างใช้ JavaScript RegExp แยก pattern/flags/replacement; ดูกรณีไม่ตรงและข้อจำกัดในคลัง"
+    },
+    "sections": [
+      {
+        "heading": "รูปแบบไม่เท่ากับความหมาย",
+        "body": "Regex ตรวจเวลา HH:mm ได้ แต่วันที่ 2026-02-31 ต้องตรวจปฏิทินด้วยโค้ด อีเมลและ URL ที่ซับซ้อนควรใช้ตัวตรวจหรือ parser ของงานนั้น"
+      },
+      {
+        "heading": "ขอบเขตที่ต้องรู้",
+        "body": "HTML, JSON และ marker ซ้อนต้องใช้ parser; หลีกเลี่ยงการซ้อนตัวซ้ำอย่าง (a+)+ กับข้อมูลยาว เริ่มจาก input สั้นและขอบเขตชัด"
+      }
+    ],
+    "exercises": [
+      {
+        "prompt": "Regex วันที่รูปแบบถูกยืนยันวันจริงได้ไหม?",
+        "answer": "ไม่ได้เสมอ ต้องตรวจจำนวนวันของเดือนและปีอธิกสุรทินเพิ่มเติม"
+      }
+    ],
+    "practicePatternId": "time-24h"
+  },
+  {
     "id": "regex-introduction",
     "schemaVersion": 1,
     "revision": 1,
@@ -9,20 +441,38 @@
     "summary": "รู้จักกฎค้นหาและแปลงข้อความ พร้อมรู้ขอบเขตของมัน",
     "level": "beginner",
     "category": "regex-foundations",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "ให้นึกว่า Regex เป็นแม่พิมพ์ค้นคำ ถ้าข้อความตรงแม่พิมพ์ก็หาเจอ แล้วเลือกได้ว่าจะเน้น เปลี่ยน หรือซ่อนส่วนนั้น คุณเริ่มจาก Pattern สำเร็จรูปได้โดยไม่ต้องเขียนเอง",
       "developer": "Regex เป็น pattern สำหรับ match, extract, validate หรือ replace ส่วนของสตริง ความสามารถและ syntax ขึ้นกับ engine; API นี้ใช้ JavaScript RegExp ใน Node.js"
     },
     "sections": [
-      { "heading": "แม่พิมพ์สำหรับข้อความ", "body": "Regex ย่อจาก regular expression เป็นวิธีบรรยายรูปแบบของข้อความ เช่น คำว่า Affection ตามด้วยโคลอนและตัวเลข เราใช้ค้นหาส่วนที่ตรง ดึงค่าข้างใน หรือแทนส่วนนั้นด้วยข้อความใหม่" },
-      { "heading": "ตัวอย่างที่เราจะค่อย ๆ อ่าน", "body": "Affection[:：]\\s*(\\d{1,3}) หาได้ทั้ง Affection: 72 และ Affection：72 แล้วเก็บเลข 72 เป็นกลุ่มจับที่ 1" },
-      { "heading": "Regex ไม่เข้าใจความหมายแทนเรา", "body": "Pattern เห็นลำดับตัวอักษร ไม่รู้ว่าตัวเลขนั้นเป็นค่าความสัมพันธ์ เวลา หรืออายุ เราจึงต้องกำหนดขอบเขตให้ชัดและทดลองทั้งตัวอย่างที่ควรตรงกับไม่ควรตรง" }
+      {
+        "heading": "แม่พิมพ์สำหรับข้อความ",
+        "body": "Regex ย่อจาก regular expression เป็นวิธีบรรยายรูปแบบของข้อความ เช่น คำว่า Affection ตามด้วยโคลอนและตัวเลข เราใช้ค้นหาส่วนที่ตรง ดึงค่าข้างใน หรือแทนส่วนนั้นด้วยข้อความใหม่"
+      },
+      {
+        "heading": "ตัวอย่างที่เราจะค่อย ๆ อ่าน",
+        "body": "Affection[:：]\\s*(\\d{1,3}) หาได้ทั้ง Affection: 72 และ Affection：72 แล้วเก็บเลข 72 เป็นกลุ่มจับที่ 1"
+      },
+      {
+        "heading": "Regex ไม่เข้าใจความหมายแทนเรา",
+        "body": "Pattern เห็นลำดับตัวอักษร ไม่รู้ว่าตัวเลขนั้นเป็นค่าความสัมพันธ์ เวลา หรืออายุ เราจึงต้องกำหนดขอบเขตให้ชัดและทดลองทั้งตัวอย่างที่ควรตรงกับไม่ควรตรง"
+      }
     ],
     "exercises": [
-      { "prompt": "ถ้าต้องการดึงเลข 72 ออกจาก Affection: 72 Regex ทำหน้าที่ส่วนใด?", "answer": "หาโครงสร้างข้อความและจับส่วนที่เป็นตัวเลขไว้ เราใช้กลุ่มจับเพื่ออ้างถึงเลขนั้นภายหลัง" }
+      {
+        "prompt": "ถ้าต้องการดึงเลข 72 ออกจาก Affection: 72 Regex ทำหน้าที่ส่วนใด?",
+        "answer": "หาโครงสร้างข้อความและจับส่วนที่เป็นตัวเลขไว้ เราใช้กลุ่มจับเพื่ออ้างถึงเลขนั้นภายหลัง"
+      }
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   },
   {
     "id": "regex-pattern-format",
@@ -34,20 +484,38 @@
     "summary": "แยกตัวนิพจน์ออกจากธงที่กำหนดวิธีค้นหา",
     "level": "beginner",
     "category": "regex-foundations",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "ในหน้าตั้งค่าของ Rubii ให้คัดลอก Pattern และ flags ลงช่องตามที่สูตรระบุ อย่าคัดลอกเครื่องหมาย / ครอบหน้าและหลัง ถ้าช่องแยกสองค่านี้อยู่แล้ว",
       "developer": "Regex literal ใน JavaScript เขียน /pattern/flags แต่ API เก็บ pattern และ flags เป็นคนละฟิลด์ เช่น pattern = Affection[:：]\\\\s*(\\\\d{1,3}), flags = gi เพื่อ serialize ได้ชัด"
     },
     "sections": [
-      { "heading": "สามส่วนที่ควรแยก", "body": "Pattern คือกฎค้นหา; flags เป็นตัวเลือกการค้น เช่น g ค้นต่อจนหมด และ i ไม่แยกตัวพิมพ์ใหญ่เล็ก; replacement คือข้อความที่จะใส่แทน match โดยอาจอ้างค่าที่จับได้" },
-      { "heading": "เขียนแบบ JavaScript กับช่องของ Rubii", "body": "ในโค้ด JavaScript นิยมเขียน /Affection[:：]\\s*(\\d{1,3})/gi ส่วนหน้าและท้าย / ใช้ครอบ literal เท่านั้น ถ้าฟอร์มมีช่อง Expression /pattern/flags ให้ใส่ pattern กับ flags ตามรูปแบบของช่องนั้น" },
-      { "heading": "Escape สองชั้นใน JSON", "body": "ใน JSON string ต้องเขียน backslash เป็น \\\\ ดังนั้นค่า Regex \\d ปรากฏในไฟล์ JSON เป็น \\\\d หลัง parse แล้วจึงกลับเป็น backslash หนึ่งตัว" }
+      {
+        "heading": "สามส่วนที่ควรแยก",
+        "body": "Pattern คือกฎค้นหา; flags เป็นตัวเลือกการค้น เช่น g ค้นต่อจนหมด และ i ไม่แยกตัวพิมพ์ใหญ่เล็ก; replacement คือข้อความที่จะใส่แทน match โดยอาจอ้างค่าที่จับได้"
+      },
+      {
+        "heading": "เขียนแบบ JavaScript กับช่องของ Rubii",
+        "body": "ในโค้ด JavaScript นิยมเขียน /Affection[:：]\\s*(\\d{1,3})/gi ส่วนหน้าและท้าย / ใช้ครอบ literal เท่านั้น ถ้าฟอร์มมีช่อง Expression /pattern/flags ให้ใส่ pattern กับ flags ตามรูปแบบของช่องนั้น"
+      },
+      {
+        "heading": "Escape สองชั้นใน JSON",
+        "body": "ใน JSON string ต้องเขียน backslash เป็น \\\\ ดังนั้นค่า Regex \\d ปรากฏในไฟล์ JSON เป็น \\\\d หลัง parse แล้วจึงกลับเป็น backslash หนึ่งตัว"
+      }
     ],
     "exercises": [
-      { "prompt": "ใน /cat/gi ตัวอักษร g และ i เป็นส่วนของ Pattern หรือ flags?", "answer": "เป็น flags; g ค้นหาต่อทุก match และ i ไม่แยกตัวพิมพ์เล็กใหญ่" }
+      {
+        "prompt": "ใน /cat/gi ตัวอักษร g และ i เป็นส่วนของ Pattern หรือ flags?",
+        "answer": "เป็น flags; g ค้นหาต่อทุก match และ i ไม่แยกตัวพิมพ์เล็กใหญ่"
+      }
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "rubii-styles-regex"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "regex-building-blocks",
@@ -59,21 +527,42 @@
     "summary": "อ่านส่วนประกอบพื้นฐานของ Pattern ทีละชิ้น",
     "level": "beginner",
     "category": "regex-syntax",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "อย่าพยายามจำทุกเครื่องหมายพร้อมกัน เปิดคำอธิบาย Pattern ดูทีละส่วนว่าอะไรเป็นคำตรง ๆ อะไรยอมรับหลายแบบ และส่วนไหนเป็นตัวเลขที่ต้องการดึง",
       "developer": "ลำดับอ่านที่ช่วย debug คือ literal, character class, escape shorthand, quantifier, grouping และ anchor; ระวัง greediness และ line-ending semantics"
     },
     "sections": [
-      { "heading": "ตัวอักษรตรงและชุดตัวเลือก", "body": "Affection จับคำตามตัวอักษร ส่วน [:：] ยอมรับหนึ่งในสองเครื่องหมายโคลอนที่อยู่ในวงเล็บเหลี่ยม" },
-      { "heading": "คำย่อที่พบบ่อย", "body": "\\d แทนตัวเลข, \\s แทนช่องว่าง, และ . แทนตัวอักษรหนึ่งตัวโดยทั่วไป; [abc] รับหนึ่งตัวจาก a, b หรือ c" },
-      { "heading": "จำนวนซ้ำ", "body": "* หมายถึงศูนย์ครั้งขึ้นไป, + อย่างน้อยหนึ่งครั้ง, ? ศูนย์หรือหนึ่งครั้ง, และ {1,3} หนึ่งถึงสามครั้ง เช่น \\d{1,3}" },
-      { "heading": "จุดเริ่มและจุดจบ", "body": "^ และ $ ระบุตำแหน่งหัวและท้ายข้อความ; เมื่อใช้ flag m จะตีความเป็นหัวและท้ายแต่ละบรรทัด ส่วน s ทำให้จุด . จับ newline ได้" }
+      {
+        "heading": "ตัวอักษรตรงและชุดตัวเลือก",
+        "body": "Affection จับคำตามตัวอักษร ส่วน [:：] ยอมรับหนึ่งในสองเครื่องหมายโคลอนที่อยู่ในวงเล็บเหลี่ยม"
+      },
+      {
+        "heading": "คำย่อที่พบบ่อย",
+        "body": "\\d แทนตัวเลข, \\s แทนช่องว่าง, และ . แทนตัวอักษรหนึ่งตัวโดยทั่วไป; [abc] รับหนึ่งตัวจาก a, b หรือ c"
+      },
+      {
+        "heading": "จำนวนซ้ำ",
+        "body": "* หมายถึงศูนย์ครั้งขึ้นไป, + อย่างน้อยหนึ่งครั้ง, ? ศูนย์หรือหนึ่งครั้ง, และ {1,3} หนึ่งถึงสามครั้ง เช่น \\d{1,3}"
+      },
+      {
+        "heading": "จุดเริ่มและจุดจบ",
+        "body": "^ และ $ ระบุตำแหน่งหัวและท้ายข้อความ; เมื่อใช้ flag m จะตีความเป็นหัวและท้ายแต่ละบรรทัด ส่วน s ทำให้จุด . จับ newline ได้"
+      }
     ],
     "exercises": [
-      { "prompt": "ใน (\\d{1,3}) ส่วนใดกำหนดจำนวนเลขสูงสุด?", "answer": "{1,3} กำหนดให้มีตัวเลขอย่างน้อยหนึ่งและไม่เกินสามหลัก" }
+      {
+        "prompt": "ใน (\\d{1,3}) ส่วนใดกำหนดจำนวนเลขสูงสุด?",
+        "answer": "{1,3} กำหนดให้มีตัวเลขอย่างน้อยหนึ่งและไม่เกินสามหลัก"
+      }
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   },
   {
     "id": "regex-captures-and-replacement",
@@ -85,20 +574,39 @@
     "summary": "เก็บค่าจาก match แล้วนำไปวางในผลลัพธ์ใหม่",
     "level": "beginner",
     "category": "regex-syntax",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "วงเล็บรอบค่าที่สนใจช่วยเก็บค่านั้นไว้ ในช่อง Replacement ใช้ $1 แทนค่าจากวงเล็บชุดแรก สูตรมักบอกไว้แล้วว่าต้องเปลี่ยนตรงไหน",
       "developer": "Capturing groups กำหนดลำดับตามวงเล็บเปิด; ใน JavaScript replacement รองรับ $1, $&, $$ และ named groups บางรูปแบบ ส่วน Rubii อธิบาย $1 และ $& ให้ใช้กับ rules ของตน"
     },
     "sections": [
-      { "heading": "จับเฉพาะค่าที่ต้องใช้", "body": "ใน Affection[:：]\\s*(\\d{1,3}) วงเล็บรอบ \\d{1,3} สร้างกลุ่มจับหมายเลข 1 คำว่า Affection และโคลอนเป็นส่วนของ match แต่ไม่ใช่ค่ากลุ่มที่ 1" },
-      { "heading": "ใส่ค่าลง Replacement", "body": "Replacement 'Affection: $1' นำค่าในกลุ่มแรกกลับมาใช้; $& หมายถึงข้อความ match ทั้งก้อน ถ้า replacement ว่าง ส่วนที่ match จะถูกลบออกจากผลที่แสดง" },
-      { "heading": "วงเล็บที่ไม่ต้องการจับ", "body": "วงเล็บที่ใช้จัดกลุ่มแต่ไม่ต้องการหมายเลขใช้รูปแบบ (?:...) ใน JavaScript Regex วิธีนี้ช่วยไม่ให้ลำดับ $1, $2 เปลี่ยนโดยไม่ตั้งใจ" }
+      {
+        "heading": "จับเฉพาะค่าที่ต้องใช้",
+        "body": "ใน Affection[:：]\\s*(\\d{1,3}) วงเล็บรอบ \\d{1,3} สร้างกลุ่มจับหมายเลข 1 คำว่า Affection และโคลอนเป็นส่วนของ match แต่ไม่ใช่ค่ากลุ่มที่ 1"
+      },
+      {
+        "heading": "ใส่ค่าลง Replacement",
+        "body": "Replacement 'Affection: $1' นำค่าในกลุ่มแรกกลับมาใช้; $& หมายถึงข้อความ match ทั้งก้อน ถ้า replacement ว่าง ส่วนที่ match จะถูกลบออกจากผลที่แสดง"
+      },
+      {
+        "heading": "วงเล็บที่ไม่ต้องการจับ",
+        "body": "วงเล็บที่ใช้จัดกลุ่มแต่ไม่ต้องการหมายเลขใช้รูปแบบ (?:...) ใน JavaScript Regex วิธีนี้ช่วยไม่ให้ลำดับ $1, $2 เปลี่ยนโดยไม่ตั้งใจ"
+      }
     ],
     "exercises": [
-      { "prompt": "จาก pattern ตัวอย่าง ค่าของ $1 เมื่อเจอ Affection: 72 คืออะไร?", "answer": "72" }
+      {
+        "prompt": "จาก pattern ตัวอย่าง ค่าของ $1 เมื่อเจอ Affection: 72 คืออะไร?",
+        "answer": "72"
+      }
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference", "rubii-styles-regex"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference",
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "regex-rubii-scope-and-order",
@@ -110,21 +618,41 @@
     "summary": "เลือก raw content หรือ displayed text และเข้าใจลำดับกฎ",
     "level": "intermediate",
     "category": "rubii-application",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "ถ้าต้องจับ tag หรือ Markdown เลือก Raw content; ถ้าต้องการเปลี่ยนคำที่เห็นบนจอโดยไม่แตะ HTML ให้เลือก Displayed text ทดลอง Preview ก่อนบันทึกทุกครั้ง",
       "developer": "Rubii มี transform pipeline เฉพาะ: raw-content rules ตามลำดับ → Style tag expansion/Markdown → displayed-text rules ตามลำดับ → CSS; local preview นี้จำลอง JavaScript matching แต่ไม่จำลอง DOM/text-node boundaries"
     },
     "sections": [
-      { "heading": "Raw content", "body": "Raw content เห็นข้อความตามที่เขียน รวม Markdown และ HTML และประมวลผลก่อนขยาย Style tags จึงจับ marker หรือโครงสร้างได้ แต่ pattern อาจไป match ข้อความใน attribute หรือ CSS โดยไม่ตั้งใจ" },
-      { "heading": "Displayed text", "body": "Displayed text เห็นเฉพาะคำที่แสดง หลังขยาย Style tags และจัด Markdown แล้ว ไม่เห็น tag, attribute, CSS หรือ code; match ไม่ข้ามช่วงข้อความที่ HTML แบ่งออกจากกัน" },
-      { "heading": "ขอบเขตผู้ส่ง", "body": "Apply to กำหนดว่าจะใช้ทุกข้อความ เฉพาะข้อความผู้ใช้ หรือเฉพาะข้อความตัวละคร กฎและลำดับที่ต่างกันอาจทำให้ผลลัพธ์เปลี่ยน" },
-      { "heading": "ลำดับการแสดงผล", "body": "Raw-content Regex → Style tags และ Markdown → Displayed-text Regex → Global CSS แต่ละกฎในรายการทำงานตามลำดับของตัวเอง" }
+      {
+        "heading": "Raw content",
+        "body": "Raw content เห็นข้อความตามที่เขียน รวม Markdown และ HTML และประมวลผลก่อนขยาย Style tags จึงจับ marker หรือโครงสร้างได้ แต่ pattern อาจไป match ข้อความใน attribute หรือ CSS โดยไม่ตั้งใจ"
+      },
+      {
+        "heading": "Displayed text",
+        "body": "Displayed text เห็นเฉพาะคำที่แสดง หลังขยาย Style tags และจัด Markdown แล้ว ไม่เห็น tag, attribute, CSS หรือ code; match ไม่ข้ามช่วงข้อความที่ HTML แบ่งออกจากกัน"
+      },
+      {
+        "heading": "ขอบเขตผู้ส่ง",
+        "body": "Apply to กำหนดว่าจะใช้ทุกข้อความ เฉพาะข้อความผู้ใช้ หรือเฉพาะข้อความตัวละคร กฎและลำดับที่ต่างกันอาจทำให้ผลลัพธ์เปลี่ยน"
+      },
+      {
+        "heading": "ลำดับการแสดงผล",
+        "body": "Raw-content Regex → Style tags และ Markdown → Displayed-text Regex → Global CSS แต่ละกฎในรายการทำงานตามลำดับของตัวเอง"
+      }
     ],
     "exercises": [
-      { "prompt": "ต้องการแทน <status> ที่โมเดลเขียนใน raw reply ควรเลือก match stage ใด?", "answer": "Raw content เพราะกฎต้องเห็น tag ก่อนการขยาย Style tag และการจัดรูปแบบ" }
+      {
+        "prompt": "ต้องการแทน <status> ที่โมเดลเขียนใน raw reply ควรเลือก match stage ใด?",
+        "answer": "Raw content เพราะกฎต้องเห็น tag ก่อนการขยาย Style tag และการจัดรูปแบบ"
+      }
     ],
-    "sourceRefs": ["rubii-styles-regex"]
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "regex-adjust-and-test",
@@ -136,21 +664,42 @@
     "summary": "แก้จุดเล็ก ๆ จากข้อความตัวอย่างและตรวจกรณีขอบ",
     "level": "intermediate",
     "category": "regex-workflow",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "เลือกสูตรที่ใกล้เคียงก่อน เปลี่ยนทีละค่า เช่น ชื่อ label หรือจำนวนหลัก แล้วลองข้อความที่ควรจับและข้อความที่ไม่ควรจับ อย่าแก้หลายเครื่องหมายพร้อมกัน",
       "developer": "เขียน positive, negative และ boundary fixtures ก่อนแก้; ตรวจ match index/captures/output พร้อมกำหนด input, output, match count และ wall-clock budgets เมื่อรับ pattern จากผู้เรียก"
     },
     "sections": [
-      { "heading": "เขียนตัวอย่างก่อนแก้", "body": "เก็บข้อความที่ควร match อย่างน้อยหนึ่งแบบ และข้อความที่ไม่ควร match เช่น label คนละคำ ค่าว่าง ตัวเลขเกินช่วง หรือบรรทัดที่อยู่ใน HTML attribute" },
-      { "heading": "เปลี่ยนทีละส่วน", "body": "ถ้าชื่อ label ต่าง ให้แก้ literal; ถ้าตัวเลขยาวขึ้น ให้แก้ {1,3}; ถ้าต้องจับเฉพาะต้นบรรทัด เพิ่ม ^ พร้อม flag m เมื่อเหมาะสม" },
-      { "heading": "ตรวจสามผล", "body": "ดูข้อความ match เต็ม, กลุ่มจับทุกกลุ่ม และ output หลัง replacement จากนั้นลอง Preview ในปลายทาง เพราะ JavaScript tester ไม่ใช่ renderer ของ Rubii" },
-      { "heading": "หยุดใช้เมื่อผลกว้างเกิน", "body": "ถ้า pattern จับเกิน HTML หรือซ่อนข้อความส่วนที่ไม่ตั้งใจ ให้ปิดกฎก่อน แล้วกลับมาทดสอบด้วย input สั้น ๆ ที่รู้คำตอบ" }
+      {
+        "heading": "เขียนตัวอย่างก่อนแก้",
+        "body": "เก็บข้อความที่ควร match อย่างน้อยหนึ่งแบบ และข้อความที่ไม่ควร match เช่น label คนละคำ ค่าว่าง ตัวเลขเกินช่วง หรือบรรทัดที่อยู่ใน HTML attribute"
+      },
+      {
+        "heading": "เปลี่ยนทีละส่วน",
+        "body": "ถ้าชื่อ label ต่าง ให้แก้ literal; ถ้าตัวเลขยาวขึ้น ให้แก้ {1,3}; ถ้าต้องจับเฉพาะต้นบรรทัด เพิ่ม ^ พร้อม flag m เมื่อเหมาะสม"
+      },
+      {
+        "heading": "ตรวจสามผล",
+        "body": "ดูข้อความ match เต็ม, กลุ่มจับทุกกลุ่ม และ output หลัง replacement จากนั้นลอง Preview ในปลายทาง เพราะ JavaScript tester ไม่ใช่ renderer ของ Rubii"
+      },
+      {
+        "heading": "หยุดใช้เมื่อผลกว้างเกิน",
+        "body": "ถ้า pattern จับเกิน HTML หรือซ่อนข้อความส่วนที่ไม่ตั้งใจ ให้ปิดกฎก่อน แล้วกลับมาทดสอบด้วย input สั้น ๆ ที่รู้คำตอบ"
+      }
     ],
     "exercises": [
-      { "prompt": "ควรเปลี่ยน literal, quantifier หรือทั้งสองอย่างพร้อมกันเมื่อ label เปลี่ยนจาก Affection เป็น Trust?", "answer": "เปลี่ยน literal ก่อน แล้วรันทดสอบชุดเดิมเพื่อแยกสาเหตุของผลที่เปลี่ยน" }
+      {
+        "prompt": "ควรเปลี่ยน literal, quantifier หรือทั้งสองอย่างพร้อมกันเมื่อ label เปลี่ยนจาก Affection เป็น Trust?",
+        "answer": "เปลี่ยน literal ก่อน แล้วรันทดสอบชุดเดิมเพื่อแยกสาเหตุของผลที่เปลี่ยน"
+      }
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "rubii-styles-regex"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "regex-access-client-and-developer",
@@ -162,19 +711,37 @@
     "summary": "คู่มือสั้นสำหรับผู้ใช้แอปและผู้พัฒนาที่เรียก API",
     "level": "beginner",
     "category": "getting-started",
-    "audiences": ["app_user", "developer"],
+    "audiences": [
+      "app_user",
+      "developer"
+    ],
     "audienceNotes": {
       "app_user": "อ่าน Markdown ตำราได้โดยไม่ต้องเขียนโค้ด จากนั้นเลือก Pattern ที่ตรงงาน คัดลอกค่าไป Rubii ทีละช่อง ทดลอง Preview แล้วแก้จากคำอธิบายหรือถามนักพัฒนาเมื่อ syntax ต่างจากสูตร",
       "developer": "อ่าน JSON ผ่าน GET /v1/lessons?audience=developer, ใช้ GET /v1/patterns ค้นสูตร และ POST /v1/regex/test ตรวจ JS RegExp ก่อนส่งค่าให้ client; endpoint ปัจจุบันเป็น local preview ไม่มี public auth"
     },
     "sections": [
-      { "heading": "เส้นทางผู้ใช้แอป", "body": "เริ่มจากบท Regex คืออะไร → อ่าน Pattern → ดูกลุ่มจับและ replacement → เลือก raw/displayed ใน Rubii → ทดสอบตัวอย่างและ Preview ใช้ Pattern ที่เตรียมไว้ได้โดยไม่ต้องเรียก API เอง" },
-      { "heading": "เส้นทางนักพัฒนา", "body": "อ่านพื้นฐานชุดเดียวกัน แล้วเรียกบทเรียนและ Pattern เป็น JSON; ใช้ POST /v1/regex/test โดยส่ง pattern, flags, replacement และ input แยกฟิลด์" },
-      { "heading": "ความเข้ากันได้", "body": "ตัวอย่างในโครงการใช้ JavaScript RegExp และ flags ที่สอดคล้องกับเอกสาร Rubii เท่าที่ระบุไว้ การที่ API preview ผ่านไม่ได้ยืนยันว่า Rubii จะ render HTML หรือจับข้าม text nodes แบบเดียวกัน" }
+      {
+        "heading": "เส้นทางผู้ใช้แอป",
+        "body": "เริ่มจากบท Regex คืออะไร → อ่าน Pattern → ดูกลุ่มจับและ replacement → เลือก raw/displayed ใน Rubii → ทดสอบตัวอย่างและ Preview ใช้ Pattern ที่เตรียมไว้ได้โดยไม่ต้องเรียก API เอง"
+      },
+      {
+        "heading": "เส้นทางนักพัฒนา",
+        "body": "อ่านพื้นฐานชุดเดียวกัน แล้วเรียกบทเรียนและ Pattern เป็น JSON; ใช้ POST /v1/regex/test โดยส่ง pattern, flags, replacement และ input แยกฟิลด์"
+      },
+      {
+        "heading": "ความเข้ากันได้",
+        "body": "ตัวอย่างในโครงการใช้ JavaScript RegExp และ flags ที่สอดคล้องกับเอกสาร Rubii เท่าที่ระบุไว้ การที่ API preview ผ่านไม่ได้ยืนยันว่า Rubii จะ render HTML หรือจับข้าม text nodes แบบเดียวกัน"
+      }
     ],
     "exercises": [
-      { "prompt": "ผู้ใช้แอปที่ไม่เขียนโค้ดควรเริ่มจาก endpoint ทดลอง Regex หรือจาก Pattern ที่มีวิธีใช้?", "answer": "เริ่มจาก Pattern พร้อมวิธีใช้และตัวอย่าง แล้วใช้ Preview ของแอปปลายทาง; endpoint เป็นทางเลือกสำหรับนักพัฒนา" }
+      {
+        "prompt": "ผู้ใช้แอปที่ไม่เขียนโค้ดควรเริ่มจาก endpoint ทดลอง Regex หรือจาก Pattern ที่มีวิธีใช้?",
+        "answer": "เริ่มจาก Pattern พร้อมวิธีใช้และตัวอย่าง แล้วใช้ Preview ของแอปปลายทาง; endpoint เป็นทางเลือกสำหรับนักพัฒนา"
+      }
     ],
-    "sourceRefs": ["mdn-js-regex-guide", "rubii-styles-regex"]
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
   }
 ]

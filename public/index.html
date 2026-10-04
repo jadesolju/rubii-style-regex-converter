@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Studio - ตำราและคลังสูตรสำเร็จรูป</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Kanit', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            glass: {
+              surface: 'rgba(15, 23, 42, 0.55)',
+              border: 'rgba(255, 255, 255, 0.08)',
+              hover: 'rgba(30, 41, 59, 0.7)',
+              glow: 'rgba(56, 189, 248, 0.15)'
+            }
+          },
+          animation: {
+            'blob': 'blob 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1)',
+            'pulse-gentle': 'pulseGentle 3s infinite ease-in-out',
+            'float': 'float 4s ease-in-out infinite',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -40px) scale(1.1)' },
+              '66%': { transform: 'translate(-25px, 20px) scale(0.95)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            pulseGentle: {
+              '0%, 100%': { opacity: '0.4' },
+              '50%': { opacity: '0.8' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: #050a18 url('/bg.jpg') center top / cover no-repeat fixed;
+      color: #f1f5f9;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(5, 11, 26, 0.88) 0%, rgba(9, 18, 42, 0.82) 50%, rgba(5, 10, 24, 0.93) 100%);
+      pointer-events: none;
+      z-index: -5;
+    }
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(9, 18, 40, 0.68);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(125, 211, 252, 0.12);
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.5), 0 0 24px 0 rgba(56, 189, 248, 0.06);
+    }
+    .glass-card-hover {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card-hover:hover {
+      background: rgba(14, 28, 60, 0.82);
+      border-color: rgba(56, 189, 248, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 45px -10px rgba(14, 165, 233, 0.22);
+    }
+    .glass-input {
+      background: rgba(5, 12, 28, 0.78);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(125, 211, 252, 0.14);
+      transition: all 0.2s ease;
+    }
+    .glass-input:focus {
+      border-color: rgba(56, 189, 248, 0.65);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+      background: rgba(7, 16, 36, 0.9);
+    }
+    .match-highlight {
+      background: rgba(14, 165, 233, 0.3);
+      border-bottom: 2px solid #38bdf8;
+      border-radius: 4px;
+      padding: 1px 3px;
+      color: #e0f2fe;
+    }
+    .capture-g1 {
+      background: rgba(6, 182, 212, 0.3);
+      border-bottom: 2px solid #22d3ee;
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+    .capture-g2 {
+      background: rgba(168, 85, 247, 0.3);
+      border-bottom: 2px solid #c084fc;
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+    .capture-g3 {
+      background: rgba(244, 63, 94, 0.3);
+      border-bottom: 2px solid #fb7185;
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+    /* Custom Cute Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(9, 18, 40, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(125, 211, 252, 0.2);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.5);
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- Cute Ambient Background Blobs -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/12 rounded-full blur-3xl animate-blob"></div>
+    <div class="absolute top-1/3 -right-32 w-[30rem] h-[30rem] bg-indigo-500/12 rounded-full blur-3xl animate-blob" style="animation-delay: 2s;"></div>
+    <div class="absolute -bottom-32 left-1/3 w-[26rem] h-[26rem] bg-fuchsia-500/10 rounded-full blur-3xl animate-blob" style="animation-delay: 4s;"></div>
+    <div class="absolute top-2/3 left-10 w-80 h-80 bg-sky-500/12 rounded-full blur-3xl animate-blob" style="animation-delay: 6s;"></div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col min-h-screen">
+    
+    <!-- Top Floating Glass Navigation -->
+    <header class="glass-card rounded-3xl px-6 py-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500/30 to-indigo-500/30 p-0.5 shadow-lg shadow-cyan-500/25 animate-float overflow-hidden shrink-0 border border-cyan-400/40">
+          <img src="/mascot.jpg" alt="Regex Studio Logo" class="w-full h-full object-cover rounded-[14px]">
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-300">
+              Regex Studio
+            </h1>
+            <span class="px-2 py-0.5 text-[11px] font-medium tracking-wider rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+              ตำรา & สูตรสำเร็จรูป
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 font-light mt-0.5">ค้นหา เรียนรู้ และทดลองใช้งาน Regex สำเร็จรูป</p>
+        </div>
+      </div>
+
+      <!-- Center & Right Controls -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Audience Switcher Pills -->
+        <div class="bg-slate-950/60 p-1 rounded-2xl border border-white/5 flex items-center gap-1">
+          <button id="audience-user-btn" onclick="setAudience('app_user')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm">
+            <!-- SVG Icon: User -->
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>ผู้ใช้ทั่วไป</span>
+          </button>
+          <button id="audience-dev-btn" onclick="setAudience('developer')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-200">
+            <!-- SVG Icon: Code -->
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+            <span>นักพัฒนา</span>
+          </button>
+        </div>
+
+        <!-- Live Status Pill -->
+        <div class="px-3 py-1.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="api-status-text">พร้อมใช้งาน</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <div class="flex items-center justify-between gap-3 mb-6 overflow-x-auto pb-1">
+      <div class="flex items-center gap-2 bg-slate-900/40 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
+        <button id="tab-recipes" onclick="switchTab('recipes')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20">
+          <!-- SVG Icon: Wand / Sparkle -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+          <span>คลังสูตรสำเร็จรูป</span>
+          <span id="badge-recipes-count" class="px-2 py-0.5 rounded-full text-[11px] bg-white/20 text-white font-mono">0</span>
+        </button>
+
+        <button id="tab-lessons" onclick="switchTab('lessons')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <!-- SVG Icon: Book -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M6 6h10"/>
+            <path d="M6 10h10"/>
+          </svg>
+          <span>ตำราคู่มือเรียนรู้</span>
+          <span id="badge-lessons-count" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-800 text-slate-300 font-mono">0</span>
+        </button>
+
+        <button id="tab-sandbox" onclick="switchTab('sandbox')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <!-- SVG Icon: Beaker / Flask -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
+            <path d="M8.5 2h7"/>
+            <path d="M7 16h10"/>
+          </svg>
+          <span>ห้องทดลองสด</span>
+        </button>
+      </div>
+
+      <!-- Quick Search Bar -->
+      <div class="relative min-w-[240px] max-w-sm flex-1 hidden sm:block">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <input type="text" id="global-search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาสูตร หรือบทเรียน..." class="glass-input w-full pl-9 pr-4 py-2 rounded-2xl text-xs text-slate-100 placeholder-slate-500 outline-none">
+      </div>
+    </div>
+
+    <!-- TAB 1: RECIPES & PATTERNS VIEW -->
+    <main id="view-recipes" class="space-y-6">
+      
+      <!-- Category & Level Filter Ribbon -->
+      <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2" id="category-filter-container">
+          <span class="text-xs text-slate-400 font-medium mr-1 flex items-center gap-1.5">
+            <!-- SVG Icon: Filter -->
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            หมวดหมู่:
+          </span>
+          <button onclick="filterCategory('all')" data-cat="all" class="cat-pill active px-3 py-1 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+            ทั้งหมด
+          </button>
+          <!-- Dynamic categories will be injected here -->
+        </div>
+
+        <div class="flex items-center gap-2" id="level-filter-container">
+          <span class="text-xs text-slate-400 font-medium mr-1">ระดับ:</span>
+          <button onclick="filterLevel('all')" data-level="all" class="level-pill active px-2.5 py-1 rounded-xl text-xs font-medium transition-all bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+            ทุกระดับ
+          </button>
+          <button onclick="filterLevel('beginner')" data-level="beginner" class="level-pill px-2.5 py-1 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200">
+            เริ่มต้น
+          </button>
+          <button onclick="filterLevel('intermediate')" data-level="intermediate" class="level-pill px-2.5 py-1 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200">
+            ปานกลาง
+          </button>
+        </div>
+      </div>
+
+      <!-- Recipes & Patterns Grid -->
+      <div id="recipes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Dynamic Cards Injected Here -->
+        <div class="col-span-full py-12 text-center text-slate-400">กำลังโหลดสูตรสำเร็จรูป...</div>
+      </div>
+    </main>
+
+    <!-- TAB 2: LESSONS & HANDBOOK VIEW -->
+    <main id="view-lessons" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Chapter Directory -->
+        <aside class="lg:col-span-4 space-y-3">
+          <div class="glass-card rounded-2xl p-4">
+            <h2 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+              <!-- SVG Icon: Layers -->
+              <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+              </svg>
+              สารบัญบทเรียน
+            </h2>
+            <div id="lessons-nav-list" class="space-y-2">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Cute Anime Mascot Companion Card -->
+          <div class="glass-card rounded-2xl p-4 border-cyan-500/20 bg-slate-950/40 relative overflow-hidden group">
+            <div class="flex items-center gap-3">
+              <div class="relative w-14 h-14 rounded-2xl overflow-hidden shrink-0 ring-2 ring-cyan-400/40 shadow-md shadow-cyan-500/20 bg-slate-900">
+                <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full group-hover:scale-105 transition-transform duration-300">
+                  <defs>
+                    <radialGradient id="sdJellyGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+                      <stop offset="60%" stop-color="#6366f1" stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9"/>
+                    </radialGradient>
+                    <linearGradient id="sdHoodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#a5f3fc" stop-opacity="0.9"/>
+                      <stop offset="40%" stop-color="#38bdf8" stop-opacity="0.75"/>
+                      <stop offset="85%" stop-color="#818cf8" stop-opacity="0.85"/>
+                      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.7"/>
+                    </linearGradient>
+                    <linearGradient id="sdHairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#7dd3fc"/>
+                      <stop offset="50%" stop-color="#38bdf8"/>
+                      <stop offset="100%" stop-color="#2563eb"/>
+                    </linearGradient>
+                    <linearGradient id="sdFaceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#fff8f0"/>
+                      <stop offset="100%" stop-color="#ffe4d6"/>
+                    </linearGradient>
+                    <linearGradient id="sdEyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#0369a1"/>
+                      <stop offset="45%" stop-color="#0284c7"/>
+                      <stop offset="100%" stop-color="#38bdf8"/>
+                    </linearGradient>
+                    <radialGradient id="sdBlushGrad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#fb7185" stop-opacity="0.6"/>
+                      <stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="sdTentacleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+                      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.6"/>
+                      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.1"/>
+                    </linearGradient>
+                    <filter id="sdGlow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="2" result="blur"/>
+                      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                    </filter>
+                  </defs>
+                  <rect width="120" height="120" rx="26" fill="url(#sdJellyGlow)"/>
+                  <circle cx="20" cy="28" r="4" fill="#a5f3fc" opacity="0.4"/>
+                  <circle cx="23" cy="26" r="1.5" fill="#ffffff" opacity="0.8"/>
+                  <circle cx="102" cy="34" r="5" fill="#818cf8" opacity="0.4"/>
+                  <circle cx="100" cy="32" r="2" fill="#ffffff" opacity="0.7"/>
+                  <circle cx="18" cy="88" r="3" fill="#38bdf8" opacity="0.4"/>
+                  <circle cx="104" cy="85" r="3.5" fill="#c084fc" opacity="0.4"/>
+                  <path d="M 38 88 Q 30 102 36 116 Q 42 108 40 92" fill="url(#sdTentacleGrad)"/>
+                  <path d="M 48 90 Q 42 105 49 118 Q 55 106 52 92" fill="url(#sdTentacleGrad)"/>
+                  <path d="M 60 92 Q 60 108 62 120 Q 66 108 64 92" fill="url(#sdTentacleGrad)"/>
+                  <path d="M 72 90 Q 78 105 71 118 Q 65 106 68 92" fill="url(#sdTentacleGrad)"/>
+                  <path d="M 82 88 Q 90 102 84 116 Q 78 108 80 92" fill="url(#sdTentacleGrad)"/>
+                  <path d="M 24 54 C 24 24 40 12 60 12 C 80 12 96 24 96 54 C 96 66 88 72 80 70 C 72 68 66 73 60 73 C 54 73 48 68 40 70 C 32 72 24 66 24 54 Z" fill="url(#sdHoodGrad)" opacity="0.65"/>
+                  <circle cx="38" cy="30" r="2" fill="#ffffff" opacity="0.8"/>
+                  <circle cx="60" cy="22" r="2.5" fill="#ffffff" opacity="0.9"/>
+                  <circle cx="82" cy="30" r="2" fill="#ffffff" opacity="0.8"/>
+                  <circle cx="48" cy="20" r="1.5" fill="#a5f3fc" opacity="0.7"/>
+                  <circle cx="72" cy="20" r="1.5" fill="#a5f3fc" opacity="0.7"/>
+                  <path d="M 32 50 C 30 75 34 88 42 90 C 46 91 50 86 50 86 C 50 86 54 91 60 91 C 66 91 70 86 70 86 C 70 86 74 91 78 90 C 86 88 90 75 88 50 Z" fill="url(#sdHairGrad)"/>
+                  <path d="M 44 84 L 76 84 L 80 104 L 40 104 Z" fill="#0f172a"/>
+                  <path d="M 44 84 L 60 96 L 76 84" fill="#38bdf8"/>
+                  <path d="M 52 86 L 60 94 L 68 86" fill="#ffffff"/>
+                  <polygon points="60,89 61.5,93 65.5,93 62.5,95.5 63.5,99.5 60,97 56.5,99.5 57.5,95.5 54.5,93 58.5,93" fill="#facc15"/>
+                  <path d="M 34 46 C 34 32 45 28 60 28 C 75 28 86 32 86 46 C 86 64 78 78 60 78 C 42 78 34 64 34 46 Z" fill="url(#sdFaceGrad)"/>
+                  <circle cx="41" cy="58" r="7" fill="url(#sdBlushGrad)"/>
+                  <circle cx="79" cy="58" r="7" fill="url(#sdBlushGrad)"/>
+                  <path d="M 38 58 L 44 56" stroke="#fb7185" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+                  <path d="M 76 56 L 82 58" stroke="#fb7185" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+                  <ellipse cx="46" cy="51" rx="6.5" ry="8.5" fill="#0f172a"/>
+                  <ellipse cx="46" cy="52" rx="5.5" ry="7.5" fill="url(#sdEyeGrad)"/>
+                  <circle cx="44" cy="47.5" r="3" fill="#ffffff"/>
+                  <circle cx="48" cy="55.5" r="1.5" fill="#ffffff"/>
+                  <polygon points="46,51 46.8,53 49,53 47.2,54.2 47.8,56.2 46,55 44.2,56.2 44.8,54.2 43,53 45.2,53" fill="#ffffff" opacity="0.75"/>
+                  <ellipse cx="74" cy="51" rx="6.5" ry="8.5" fill="#0f172a"/>
+                  <ellipse cx="74" cy="52" rx="5.5" ry="7.5" fill="url(#sdEyeGrad)"/>
+                  <circle cx="72" cy="47.5" r="3" fill="#ffffff"/>
+                  <circle cx="76" cy="55.5" r="1.5" fill="#ffffff"/>
+                  <polygon points="74,51 74.8,53 77,53 75.2,54.2 75.8,56.2 74,55 72.2,56.2 72.8,54.2 71,53 73.2,53" fill="#ffffff" opacity="0.75"/>
+                  <path d="M 38 43 Q 46 39 53 43" stroke="#0369a1" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path d="M 39 42 L 36 39" stroke="#0369a1" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M 67 43 Q 74 39 82 43" stroke="#0369a1" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path d="M 81 42 L 84 39" stroke="#0369a1" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M 40 37 Q 46 34 51 37" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                  <path d="M 69 37 Q 74 34 80 37" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                  <circle cx="60" cy="57" r="0.8" fill="#fda4af"/>
+                  <path d="M 55 62 Q 60 67 65 62" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round" fill="#fda4af"/>
+                  <path d="M 32 44 C 33 26 44 20 60 20 C 76 20 87 26 88 44 C 83 38 78 40 73 45 C 69 36 63 36 60 46 C 57 36 51 36 47 45 C 42 40 37 38 32 44 Z" fill="url(#sdHairGrad)"/>
+                  <path d="M 40 27 Q 60 22 80 27" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" opacity="0.65" fill="none"/>
+                  <path d="M 60 20 Q 64 6 54 8 Q 58 14 60 20" fill="#38bdf8"/>
+                  <g filter="url(#sdGlow)">
+                    <polygon points="98,42 100,47 105,47 101,50 102.5,55 98,52 93.5,55 95,50 91,47 96,47" fill="#38bdf8"/>
+                    <polygon points="98,44 99.2,47 102,47 99.8,49 100.6,52 98,50 95.4,52 96.2,49 94,47 96.8,47" fill="#ffffff"/>
+                  </g>
+                  <g filter="url(#sdGlow)">
+                    <polygon points="18,52 19,55 22,55 19.5,57 20.5,60 18,58 15.5,60 16.5,57 14,55 17,55" fill="#a855f7"/>
+                    <polygon points="18,53 18.5,55 20.5,55 19,56.5 19.5,58.5 18,57 16.5,58.5 17,56.5 15.5,55 17.5,55" fill="#ffffff"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-cyan-300">Jelly Guide</span>
+                  <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-cyan-500/20 text-cyan-200 border border-cyan-500/30">AI Companion</span>
+                </div>
+                <p id="jelly-companion-speech" class="text-[11px] text-slate-300 font-light leading-relaxed">
+                  "ฝึกจับ Pattern ไปทีละขั้นนะ! หากติดขัดสามารถกดปุ่มทดลองใน Sandbox ได้ทันที"
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right: Lesson Content Reader -->
+        <section class="lg:col-span-8">
+          <div id="lesson-content-card" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="text-center py-12 text-slate-400">เลือกบทเรียนจากสารบัญด้านซ้ายเพื่อเริ่มอ่าน</div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- TAB 3: REAL-TIME SANDBOX VIEW -->
+    <main id="view-sandbox" class="hidden space-y-6">
+      <section class="glass-card rounded-3xl p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-2xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
+                <path d="M8.5 2h7"/>
+                <path d="M7 16h10"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="font-bold text-base text-cyan-300">ทดลอง Regex 101 ทีละขั้น (Interactive Sandbox)</h2>
+              <p class="text-xs text-slate-400">1. เลือกสูตร → 2. อ่านผลที่คาดไว้ → 3. เปลี่ยน Input → 4. ตรวจข้อความที่ไม่ควรจับ</p>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-xl text-xs bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hidden sm:inline-block">
+            Bullet Journal Mode
+          </span>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="practice-picker" class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 8 8 12 12 16 12 8"/></svg>
+            เลือกสถานการณ์ตัวอย่าง:
+          </label>
+          <select id="practice-picker" class="glass-input w-full p-3 rounded-2xl text-xs text-slate-200 outline-none" onchange="loadPractice(this.value)">
+            <option value="">เลือกตัวอย่างจากคลัง…</option>
+          </select>
+        </div>
+
+        <!-- Structured Practice Guide Card -->
+        <div id="practice-guide" class="space-y-3" aria-live="polite">
+          <div class="p-4 rounded-2xl bg-slate-950/40 border border-white/5 text-xs text-slate-300 flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>เริ่มด้วยสูตรจัดช่องว่าง หรือเลือกสูตรจากเมนูด้านบน แล้วลองปรับแก้ Input ในช่องด้านล่างเพื่อเปรียบเทียบผลลัพธ์</span>
+          </div>
+        </div>
+      </section>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Input Form & Flags -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="glass-card rounded-3xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                <!-- SVG Icon: Sliders -->
+                <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+                กำหนดนิพจน์ (Regex Expression)
+              </h2>
+              <button onclick="resetSandbox()" class="text-xs text-slate-400 hover:text-cyan-300 flex items-center gap-1">
+                <!-- SVG Icon: Refresh -->
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+                ล้างข้อมูล
+              </button>
+            </div>
+
+            <!-- Direct Full Literal Expression Input (/pattern/flags) -->
+            <div class="bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-indigo-950/40 p-4 rounded-2xl border border-cyan-500/25 space-y-2">
+              <div class="flex items-center justify-between text-xs font-semibold text-cyan-300">
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  ใส่นิพจน์แบบเต็ม (Full Regex Literal: /.../flags)
+                </span>
+                <button type="button" onclick="copyFullLiteral()" class="text-[11px] text-cyan-300 hover:text-cyan-100 flex items-center gap-1 bg-cyan-500/20 px-2.5 py-1 rounded-lg border border-cyan-500/30 active:scale-95 transition-all" title="คัดลอกนิพจน์แบบเต็มไปใส่ Rubii ทันที">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span>คัดลอก /.../flags สำหรับ Rubii</span>
+                </button>
+              </div>
+                <textarea id="sandbox-full-literal" rows="2" oninput="handleFullLiteralInput(this.value)" placeholder="เช่น /^([^:：\r\n]{1,500})[:：][ \t]*([^\r\n]+)$/gm" class="glass-input w-full px-4 py-2.5 rounded-xl code-font text-sm text-cyan-200 placeholder-slate-500 resize-y"></textarea>
+              <div class="text-[11px] text-slate-400 font-light flex items-center justify-between">
+                <span>วางนิพจน์ที่มี / ครอบหน้าหลังได้ทันที ระบบจะแยก Pattern และ Flags ให้อัตโนมัติ</span>
+                <span id="literal-sync-badge" class="text-emerald-400 hidden flex items-center gap-1">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  ตรวจจับ Flags อัตโนมัติ
+                </span>
+              </div>
+            </div>
+
+            <!-- Guided expression builder -->
+            <section class="glass-card rounded-2xl p-4 space-y-4 border border-cyan-500/20">
+              <div>
+                <h3 class="text-sm font-semibold text-cyan-200">สร้างนิพจน์จากชุดสำเร็จรูป</h3>
+                <p class="text-xs text-slate-400 mt-1">เลือกสูตรพร้อมตัวอย่าง หรือประกอบจากชิ้นส่วนด้านล่าง ไม่ต้องเริ่มพิมพ์ Regex เอง</p>
+              </div>
+              <label class="block space-y-1.5 text-xs text-slate-300">
+                <span>ชุดเริ่มต้น</span>
+                <select id="sandbox-pattern-preset" onchange="usePatternStarter(this.value)" class="glass-input w-full px-3 py-2.5 rounded-xl">
+                  <option value="">เลือกสูตรเริ่มต้น…</option>
+                </select>
+              </label>
+              <div id="pattern-preset-explanation" class="text-xs text-slate-400" aria-live="polite">ชุดเริ่มต้นจะใส่ Pattern, flags, replacement และข้อความตัวอย่างให้พร้อมดูผล</div>
+              <details class="space-y-3">
+                <summary class="cursor-pointer text-sm text-slate-200">Custom: ประกอบนิพจน์ทีละชิ้น</summary>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+                  <label class="block space-y-1 text-xs text-slate-300">ชิ้นส่วน
+                    <select id="builder-token" onchange="updateBuilderControls()" class="glass-input w-full p-2.5 rounded-xl">
+                      <option value="literal">คำหรือตัวอักษรตรงตัว</option>
+                      <option value="digit">ตัวเลข 0–9</option>
+                      <option value="latin">ตัวอักษรอังกฤษ/ตัวเลข/_</option>
+                      <option value="space">ช่องว่างหรือ Tab</option>
+                      <option value="any">ตัวอักษรอะไรก็ได้หนึ่งตัว</option>
+                      <option value="set">หนึ่งตัวจากชุดที่กำหนด […]</option>
+                      <option value="not-set">หนึ่งตัวที่ไม่อยู่ในชุด [^…]</option>
+                      <option value="alternative">หนึ่งคำจากตัวเลือก (cat|dog)</option>
+                      <option value="line-start">ตำแหน่งเริ่มบรรทัด ^</option>
+                      <option value="line-end">ตำแหน่งท้ายบรรทัด $</option>
+                    </select>
+                  </label>
+                  <label id="builder-value-wrap" class="block space-y-1 text-xs text-slate-300">ข้อความ/ชุดตัวเลือก
+                    <textarea id="builder-value" rows="2" class="glass-input w-full p-2.5 rounded-xl resize-y" placeholder="เช่น cat หรือ abc123"></textarea>
+                  </label>
+                  <label class="block space-y-1 text-xs text-slate-300">จำนวน
+                    <select id="builder-count" onchange="updateBuilderControls()" class="glass-input w-full p-2.5 rounded-xl">
+                      <option value="1">หนึ่งครั้ง</option><option value="?">0 หรือ 1 ครั้ง (?)</option>
+                      <option value="+">อย่างน้อยหนึ่งครั้ง (+)</option><option value="*">ศูนย์ครั้งขึ้นไป (*)</option>
+                      <option value="exact">จำนวนเป๊ะ กำหนด n</option><option value="range">ช่วง กำหนด min–max</option>
+                    </select>
+                  </label>
+                  <div id="builder-count-fields" class="hidden grid grid-cols-2 gap-2">
+                    <label class="text-xs text-slate-300">min/n<input id="builder-min" type="number" min="0" max="100" value="1" class="glass-input w-full p-2.5 rounded-xl"></label>
+                    <label class="text-xs text-slate-300">max<input id="builder-max" type="number" min="1" max="100" value="3" class="glass-input w-full p-2.5 rounded-xl"></label>
+                  </div>
+                  <label class="flex items-center gap-2 text-xs text-slate-300"><input id="builder-capture" type="checkbox"> เก็บชิ้นนี้เป็นกลุ่มจับ ($1, $2…)</label>
+                </div>
+                <p id="builder-token-help" class="text-xs text-slate-400">ข้อความตรงตัวจะถูก escape อัตโนมัติ เพื่อไม่ให้เครื่องหมายพิเศษทำงานเป็น Regex</p>
+                <p class="text-[11px] text-slate-500">เพิ่มทีละชิ้นแล้วใช้ปุ่ม ↑ ↓ จัดลำดับได้: <code>^</code> วางก่อนส่วนที่ต้องเริ่มบรรทัด และ <code>$</code> วางหลังส่วนที่ต้องอยู่ท้ายบรรทัด; เปิด <code>m</code> หากต้องการให้ตรวจทุกบรรทัด</p>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" onclick="addBuilderPiece()" class="px-3 py-2 rounded-xl bg-white/10 text-xs">เพิ่มชิ้นส่วน</button>
+                  <button type="button" onclick="buildPatternFromPieces()" class="px-3 py-2 rounded-xl bg-cyan-600 text-xs">สร้าง Pattern แล้วใช้</button>
+                  <button type="button" onclick="clearBuilderPieces()" class="px-3 py-2 rounded-xl bg-white/5 text-xs text-slate-300">เริ่ม Custom ใหม่</button>
+                </div>
+                <div id="builder-pieces" class="space-y-2" aria-live="polite"><p class="text-xs text-slate-500">ยังไม่มีชิ้นส่วน เพิ่มจากตัวเลือกด้านบนได้เลย</p></div>
+              </details>
+            </section>
+
+            <!-- Pattern Input -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300 flex items-center justify-between">
+                <span>Pattern (นิพจน์ค้นหาเฉพาะส่วนในเครื่องหมาย /)</span>
+                <span class="text-[11px] text-slate-500">แยกช่องเฉพาะ Pattern</span>
+              </label>
+              <div class="relative">
+                <textarea id="sandbox-pattern" rows="2" oninput="triggerSandboxRun()" placeholder="เช่น ^([^:：\n]{1,100})[:：]\s*(.+)$" class="glass-input w-full px-4 py-2.5 rounded-2xl code-font text-sm text-cyan-300 resize-y"></textarea>
+              </div>
+            </div>
+
+            <section class="space-y-2" aria-label="อ่าน Pattern แยกสี">
+              <h3 class="text-sm font-semibold">อ่าน Pattern แยกสี</h3>
+              <div id="pattern-colors" class="code-font text-base break-all bg-slate-950/60 p-3 rounded-xl"></div>
+              <div id="pattern-token-guide" class="space-y-1 text-xs" aria-live="polite"></div>
+              <p class="text-xs text-slate-400">สีช่วยแยกส่วนของนิพจน์; อ่านชื่อประเภทควบคู่กัน กรณีไวยากรณ์ซับซ้อนให้ยึดผลตรวจของ engine</p>
+              <div id="flags-guide" class="text-xs text-slate-300 whitespace-pre-wrap"></div>
+            </section>
+            <!-- Flags Selector -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Flags (ธงตัวเลือก)</label>
+              <div class="flex flex-wrap gap-2">
+                <label class="cursor-pointer">
+                  <input type="checkbox" id="flag-g" checked onchange="triggerSandboxRun()" class="hidden peer">
+                  <div class="px-3 py-1.5 rounded-xl text-xs font-mono border border-slate-700 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/20 peer-checked:text-cyan-300 text-slate-400 transition-all">
+                    g (Global)
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="checkbox" id="flag-i" checked onchange="triggerSandboxRun()" class="hidden peer">
+                  <div class="px-3 py-1.5 rounded-xl text-xs font-mono border border-slate-700 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/20 peer-checked:text-indigo-300 text-slate-400 transition-all">
+                    i (Ignore Case)
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="checkbox" id="flag-m" onchange="triggerSandboxRun()" class="hidden peer">
+                  <div class="px-3 py-1.5 rounded-xl text-xs font-mono border border-slate-700 peer-checked:border-fuchsia-500 peer-checked:bg-fuchsia-500/20 peer-checked:text-fuchsia-300 text-slate-400 transition-all">
+                    m (Multiline)
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="checkbox" id="flag-s" onchange="triggerSandboxRun()" class="hidden peer">
+                  <div class="px-3 py-1.5 rounded-xl text-xs font-mono border border-slate-700 peer-checked:border-amber-500 peer-checked:bg-amber-500/20 peer-checked:text-amber-300 text-slate-400 transition-all">
+                    s (DotAll)
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="checkbox" id="flag-u" onchange="triggerSandboxRun()" class="hidden peer">
+                  <div class="px-3 py-1.5 rounded-xl text-xs font-mono border border-slate-700 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/20 peer-checked:text-emerald-300 text-slate-400 transition-all">
+                    u (Unicode)
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Replacement Input -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300 flex items-center justify-between">
+                <span>Replacement (ข้อความแทนที่)</span>
+                <span class="text-[11px] text-slate-500">อ้างกลุ่มจับด้วย $1, $2 หรือเว้นว่างเพื่อลบ</span>
+              </label>
+            <textarea id="sandbox-replacement" rows="2" oninput="triggerSandboxRun()" placeholder="เช่น <div class=&quot;model-status-row&quot;><b>$1</b><span>$2</span></div> หรือ $1: $2" class="glass-input w-full px-4 py-2.5 rounded-2xl code-font text-sm text-indigo-300 resize-y"></textarea>
+            </div>
+
+            <section class="glass-card rounded-2xl p-4 space-y-3 border border-indigo-500/20" aria-label="Regex เพิ่มเติม">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h3 class="text-sm font-semibold text-indigo-200">Regex เพิ่มเติม</h3>
+                  <p class="text-xs text-slate-400 mt-1">กฎทำงานต่อจาก Pattern หลักตามลำดับ และใช้ข้อความผลลัพธ์จากกฎก่อนหน้า</p>
+                </div>
+                <button type="button" onclick="addSandboxRegexRule()" class="px-3 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-400/20 text-xs text-indigo-200">เพิ่ม Regex</button>
+              </div>
+              <div id="sandbox-extra-regex-list" class="space-y-2"></div>
+              <p class="text-[11px] text-slate-500">เว้น Pattern ว่างเพื่อพักกฎนั้นชั่วคราว; ใช้ ↑ ↓ จัดลำดับก่อนประมวลผล</p>
+            </section>
+
+            <!-- Input Test Text -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">ข้อความสำหรับทดสอบ (Input Text)</label>
+              <textarea id="sandbox-input" rows="5" oninput="triggerSandboxRun()" placeholder="วางข้อความที่ต้องการทดสอบที่นี่..." class="glass-input w-full px-4 py-3 rounded-2xl code-font text-sm text-slate-200 resize-y"></textarea>
+            </div>
+
+            <!-- Run Test Button -->
+            <button onclick="runRegexWorkerTest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-medium text-sm shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+              <!-- SVG Icon: Play -->
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <span>ทดสอบและประมวลผลทันที</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Visual Result & Highlights -->
+        <div class="lg:col-span-6 space-y-4">
+          
+          <!-- Visual Match Preview Card -->
+          <div class="glass-card rounded-3xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                <!-- SVG Icon: Target -->
+                <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="6"/>
+                  <circle cx="12" cy="12" r="2"/>
+                </svg>
+                ผลลัพธ์การตรวจจับ (Visual Match)
+              </h2>
+              <div id="sandbox-match-badge" class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400">
+                ยังไม่มีการทดสอบ
+              </div>
+            </div>
+
+            <!-- Highlight Display Area -->
+            <div class="space-y-1.5">
+              <span class="text-xs text-slate-400">ข้อความพร้อมไฮไลต์ตำแหน่ง Match:</span>
+              <div id="sandbox-highlight-box" class="glass-input p-4 rounded-2xl code-font text-sm whitespace-pre-wrap min-h-[90px] text-slate-200">
+                <span class="text-slate-500 italic">ผลการไฮไลต์จะปรากฏที่นี่...</span>
+              </div>
+            </div>
+
+            <!-- Capture Groups List -->
+            <div class="space-y-1.5">
+              <span class="text-xs text-slate-400">กลุ่มจับที่สกัดได้ (Capture Groups):</span>
+              <div id="sandbox-groups-box" class="space-y-2">
+                <div class="text-xs text-slate-500 italic bg-slate-950/40 p-3 rounded-xl border border-white/5">
+                  ไม่มีกลุ่มจับที่พบ
+                </div>
+              </div>
+            </div>
+
+            <!-- Replaced Output Preview -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs text-slate-400">ผลลัพธ์หลังแทนที่</span>
+                <div class="flex items-center gap-2">
+                  <button id="sandbox-view-preview" type="button" onclick="setSandboxOutputView('preview')" class="text-[11px] px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-200 border border-cyan-400/30">ดูตัวอย่าง</button>
+                  <button id="sandbox-view-code" type="button" onclick="setSandboxOutputView('code')" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 text-slate-300 border border-white/10">โค้ด</button>
+                  <button type="button" onclick="copySandboxOutput()" class="text-[11px] text-cyan-300 hover:underline">คัดลอก HTML</button>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-violet-400/20 bg-slate-900/60 overflow-hidden">
+                <nav class="grid grid-cols-2 border-b border-white/10" aria-label="ตั้งค่ารูปแบบ Preview">
+                  <button id="sandbox-style-tab-button" type="button" onclick="setSandboxStyleTab('tag')" class="px-3 py-2.5 text-xs font-medium text-violet-200 border-b-2 border-violet-400 bg-violet-400/10">แท็กตกแต่ง</button>
+                  <button id="sandbox-css-tab-button" type="button" onclick="setSandboxStyleTab('css')" class="px-3 py-2.5 text-xs font-medium text-slate-400 border-b-2 border-transparent">CSS ส่วนกลาง</button>
+                </nav>
+                <section id="sandbox-style-tab-tag" class="p-3 space-y-3">
+                  <div class="flex flex-wrap items-end justify-between gap-3">
+                    <label class="block space-y-1 text-xs text-slate-300">แสดงตัวอย่างเป็น
+                      <select id="sandbox-preview-target" onchange="triggerSandboxRun()" class="glass-input w-full sm:w-52 px-3 py-2 rounded-lg">
+                        <option value="character">ข้อความตัวละคร</option>
+                        <option value="user">ข้อความผู้ใช้</option>
+                      </select>
+                    </label>
+                    <button type="button" onclick="addSandboxStyleTag()" class="px-3 py-2 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 border border-violet-400/20 text-xs text-violet-200">เพิ่ม Tag</button>
+                  </div>
+                  <div id="sandbox-style-tags" class="space-y-2"></div>
+                  <p class="text-[11px] text-slate-400">แต่ละ Tag พับเก็บได้และเลือกขอบเขตได้; ระบบแทน <code>&lt;ชื่อแท็ก&gt;...&lt;/ชื่อแท็ก&gt;</code> ด้วยเทมเพลตตามลำดับ โดยใช้ CSS ส่วนกลางชุดเดียว</p>
+                </section>
+                <section id="sandbox-style-tab-css" class="hidden p-3 space-y-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <label for="sandbox-global-css" class="text-xs text-slate-300">CSS ใช้จัดรูปแบบ HTML ใน Preview</label>
+                    <button type="button" onclick="copySandboxCss()" class="text-[11px] text-cyan-300 hover:underline">คัดลอก CSS</button>
+                  </div>
+                  <textarea id="sandbox-global-css" rows="6" oninput="renderSandboxPreview()" class="glass-input w-full p-2.5 rounded-lg code-font text-xs resize-y" spellcheck="false">/* การ์ดสถานะสำหรับ Rubii */
+.model-status-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  margin: 6px 0; padding: 8px 12px;
+  color: #f1f5f9; background: rgba(5, 12, 28, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px;
+}
+.model-status-row b, .model-status-row .key { color: #38bdf8; font-weight: 600; }
+.model-status-row span, .model-status-row .val { color: #a5f3fc; }
+
+.status-card {
+  margin: 10px 0; padding: 12px 14px;
+  border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px;
+  background: rgba(8, 18, 42, 0.85); box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.status-body { white-space: pre-wrap; color: #e2e8f0; }</textarea>
+                  <p class="text-[11px] text-slate-400">เลือก selector เช่น <code>.rubii-message-character .ชื่อคลาส</code> ให้ตรงกับ HTML template แล้วสลับไปดูตัวอย่างได้ทันที</p>
+                </section>
+              </div>
+
+              <div id="sandbox-output-box" class="glass-input rounded-2xl min-h-[180px] max-h-[70vh] overflow-auto resize-y bg-slate-950/70 border-emerald-500/20">
+                <iframe id="sandbox-output-frame" title="ตัวอย่าง HTML หลังใช้ Tag และ CSS" sandbox="" referrerpolicy="no-referrer" class="w-full min-h-[180px] h-[260px] resize-y overflow-auto rounded-2xl bg-[#060d1f]"></iframe>
+                <pre id="sandbox-output-code" class="hidden m-0 p-4 whitespace-pre-wrap break-words"><code class="code-font text-sm text-emerald-300">ผลลัพธ์หลังแทนที่จะปรากฏที่นี่...</code></pre>
+              </div>
+            </div>
+
+            <!-- Execution Time / Engine Note -->
+            <div class="text-[11px] text-slate-400 flex items-center justify-between pt-2 border-t border-white/5">
+              <span id="sandbox-perf-text">การประมวลผล: ปลอดภัยด้วย Worker Sandbox</span>
+              <span id="sandbox-time-text">0 ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- DETAIL MODAL: RECIPE BLUEPRINT & EXPORT -->
+    <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
+      <div class="glass-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto space-y-6 relative border-white/15 shadow-2xl">
+        <!-- Close button -->
+        <button onclick="closeModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+
+        <div id="modal-content" class="space-y-5">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="glass-card px-4 py-3 rounded-2xl border-cyan-500/30 flex items-center gap-2.5 text-xs text-cyan-200 shadow-xl shadow-cyan-500/10">
+        <!-- SVG Icon: Check Circle -->
+        <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span id="toast-message">คัดลอกเรียบร้อยแล้ว</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-8 pb-4 text-center text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/5">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+        <span>Regex Studio - ระบบตำราและคลังสูตรสำเร็จรูป</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span>ข้อมูลแบบ Dynamic</span>
+        <span>ระบบตรวจสอบแบบ Worker Sandbox</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- APPLICATION LOGIC SCRIPT (Dynamic 100% No Hardcode) -->
+  <script>
+    // State Store
+    let sandboxOutputRaw = '';
+    let sandboxOutputView = 'preview';
+    let sandboxRunRevision = 0;
+    let nextSandboxRuleId = 1;
+    let nextSandboxTagId = 2;
+    const sandboxRegexRules = [];
+    const sandboxStyleTags = [{
+      id: 1,
+      name: 'status',
+      applyTo: 'character',
+      template: '<section class="status-card"><div class="status-body">$1</div></section>',
+      open: true
+    }];
+
+    const state = {
+      audience: 'app_user', // 'app_user' | 'developer'
+      currentTab: 'recipes',
+      patterns: [],
+      recipes: [],
+      lessons: [],
+      categories: new Set(),
+      selectedCategory: 'all',
+      selectedLevel: 'all',
+      searchQuery: '',
+      activeLessonId: null,
+      debounceTimer: null,
+    };
+    const builderPieces = [];
+
+    // Category translations for cute labels
+    const categoryLabels = {
+      'status': 'ค่าสถานะตัวละคร',
+      'cleanup': 'ทำความสะอาดข้อความ',
+      'dialogue': 'บทสนทนาและการกระทำ',
+      'regex-foundations': 'พื้นฐานและการทำงาน',
+      'all': 'ทั้งหมด'
+    };
+
+    // Level badges formatting
+    const levelConfig = {
+      'beginner': { label: 'เริ่มต้น', bg: 'bg-emerald-500/15', text: 'text-emerald-300', border: 'border-emerald-500/30' },
+      'intermediate': { label: 'ปานกลาง', bg: 'bg-indigo-500/15', text: 'text-indigo-300', border: 'border-indigo-500/30' },
+      'advanced': { label: 'ขั้นสูง', bg: 'bg-fuchsia-500/15', text: 'text-fuchsia-300', border: 'border-fuchsia-500/30' }
+    };
+
+    // Initialize Application
+    async function initApp() {
+      try {
+        await Promise.all([
+          fetchPatterns(),
+          fetchRecipes(),
+          fetchLessons()
+        ]);
+        renderPracticePicker();
+        renderPatternStarterPicker();
+        renderBuilderPieces();
+        renderSandboxRegexRules();
+        renderSandboxStyleTags();
+        renderCategoryFilters();
+        renderRecipesGrid();
+        renderLessonsNav();
+        checkApiHealth();
+
+        // Initialize Sandbox with primary Universal Key-Value pattern (/^([^:：\n]{1,100})[:：]\s*(.+)$/gm)
+        if (state.patterns.some(p => p.id === 'key-value-generic')) {
+          loadPractice('key-value-generic', 1);
+          switchTab('recipes');
+        }
+      } catch (err) {
+        console.error('Initialization error:', err);
+        document.getElementById('api-status-text').textContent = 'ทำงานในโหมด Standalone';
+      }
+    }
+
+    // Health check
+    async function checkApiHealth() {
+      try {
+        const res = await fetch('/healthz');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('api-status-text').textContent = 'API ออนไลน์ (v' + (data.contentVersion || '0.1') + ')';
+        }
+      } catch (e) {
+        console.warn('API health check fallback');
+      }
+    }
+
+    // Fetch APIs
+    async function fetchPatterns() {
+      const res = await fetch('/v1/patterns');
+      const json = await res.json();
+      state.patterns = json.data || [];
+      state.patterns.forEach(p => {
+        if (p.category) state.categories.add(p.category);
+      });
+    }
+
+    async function fetchRecipes() {
+      const res = await fetch('/v1/recipes');
+      const json = await res.json();
+      state.recipes = json.data || [];
+      state.recipes.forEach(r => {
+        if (r.category) state.categories.add(r.category);
+      });
+      document.getElementById('badge-recipes-count').textContent = state.recipes.length;
+    }
+
+    async function fetchLessons() {
+      const res = await fetch(`/v1/lessons?audience=${state.audience}`);
+      const json = await res.json();
+      state.lessons = json.data || [];
+      document.getElementById('badge-lessons-count').textContent = state.lessons.length;
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      state.currentTab = tabId;
+      ['recipes', 'lessons', 'sandbox'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const view = document.getElementById(`view-${t}`);
+        if (t === tabId) {
+          btn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20";
+          view.classList.remove('hidden');
+        } else {
+          btn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5";
+          view.classList.add('hidden');
+        }
+      });
+    }
+
+    // Audience Switcher
+    async function setAudience(aud) {
+      state.audience = aud;
+      const userBtn = document.getElementById('audience-user-btn');
+      const devBtn = document.getElementById('audience-dev-btn');
+      if (aud === 'app_user') {
+        userBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm";
+        devBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-200";
+      } else {
+        devBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm";
+        userBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-200";
+      }
+      await fetchLessons();
+      renderLessonsNav();
+      if (state.activeLessonId) {
+        showLessonDetail(state.activeLessonId);
+      }
+      showToast(aud === 'app_user' ? 'สลับเป็นมุมมอง: ผู้ใช้ทั่วไป' : 'สลับเป็นมุมมอง: นักพัฒนา');
+    }
+
+    // Category & Level Filters
+    function renderCategoryFilters() {
+      const container = document.getElementById('category-filter-container');
+      const currentButtons = container.querySelectorAll('.cat-pill-dynamic');
+      currentButtons.forEach(b => b.remove());
+
+      state.categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = "cat-pill cat-pill-dynamic px-3 py-1 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200";
+        btn.setAttribute('data-cat', cat);
+        btn.textContent = categoryLabels[cat] || cat;
+        btn.onclick = () => filterCategory(cat);
+        container.appendChild(btn);
+      });
+    }
+
+    function filterCategory(cat) {
+      state.selectedCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.className = "cat-pill px-3 py-1 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40";
+        } else {
+          btn.className = "cat-pill cat-pill-dynamic px-3 py-1 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200";
+        }
+      });
+      renderRecipesGrid();
+    }
+
+    function filterLevel(level) {
+      state.selectedLevel = level;
+      document.querySelectorAll('.level-pill').forEach(btn => {
+        if (btn.getAttribute('data-level') === level) {
+          btn.className = "level-pill px-2.5 py-1 rounded-xl text-xs font-medium transition-all bg-indigo-500/20 text-indigo-300 border border-indigo-500/40";
+        } else {
+          btn.className = "level-pill px-2.5 py-1 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200";
+        }
+      });
+      renderRecipesGrid();
+    }
+
+    async function handleSearch(query) {
+      state.searchQuery = (query || '').trim().toLowerCase();
+      renderRecipesGrid();
+      renderLessonsNav();
+      if (state.searchQuery) {
+        clearTimeout(state.searchDebounceTimer);
+        state.searchDebounceTimer = setTimeout(async () => {
+          try {
+            const res = await fetch('/v1/search?term=' + encodeURIComponent(state.searchQuery));
+            if (res.ok) {
+              const json = await res.json();
+              if (json.data) {
+                renderRecipesGrid();
+                renderLessonsNav();
+              }
+            }
+          } catch (e) {
+            console.warn('Search API sync error:', e);
+          }
+        }, 150);
+      }
+    }
+
+    // Render Recipes & Patterns
+    function renderRecipesGrid() {
+      renderCookbookLibrary();
+      const container = document.getElementById('recipes-grid');
+      container.innerHTML = '';
+
+      // Combine recipes and standalone patterns
+      let list = state.patterns.filter(item => {
+        const matchCategory = state.selectedCategory === 'all' || item.category === state.selectedCategory;
+        const matchLevel = state.selectedLevel === 'all' || item.level === state.selectedLevel;
+        const matchQuery = !state.searchQuery || 
+          item.title.toLowerCase().includes(state.searchQuery) ||
+          item.summary.toLowerCase().includes(state.searchQuery) ||
+          (item.pattern && item.pattern.toLowerCase().includes(state.searchQuery));
+        return matchCategory && matchLevel && matchQuery;
+      });
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-400 glass-card rounded-3xl p-8">
+            <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <p class="text-sm font-medium text-slate-300">ไม่พบสูตรที่ตรงกับเงื่อนไขค้นหา</p>
+            <p class="text-xs text-slate-500 mt-1">ลองเปลี่ยนคำค้น หรือเลือกหมวดหมู่อื่นดูนะ</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(pattern => {
+        const lvl = levelConfig[pattern.level] || levelConfig.beginner;
+        const card = document.createElement('div');
+        card.className = "glass-card glass-card-hover rounded-3xl p-6 flex flex-col justify-between space-y-4";
+        
+        // Escape pattern for attribute
+        const escapedPattern = encodeURIComponent(pattern.pattern);
+        const escapedFlags = encodeURIComponent(pattern.flags || '');
+        const escapedReplacement = encodeURIComponent(pattern.replacement || '');
+        const sampleInput = pattern.examples?.[0]?.input || '';
+        const escapedInput = encodeURIComponent(sampleInput);
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="space-y-1">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 text-slate-300 border border-white/10">
+                  ${categoryLabels[pattern.category] || pattern.category}
+                </span>
+                <h3 class="text-base font-bold text-slate-100 mt-1 leading-snug">${escapeHtml(pattern.title)}</h3>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium ${lvl.bg} ${lvl.text} border ${lvl.border} shrink-0">
+                ${lvl.label}
+              </span>
+            </div>
+
+            <p class="text-xs text-slate-400 font-light line-clamp-2">${escapeHtml(pattern.summary)}</p>
+
+            <!-- Pattern Expression Preview Box -->
+            <div class="bg-slate-950/70 p-3 rounded-2xl border border-white/5 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] text-slate-500">
+                <span>Expression · /pattern/flags</span>
+              </div>
+              <div class="code-font text-xs text-cyan-300 truncate select-all">${escapeHtml('/' + pattern.pattern + '/' + (pattern.flags || ''))}</div>
+              ${pattern.replacement ? `
+                <div class="pt-1.5 border-t border-white/5 flex items-center justify-between text-[11px]">
+                  <span class="text-slate-500">แทนที่ด้วย:</span>
+                  <span class="code-font text-indigo-300 truncate">${escapeHtml(pattern.replacement)}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Card Action Buttons -->
+          <div class="pt-2 flex items-center gap-2 border-t border-white/5">
+            <button onclick="sendToSandbox('${escapedPattern}', '${escapedFlags}', '${escapedReplacement}', '${escapedInput}')" class="flex-1 py-2 px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-all border border-cyan-500/20 active:scale-95">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
+              </svg>
+              <span>ทดสอบใน Sandbox</span>
+            </button>
+
+            <button onclick="showPatternDetail('${pattern.id}')" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95" title="ดูรายละเอียดสูตร">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+            </button>
+
+            <button onclick="copyToClipboard('${escapeJs(pattern.pattern)}', 'คัดลอก Pattern แล้ว!')" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95" title="คัดลอก Pattern">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Detail Modal for Pattern
+    function showPatternDetail(patternId) {
+      const pattern = state.patterns.find(p => p.id === patternId);
+      if (!pattern) return;
+
+      const lvl = levelConfig[pattern.level] || levelConfig.beginner;
+      const modal = document.getElementById('detail-modal');
+      const content = document.getElementById('modal-content');
+
+      const captureHtml = pattern.captureGroups && pattern.captureGroups.length > 0 ? `
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            กลุ่มจับ (Capture Groups):
+          </h4>
+          <div class="space-y-1.5">
+            ${pattern.captureGroups.map(g => `
+              <div class="flex items-center gap-2 text-xs bg-slate-950/60 p-2.5 rounded-xl border border-white/5">
+                <span class="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 font-mono font-bold">$${g.index}</span>
+                <span class="text-slate-300">${escapeHtml(g.meaning)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      const explanationHtml = pattern.explanation && pattern.explanation.length > 0 ? `
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            แจกแจงโครงสร้างนิพจน์:
+          </h4>
+          <ul class="space-y-1 text-xs text-slate-300 bg-slate-950/60 p-3 rounded-2xl border border-white/5 list-disc list-inside">
+            ${pattern.explanation.map(exp => `<li>${escapeHtml(exp)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : '';
+
+      const limitationsHtml = pattern.limitations && pattern.limitations.length > 0 ? `
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold text-amber-300 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            ข้อจำกัดที่ควรรู้:
+          </h4>
+          <ul class="space-y-1 text-xs text-amber-200/80 bg-amber-950/20 p-3 rounded-2xl border border-amber-500/20 list-disc list-inside">
+            ${pattern.limitations.map(lim => `<li>${escapeHtml(lim)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : '';
+
+      content.innerHTML = `
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium ${lvl.bg} ${lvl.text} border ${lvl.border}">
+              ${lvl.label}
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] bg-white/5 text-slate-300">
+              ${categoryLabels[pattern.category] || pattern.category}
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-100">${escapeHtml(pattern.title)}</h3>
+          <p class="text-xs text-slate-400">${escapeHtml(pattern.summary)}</p>
+        </div>
+
+        <div class="bg-slate-950/80 p-4 rounded-2xl border border-white/10 space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span>นิพจน์เต็มสำหรับ Rubii</span>
+            <button onclick="copyToClipboard('${escapeJs('/' + pattern.pattern + '/' + (pattern.flags || ''))}', 'คัดลอก /pattern/flags แล้ว!')" class="text-cyan-400 hover:underline text-[11px]">คัดลอก /pattern/flags</button>
+          </div>
+          <div class="code-font text-sm text-cyan-300 break-all select-all">${escapeHtml('/' + pattern.pattern + '/' + (pattern.flags || ''))}</div>
+
+          ${pattern.replacement ? `
+            <div class="flex items-center gap-2 pt-1 text-xs">
+              <span class="text-slate-400">Replacement:</span>
+              <span class="code-font text-emerald-300">${escapeHtml(pattern.replacement)}</span>
+            </div>
+          ` : ''}
+        </div>
+
+        ${captureHtml}
+        ${explanationHtml}
+        ${limitationsHtml}
+
+        <div class="pt-4 flex items-center justify-end gap-2 border-t border-white/10">
+          <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-slate-300 transition-all">
+            ปิด
+          </button>
+          <button onclick="sendToSandbox('${encodeURIComponent(pattern.pattern)}', '${encodeURIComponent(pattern.flags || '')}', '${encodeURIComponent(pattern.replacement || '')}', '${encodeURIComponent(pattern.examples?.[0]?.input || '')}'); closeModal();" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-xs text-white font-medium transition-all shadow-md shadow-cyan-500/20">
+            นำไปทดสอบสดใน Sandbox
+          </button>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detail-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    // Render Lessons Navigation
+    function renderLessonsNav() {
+      const navList = document.getElementById('lessons-nav-list');
+      navList.innerHTML = '';
+
+      let list = state.lessons.filter(item => {
+        return !state.searchQuery ||
+          item.title.toLowerCase().includes(state.searchQuery) ||
+          item.summary.toLowerCase().includes(state.searchQuery);
+      });
+
+      if (list.length === 0) {
+        navList.innerHTML = `<div class="text-xs text-slate-500 p-3 text-center">ไม่พบบทเรียนที่ค้นหา</div>`;
+        return;
+      }
+
+      list.forEach((lesson, idx) => {
+        const btn = document.createElement('button');
+        const isActive = state.activeLessonId === lesson.id || (!state.activeLessonId && idx === 0);
+        if (isActive && !state.activeLessonId) state.activeLessonId = lesson.id;
+
+        btn.className = `w-full text-left p-3 rounded-2xl text-xs transition-all flex items-center justify-between gap-2 ${
+          isActive 
+            ? 'bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 shadow-sm' 
+            : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+        }`;
+
+        btn.innerHTML = `
+          <div class="space-y-0.5 truncate">
+            <div class="font-medium truncate">${idx + 1}. ${escapeHtml(lesson.title)}</div>
+            <div class="text-[11px] text-slate-400 font-light truncate">${escapeHtml(lesson.summary)}</div>
+          </div>
+          <svg class="w-3.5 h-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        `;
+
+        btn.onclick = () => showLessonDetail(lesson.id);
+        navList.appendChild(btn);
+      });
+
+      if (state.activeLessonId) {
+        showLessonDetail(state.activeLessonId);
+      }
+    }
+
+    function highlightRegexTokens(str) {
+      if (!str) return '';
+      let escaped = escapeHtml(str);
+
+      // 1. Markdown bold, italic, code
+      escaped = escaped.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</code>');
+      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-cyan-200">$1</strong>');
+      escaped = escaped.replace(/(?<!\*)\*([^*\s][^*]*[^*\s])\*(?!\*)/g, '<em class="italic text-indigo-200">$1</em>');
+
+      // 2. Arrows
+      escaped = escaped.replace(/(-&gt;|→|=&gt;)/g, '<span class="inline-flex items-center text-cyan-400 font-bold px-1">→</span>');
+
+      // 3. Quotes: “...”, "...", '...', ‘...’
+      escaped = escaped.replace(/(“|”|&quot;)([^“”"&]+)(“|”|&quot;)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">“$2”</span>');
+      escaped = escaped.replace(/(‘|’|&#039;)([^‘’'&#]+)(‘|’|&#039;)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">‘$2’</span>');
+
+      // 4. Literal regexes with slashes: /pattern/flags or /^📅...$/gm
+      escaped = escaped.replace(/(^|\s)(\/[^\/\s]+\/[gimsu]*)(\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-lg code-font text-xs font-bold bg-indigo-500/25 text-indigo-200 border border-indigo-500/40">$2</span>$3');
+
+      // 5. Character Sets & Inverted Sets: [abc], [a-z], [^0-9], [0-9], [:：], [^()\n]{1,60}
+      escaped = escaped.replace(/(\[\^?[^\]]+\](?:\{[^}]+\})?)/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">$1</span>');
+
+      // 6. Escaped sets and characters: \d, \w, \s, \D, \W, \S, \n, \b, \B, \D/\W/\S, \bcat\b, \(, \)
+      escaped = escaped.replace(/(\\bcat\\b|\\D\/\\W\/\\S|\\[dwsnDbWSbB]|\\[pP]\{[^}]+\}|\\\(|\\\))/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/35">$1</span>');
+
+      // 7. Key-Value patterns: e.g. Location: ..., Time: ..., Mood: ..., Affection: 92
+      escaped = escaped.replace(/\b(Location|Time|Mood|Affection|Key|field|pattern|Format)[:：]\s*(\.{3}|[A-Za-z0-9_ -]+)?/gi, (match, k, v) => {
+        return `<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30">${k}: ${v || ''}</span>`;
+      });
+
+      // 8. Capturing groups & backreferences: (\d{2}), (\d{1,3}), (?:...), $1, $2, $1/$2, $2/$1
+      escaped = escaped.replace(/(\((?:\?:)?[^)]+\)|\$[1-9&](?:\/\$[1-9&])?)/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/35">$1</span>');
+
+      // 9. Quantifiers & Repetitions: {4}, {3,8}, {1,60}, {1,3}, {n}, {min,max}, standalone +, *, ?
+      escaped = escaped.replace(/(^|\s)(\{\d+(?:,\d*)?\}\??)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
+      escaped = escaped.replace(/(^|\s)([\+\*\?])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
+
+      // 10. Anchors / Boundaries / Operators: ^, $, ^/$, |, cat|dog
+      escaped = escaped.replace(/(^|\s)(\^\/\$|cat\|dog)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
+      escaped = escaped.replace(/(^|\s)([\^$|])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
+
+      // 11. Flags when standing at item start: e.g. "g ค้นหรือ...", "i ไม่แยก...", "m เปลี่ยน...", "s ทำให้...", "u เปิด...", "y จับตรง...", "d เพิ่ม..."
+      escaped = escaped.replace(/(^|\s|\b)([gimsuycd])(?=\s+(?:ค้น|ไม่แยก|เปลี่ยน|ทำให้|เปิด|จับตรง|เพิ่ม|รองรับ))/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-violet-500/20 text-violet-300 border border-violet-500/35">flag $2</span>');
+
+      // 12. Keywords & Technical terms
+      escaped = escaped.replace(/\b(Regex)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</span>');
+      escaped = escaped.replace(/\b(pattern|Pattern)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-semibold text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">$1</span>');
+      escaped = escaped.replace(/\b(field|key)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-semibold text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30">$1</span>');
+      escaped = escaped.replace(/\b(Markdown|bullet)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-semibold text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">$1</span>');
+      escaped = escaped.replace(/\b(Match|Output|Replacement|lastIndex|indices|Sandbox|Unicode)\b/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-200 border border-slate-700/60">$1</span>');
+
+      return escaped;
+    }
+
+    function formatJournalText(text) {
+      if (!text) return '';
+      const items = text.split(/\n|;\s*(?=[\\a-zA-Z0-9\[\(\$\+\*\?^\/“"'])/);
+      return items.map((item, idx) => {
+        item = item.trim();
+        if (!item) return '';
+        const highlighted = highlightRegexTokens(item);
+        return `
+          <div class="flex items-start gap-3 py-2 px-3.5 rounded-2xl bg-slate-950/40 border border-white/5 hover:border-cyan-500/30 transition-all text-xs text-slate-200">
+            <!-- Cute BuJo Star SVG Bullet -->
+            <svg class="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+            </svg>
+            <div class="flex-1 leading-relaxed">${highlighted}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Show Lesson Detail Content
+    function showLessonDetail(lessonId) {
+      state.activeLessonId = lessonId;
+      const lesson = state.lessons.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      const card = document.getElementById('lesson-content-card');
+      const audienceNote = lesson.audienceNotes?.[state.audience] || '';
+
+      const sectionsHtml = lesson.sections ? lesson.sections.map((s, idx) => `
+        <div class="glass-card rounded-3xl p-5 sm:p-6 space-y-3.5 border-white/10 hover:border-cyan-500/30 transition-all">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center text-xs font-mono font-bold shadow-sm">${idx + 1}</span>
+            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">${highlightRegexTokens(s.heading)}</h3>
+          </div>
+          <div class="space-y-2 pl-0.5">
+            ${formatJournalText(s.body)}
+          </div>
+        </div>
+      `).join('') : '';
+
+      const exercisesHtml = lesson.exercises && lesson.exercises.length > 0 ? `
+        <div class="space-y-3 pt-4 border-t border-white/10">
+          <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-fuchsia-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            แบบฝึกหัดทบทวนความเข้าใจ:
+          </h3>
+          ${lesson.exercises.map((ex, i) => `
+            <div class="bg-slate-950/60 p-4 rounded-2xl border border-white/5 space-y-2">
+              <p class="text-xs text-slate-200 font-medium">${i + 1}. ${highlightRegexTokens(ex.prompt)}</p>
+              <div class="pt-2">
+                <button onclick="toggleExerciseAnswer('ex-ans-${i}')" class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  <span>คลิกเพื่อดูแนวคิดเฉลย</span>
+                </button>
+                <div id="ex-ans-${i}" class="hidden mt-2 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-xs text-cyan-200 leading-relaxed">
+                  ${highlightRegexTokens(ex.answer)}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
+
+      card.innerHTML = `
+        <div class="space-y-2 pb-4 border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+              บทเรียนตำรา
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] bg-white/5 text-slate-400">
+              ${state.audience === 'app_user' ? 'สำหรับผู้ใช้ทั่วไป' : 'สำหรับนักพัฒนา'}
+            </span>
+          </div>
+          <h2 class="text-xl font-bold text-slate-100">${escapeHtml(lesson.title)}</h2>
+          <p class="text-xs text-slate-400">${escapeHtml(lesson.summary)}</p>
+        </div>
+
+        ${audienceNote ? `
+          <div class="bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-900/40 p-4 rounded-2xl border border-cyan-500/20 space-y-1">
+            <div class="text-[11px] font-semibold text-cyan-300 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              คำแนะนำเฉพาะสำหรับ ${state.audience === 'app_user' ? 'ผู้ใช้ทั่วไป' : 'นักพัฒนา'}:
+            </div>
+            <p class="text-xs text-slate-200 font-light leading-relaxed">${highlightRegexTokens(audienceNote)}</p>
+          </div>
+        ` : ''}
+
+        <div class="space-y-4">
+          ${sectionsHtml}
+          ${lesson.practicePatternId ? `<button class="px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs shadow-md shadow-cyan-500/20 flex items-center gap-2 transition-all active:scale-95" onclick="loadPractice('${escapeJs(lesson.practicePatternId)}')">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/></svg>
+            <span>ลองทำตามบทนี้ใน Sandbox</span>
+          </button>` : ''}
+        </div>
+
+        ${exercisesHtml}
+      `;
+
+      // Update active highlight in left menu
+      document.querySelectorAll('#lessons-nav-list button').forEach(b => {
+        if (b.textContent.includes(lesson.title)) {
+          b.className = "w-full text-left p-3 rounded-2xl text-xs transition-all flex items-center justify-between gap-2 bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 shadow-sm";
+        } else {
+          b.className = "w-full text-left p-3 rounded-2xl text-xs transition-all flex items-center justify-between gap-2 text-slate-400 hover:text-slate-200 hover:bg-white/5";
+        }
+      });
+
+      // Update Jelly Companion speech
+      const speechEl = document.getElementById('jelly-companion-speech');
+      if (speechEl) {
+        const tips = {
+          '01-neutral-model-template': '"กำหนดโครงสร้างข้อความกลางให้เรียบร้อยก่อน แล้วใช้ Regex สูตรเดียวคุมได้ทุกโมเดลเลยนะ!"',
+          '02-zero-to-hero-5min': '"จำบันทึก 4 ขั้นตอน: 1. อ่านสั้น 2. ดูตัวอย่าง 3. เปลี่ยนโจทย์ 4. ตรวจผล ไม่ยากเลย!"',
+          '03-read-pattern-and-flags': '"ชื่อกฎตั้งให้จำง่าย แต่ส่วน Pattern กับ Flags ต้องระวังให้ตรงกับโจทย์จริง ๆ นะ"',
+          '04-special-characters': '"ถ้าอยากค้นหาจุดจริง ๆ ในประโยค อย่าลืมใส่ Backslash \\. เพื่อ Escape นะคะ"',
+          '05-partial-match-vs-full-text': '"ถ้าอยากตรวจเข้มงวดทั้งประโยค อย่าลืมใส่ ^ และ $ หัวท้ายเสมอ จะได้ไม่หลุดข้อความอื่นเข้ามา!"',
+          '06-thai-and-unicode': '"ภาษาไทยไม่มีเว้นวรรคคำ ใช้ Unicode [\\u0E00-\\u0E7F] หรือ \\p{Thai} จะแม่นยำที่สุด!"',
+          '07-whitespace-and-multiline': '"ข้อความหลายบรรทัด ให้เปิด flag m หรือใช้ \\s*\\n จะช่วยจับช่วงขึ้นบรรทัดใหม่ได้เนียนกริบ"',
+          '08-alternatives-and-groups': '"ถ้าใช้เครื่องหมาย | (หรือ) อย่าลืมใส่วงเล็บ (a|b) ล้อมรอบกลุ่มทางเลือกเสมอน้า"'
+        };
+        speechEl.textContent = tips[lesson.id] || `"${lesson.summary}"`;
+      }
+    }
+
+    function toggleExerciseAnswer(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    // Live Sandbox Logic
+    function handleFullLiteralInput(val) {
+      val = val.trim();
+      const badge = document.getElementById('literal-sync-badge');
+      if (val.startsWith('/') && val.lastIndexOf('/') > 0) {
+        const lastSlash = val.lastIndexOf('/');
+        const pattern = val.substring(1, lastSlash);
+        const flags = val.substring(lastSlash + 1);
+        
+        document.getElementById('sandbox-pattern').value = pattern;
+        document.getElementById('flag-g').checked = flags.includes('g');
+        document.getElementById('flag-i').checked = flags.includes('i');
+        document.getElementById('flag-m').checked = flags.includes('m');
+        document.getElementById('flag-s').checked = flags.includes('s');
+        document.getElementById('flag-u').checked = flags.includes('u');
+        if (badge) badge.classList.remove('hidden');
+        triggerSandboxRun(true);
+      } else {
+        document.getElementById('sandbox-pattern').value = val;
+        if (badge) badge.classList.add('hidden');
+        triggerSandboxRun(true);
+      }
+    }
+
+    function updateFullLiteralDisplay() {
+      const pattern = document.getElementById('sandbox-pattern').value;
+      const flags = getSandboxFlags();
+      const input = document.getElementById('sandbox-full-literal');
+      if (input && document.activeElement !== input) {
+        input.value = pattern ? `/${pattern}/${flags}` : '';
+      }
+    }
+
+    function copyFullLiteral() {
+      const pattern = document.getElementById('sandbox-pattern').value;
+      const flags = getSandboxFlags();
+      if (!pattern) {
+        showToast('กรุณากรอก Pattern ก่อนคัดลอก');
+        return;
+      }
+      const literal = `/${pattern}/${flags}`;
+      copyToClipboard(literal, 'คัดลอกนิพจน์แบบเต็ม /.../flags สำหรับ Rubii แล้ว!');
+    }
+
+    function sendToSandbox(patternEnc, flagsEnc, replacementEnc, inputEnc) {
+      const pattern = decodeURIComponent(patternEnc);
+      const flags = decodeURIComponent(flagsEnc);
+      const replacement = decodeURIComponent(replacementEnc);
+      const input = decodeURIComponent(inputEnc);
+
+      sandboxRegexRules.length = 0;
+      renderSandboxRegexRules();
+
+      document.getElementById('sandbox-pattern').value = pattern;
+      document.getElementById('sandbox-replacement').value = replacement;
+      document.getElementById('sandbox-input').value = input;
+
+      document.getElementById('flag-g').checked = flags.includes('g');
+      document.getElementById('flag-i').checked = flags.includes('i');
+      document.getElementById('flag-m').checked = flags.includes('m');
+      document.getElementById('flag-s').checked = flags.includes('s');
+      document.getElementById('flag-u').checked = flags.includes('u');
+
+      updateFullLiteralDisplay();
+      switchTab('sandbox');
+      runRegexWorkerTest();
+      showToast('ส่งสูตรไปยังห้องทดลองแล้ว!');
+    }
+
+    function renderPatternGuide() {
+      const source = document.getElementById('sandbox-pattern').value;
+      const colors = document.getElementById('pattern-colors');
+      const descriptions = document.getElementById('pattern-token-guide');
+      colors.replaceChildren(); descriptions.replaceChildren();
+      const types = {
+        literal: ['#cbd5e1', 'คำตรงตัว', 'ค้นตัวอักษรตามที่เขียน'],
+        escape: ['#67e8f9', 'Escape / ชุดอักขระ', 'd = 0–9; w = อังกฤษ ตัวเลข _; s = whitespace รวมขึ้นบรรทัดใหม่; D/W/S คือชุดตรงข้าม; n = newline; เครื่องหมายที่ escape คืออักขระจริง'],
+        set: ['#6ee7b7', 'ชุดตัวเลือก […]', 'รับหนึ่งอักขระจากชุด; ^ ตัวแรกในชุดหมายถึงไม่เอาชุดนี้'],
+        repeat: ['#fcd34d', 'จำนวนซ้ำ', '+ อย่างน้อย 1; * ตั้งแต่ 0; ? มีหรือไม่มี; {n} จำนวนเป๊ะ; {min,max} ช่วง; ? หลังตัวซ้ำทำให้เลือกสั้นก่อน'],
+        group: ['#c4b5fd', 'วงเล็บ / กลุ่ม', '(…) เก็บค่าเป็น $1, $2; (?:…) รวมกลุ่มโดยไม่เก็บ; กลุ่มแบบอื่นมีความหมายเฉพาะ'],
+        boundary: ['#f9a8d4', 'ตำแหน่ง / ทางเลือก', '^ ต้น; $ ท้าย; | หรือ; จุด . รับหนึ่งอักขระ ยกเว้น line terminators เมื่อไม่เปิด s; b เป็นขอบคำตามชุด word ไม่ใช่การตัดคำไทย']
+      };
+      const seen = new Set();
+      for (let i=0; i<source.length;) {
+        let token=source[i], type='literal';
+        if (token==='\\') {
+          token=source.slice(i,i+2); type=source[i+1]==='b'||source[i+1]==='B'?'boundary':'escape';
+          if (/[pP]/.test(source[i+1] || '') && source[i+2]==='{') { const end=source.indexOf('}',i+3); if(end>=0) token=source.slice(i,end+1); }
+        } else if(token==='[') {
+          let end=i+1; for(;end<source.length;end++) { if(source[end]==='\\') end++; else if(source[end]===']') {end++;break;} }
+          token=source.slice(i,end); type='set';
+        } else if ('*+?'.includes(token)) { type='repeat'; if(source[i+1]==='?') token+='?'; }
+        else if(token==='{' && /^\{\d+(?:,\d*)?\}/.test(source.slice(i))) { token=source.slice(i).match(/^\{\d+(?:,\d*)?\}\??/)[0];type='repeat'; }
+        else if(token==='('||token===')') {type='group';if(source.slice(i,i+3)==='(?:') token='(?:';}
+        else if('^$|.'.includes(token)) type='boundary';
+        const span=document.createElement('span'); span.textContent=token;span.style.color=types[type][0];span.title=types[type][1]+' · '+types[type][2]; colors.append(span);
+        if(!seen.has(type)) {
+          const row=document.createElement('div');
+          row.className='flex items-start gap-2 text-xs py-1 px-2.5 rounded-xl bg-slate-950/40 border border-white/5';
+          row.innerHTML=`<span class="w-2 h-2 rounded-full mt-1.5 shrink-0" style="background:${types[type][0]}"></span><div class="leading-relaxed"><strong style="color:${types[type][0]}">${types[type][1]}:</strong> <span class="text-slate-300">${types[type][2]}</span></div>`;
+          descriptions.append(row);
+          seen.add(type);
+        }
+        i+=token.length;
+      }
+      if(!source) colors.textContent='กรอก Pattern แล้วดูส่วนประกอบที่นี่';
+      const flags=getSandboxFlags();
+      const flagInfo = [
+        { flag: 'g', name: 'Global', desc: 'แทนทุก match; ค้นหาตำแหน่งทั้งหมดต่อเนื่อง' },
+        { flag: 'i', name: 'Ignore Case', desc: 'ไม่แยกตัวพิมพ์เล็กใหญ่' },
+        { flag: 'm', name: 'Multiline', desc: '^ และ $ อ้างต้นและท้ายแต่ละบรรทัด' },
+        { flag: 's', name: 'DotAll', desc: 'จุด . จับ line terminators ได้ด้วย' },
+        { flag: 'u', name: 'Unicode', desc: 'โหมด Unicode และ property escapes' }
+      ];
+      const activeFlagsHtml = flagInfo.map(f => {
+        const isActive = flags.includes(f.flag);
+        return `
+          <div class="flex items-center gap-2 p-2 rounded-xl text-xs ${isActive ? 'bg-cyan-500/15 text-cyan-200 border border-cyan-500/30' : 'bg-slate-950/40 text-slate-500 border border-white/5'}">
+            <span class="px-1.5 py-0.5 rounded-md font-mono font-bold text-[11px] ${isActive ? 'bg-cyan-500/25 text-cyan-300' : 'bg-slate-800 text-slate-400'}">${f.flag}</span>
+            <span class="font-medium">${f.name}:</span>
+            <span class="text-[11px] font-light truncate">${f.desc}</span>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('flags-guide').innerHTML = `
+        <div class="space-y-1.5 pt-2">
+          <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            สถานะและคำอธิบาย Flags:
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${activeFlagsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    const corePatternIds = ['key-value-generic', 'quoted-dialogue', 'parenthetical-action', 'ooc-line', 'markdown-heading'];
+      const markdownExtraPatternIds = ['markdown-bullet', 'markdown-bold', 'markdown-italic', 'markdown-inline-code', 'markdown-blockquote', 'markdown-horizontal-rule', 'markdown-fenced-code', 'markdown-table-header', 'markdown-table-separator', 'markdown-table-row', 'markdown-table-close', 'markdown-details-summary', 'markdown-ordered-list', 'markdown-strikethrough'];
+
+    function renderPracticePicker() {
+      const picker = document.getElementById('practice-picker');
+      picker.replaceChildren(new Option('เลือกตัวอย่างจากคลัง…', ''));
+      const addGroup = (label, ids) => {
+        const group = document.createElement('optgroup'); group.label = label;
+        ids.map(id => state.patterns.find(pattern => pattern.id === id)).filter(Boolean).forEach(pattern => group.append(new Option(pattern.title, pattern.id)));
+        if (group.children.length) picker.append(group);
+      };
+      addGroup('แกนหลัก · เริ่มจากชุดนี้', corePatternIds);
+      addGroup('Markdown · เครื่องหมายเพิ่มเติม', markdownExtraPatternIds);
+      const knownIds = new Set([...corePatternIds, ...markdownExtraPatternIds]);
+      const extras = state.patterns.filter(pattern => !knownIds.has(pattern.id));
+      const group = document.createElement('optgroup'); group.label = 'สูตรเฉพาะสถานการณ์';
+      extras.forEach(pattern => group.append(new Option(pattern.title, pattern.id)));
+      if (group.children.length) picker.append(group);
+    }
+
+    const patternStarterIds = corePatternIds;
+
+    function renderPatternStarterPicker() {
+      const picker = document.getElementById('sandbox-pattern-preset');
+      if (!picker) return;
+      picker.replaceChildren(new Option('เลือกสูตรเริ่มต้น…', ''));
+      patternStarterIds.map(id => state.patterns.find(p => p.id === id)).filter(Boolean).forEach(p => picker.add(new Option(p.title, p.id)));
+    }
+
+    function usePatternStarter(id) {
+      const p = state.patterns.find(item => item.id === id);
+      const explanation = document.getElementById('pattern-preset-explanation');
+      if (!p) { explanation.textContent = 'ชุดเริ่มต้นจะใส่ Pattern, flags, replacement และข้อความตัวอย่างให้พร้อมดูผล'; return; }
+      const example = p.examples?.[0];
+      sendToSandbox(...[p.pattern, p.flags || '', p.replacement || '', example?.input || ''].map(encodeURIComponent));
+      const caution = p.limitations?.length ? ` ข้อควรระวัง: ${p.limitations.join(' · ')}` : '';
+      explanation.textContent = `${p.title}: ${p.summary} ตัวอย่างนี้ควรพบ ${example?.expectedMatches.length || 0} match; วิธีอ่าน: ${p.explanation.join(' · ')}${caution}`;
+    }
+
+    function updateBuilderControls() {
+      const kind = document.getElementById('builder-token').value;
+      const wantsValue = ['literal', 'set', 'not-set', 'alternative'].includes(kind);
+      document.getElementById('builder-value-wrap').classList.toggle('hidden', !wantsValue);
+      document.getElementById('builder-value-wrap').firstChild.textContent = kind === 'literal' ? 'คำหรือตัวอักษรตรงตัว' : kind === 'set' || kind === 'not-set' ? 'ตัวอักษรที่เลือก (ไม่ต้องใส่วงเล็บ)' : 'คำที่เลือก คั่นด้วย |';
+      const isAnchor = ['line-start', 'line-end'].includes(kind);
+      const count = document.getElementById('builder-count');
+      const capture = document.getElementById('builder-capture');
+      count.disabled = isAnchor;
+      capture.disabled = isAnchor;
+      if (isAnchor) { count.value = '1'; capture.checked = false; }
+      document.getElementById('builder-count-fields').classList.toggle('hidden', isAnchor || !['exact', 'range'].includes(count.value));
+      const help = {
+        literal: 'จับตัวอักษรตรงตามที่พิมพ์; ระบบ escape เครื่องหมายพิเศษให้',
+        digit: '\\d เลือกเลข 0–9; จำนวนกำหนดว่ารับกี่หลัก',
+        latin: '\\w เลือก a–z, A–Z, 0–9 หรือ _; ไม่ครอบคลุมภาษาไทย',
+        space: '[ \\t] เลือกช่องว่างหรือ Tab แต่ไม่ข้ามบรรทัด',
+        any: '. เลือกหนึ่งอักขระ; ปกติไม่รวมบรรทัดใหม่ เว้นเปิด s',
+        set: '[abc] เลือกหนึ่งตัวจากชุดที่พิมพ์; ขีดกลางและวงเล็บเหลี่ยมจะ escape ให้',
+        'not-set': '[^abc] เลือกหนึ่งตัวที่ไม่อยู่ในชุด; ระวังจำนวนซ้ำอาจกินตัวแบ่งข้อความ',
+        alternative: '(?:cat|dog) เลือกหนึ่งคำ; ถ้าติ๊กกลุ่มจับ จะเก็บทั้งคำไว้ใน $1',
+        'line-start': '^ ยึดต้นข้อความ; เปิด m เพื่อให้ยึดต้นทุกบรรทัด',
+        'line-end': '$ ยึดท้ายข้อความ; เปิด m เพื่อให้ยึดท้ายทุกบรรทัด'
+      };
+      document.getElementById('builder-token-help').textContent = help[kind];
+    }
+
+    function builderPieceSource(piece) {
+      const escapeLiteral = value => [...value].map(char => '.^$*+?()[]{}|\\'.includes(char) ? '\\' + char : char).join('');
+      const escapeSet = value => [...value].map(char => ({'\\':'\\\\', ']':'\\]', '[':'\\[', '^':'\\^', '-':'\\-'}[char] || char)).join('');
+      let base = piece.kind === 'literal' ? escapeLiteral(piece.value)
+        : piece.kind === 'digit' ? '\\d'
+        : piece.kind === 'latin' ? '\\w'
+        : piece.kind === 'space' ? '[ \\t]'
+        : piece.kind === 'any' ? '.'
+        : piece.kind === 'set' ? `[${escapeSet(piece.value)}]`
+        : piece.kind === 'not-set' ? `[^${escapeSet(piece.value)}]`
+        : piece.kind === 'alternative' ? `(?:${piece.value.split('|').map(value => escapeLiteral(value.trim())).join('|')})`
+        : piece.kind === 'line-start' ? '^' : '$';
+      const count = piece.count && piece.count !== '1' ? piece.count : '';
+      if (piece.kind === 'literal' && count) base = `(?:${base})`;
+      const quantified = ['line-start', 'line-end'].includes(piece.kind) ? base : base + count;
+      return piece.capture && !['line-start', 'line-end'].includes(piece.kind) ? `(${quantified})` : quantified;
+    }
+
+    function renderBuilderPieces() {
+      const list = document.getElementById('builder-pieces');
+      list.replaceChildren();
+      if (!builderPieces.length) { const empty = document.createElement('p'); empty.className='text-xs text-slate-500'; empty.textContent='ยังไม่มีชิ้นส่วน เพิ่มจากตัวเลือกด้านบนได้เลย'; list.append(empty); return; }
+      builderPieces.forEach((piece,index) => {
+        const row=document.createElement('div');row.className='flex items-center gap-2 p-2 rounded-xl bg-slate-950/50 border border-white/5';
+        const expression=document.createElement('code');expression.className='code-font text-cyan-300';expression.textContent=builderPieceSource(piece);row.append(expression);
+        const meaning=document.createElement('span');meaning.className='text-xs text-slate-400 flex-1';meaning.textContent=piece.label+(piece.capture?' · จะเก็บเป็น $'+(builderPieces.slice(0,index+1).filter(item=>item.capture).length):'');row.append(meaning);
+        const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='text-xs px-2 py-1 rounded bg-white/5 disabled:opacity-30';moveUp.textContent='↑';moveUp.title='เลื่อนชิ้นส่วนขึ้น';moveUp.setAttribute('aria-label','เลื่อนชิ้นส่วนขึ้น');moveUp.disabled=index===0;moveUp.onclick=()=>{[builderPieces[index-1],builderPieces[index]]=[builderPieces[index],builderPieces[index-1]];renderBuilderPieces();};row.append(moveUp);
+        const moveDown=document.createElement('button');moveDown.type='button';moveDown.className='text-xs px-2 py-1 rounded bg-white/5 disabled:opacity-30';moveDown.textContent='↓';moveDown.title='เลื่อนชิ้นส่วนลง';moveDown.setAttribute('aria-label','เลื่อนชิ้นส่วนลง');moveDown.disabled=index===builderPieces.length-1;moveDown.onclick=()=>{[builderPieces[index+1],builderPieces[index]]=[builderPieces[index],builderPieces[index+1]];renderBuilderPieces();};row.append(moveDown);
+        const remove=document.createElement('button');remove.type='button';remove.className='text-xs px-2 py-1 rounded bg-white/5';remove.textContent='เอาออก';remove.onclick=()=>{builderPieces.splice(index,1);renderBuilderPieces();};row.append(remove);list.append(row);
+      });
+    }
+
+    function addBuilderPiece() {
+      const kind=document.getElementById('builder-token').value;
+      const value=document.getElementById('builder-value').value;
+      if(['literal','set','not-set','alternative'].includes(kind) && !value) { showToast('เติมข้อความหรือตัวเลือกก่อน'); return; }
+      const countType=document.getElementById('builder-count').value;
+      const minimum=Number(document.getElementById('builder-min').value), maximum=Number(document.getElementById('builder-max').value);
+      if(countType==='exact' && (!Number.isInteger(minimum)||minimum<0||minimum>100)) {showToast('จำนวนต้องอยู่ระหว่าง 0 ถึง 100');return;}
+      if(countType==='range' && (!Number.isInteger(minimum)||!Number.isInteger(maximum)||minimum<0||maximum<minimum||maximum>100)) {showToast('ช่วงจำนวนไม่ถูกต้อง (0–100)');return;}
+      const count=countType==='exact'?`{${minimum}}`:countType==='range'?`{${minimum},${maximum}}`:countType;
+      const names={literal:'ข้อความ “'+value+'”',digit:'ตัวเลข',latin:'ตัวอักษรอังกฤษ/ตัวเลข/_',space:'ช่องว่างหรือ Tab',any:'อักขระหนึ่งตัว',set:'หนึ่งตัวจาก ['+value+']','not-set':'หนึ่งตัวที่ไม่ใช่ ['+value+']',alternative:'หนึ่งคำจาก '+value,'line-start':'ต้นบรรทัด','line-end':'ท้ายบรรทัด'};
+      builderPieces.push({kind,value,count: ['line-start','line-end'].includes(kind)?'':count,capture:document.getElementById('builder-capture').checked,label:names[kind]});
+      document.getElementById('builder-value').value='';renderBuilderPieces();
+    }
+
+    function buildPatternFromPieces() {
+      if(!builderPieces.length) {showToast('เพิ่มชิ้นส่วนก่อนสร้าง Pattern');return;}
+      const pattern=builderPieces.map(builderPieceSource).join('');
+      document.getElementById('sandbox-pattern').value=pattern;
+      if(!document.getElementById('flag-g').checked) document.getElementById('flag-g').checked=true;
+      updateFullLiteralDisplay();triggerSandboxRun();
+    }
+
+    function clearBuilderPieces() { builderPieces.length=0;renderBuilderPieces(); }
+
+    function copySandboxOutput() {
+      if(sandboxOutputRaw) copyToClipboard(sandboxOutputRaw,'คัดลอก HTML ผลลัพธ์แล้ว');
+    }
+
+    function renderOutputCode(value) {
+      sandboxOutputRaw=value;
+      const pre=document.getElementById('sandbox-output-code');
+      const code=pre.querySelector('code');code.replaceChildren();
+      const tagPattern=/<\/?[A-Za-z][^>]*>/g;let cursor=0,match;
+      while((match=tagPattern.exec(value))!==null){
+        if(match.index>cursor) code.append(document.createTextNode(value.slice(cursor,match.index)));
+        const tag=match[0],parts=tag.match(/^(<\/?)([A-Za-z][\w:-]*)([\s\S]*?)(\/?>)$/);
+        if(!parts){code.append(document.createTextNode(tag));cursor=tagPattern.lastIndex;continue;}
+        const open=document.createElement('span');open.className='text-slate-500';open.textContent=parts[1];code.append(open);
+        const name=document.createElement('span');name.className='text-cyan-300';name.textContent=parts[2];code.append(name);
+        const attrs=parts[3];const attrPattern=/([\w:-]+)(\s*=\s*)(&quot;[^&]*?&quot;|"[^"]*"|'[^']*'|[^\s>]+)/g;
+        // Attribute coloring uses text nodes and spans; output is never interpreted as HTML.
+        let attrCursor=0,attrMatch;
+        while((attrMatch=attrPattern.exec(attrs))!==null){if(attrMatch.index>attrCursor)code.append(document.createTextNode(attrs.slice(attrCursor,attrMatch.index)));const attrName=document.createElement('span');attrName.className='text-amber-300';attrName.textContent=attrMatch[1];code.append(attrName);code.append(document.createTextNode(attrMatch[2]));const attrValue=document.createElement('span');attrValue.className='text-emerald-300';attrValue.textContent=attrMatch[3];code.append(attrValue);attrCursor=attrPattern.lastIndex;}
+        if(attrCursor<attrs.length)code.append(document.createTextNode(attrs.slice(attrCursor)));
+        const close=document.createElement('span');close.className='text-slate-500';close.textContent=parts[4];code.append(close);cursor=tagPattern.lastIndex;
+      }
+      if(cursor<value.length)code.append(document.createTextNode(value.slice(cursor)));
+      if(!value) {const empty=document.createElement('span');empty.className='text-slate-500 italic';empty.textContent='ไม่มีโค้ดผลลัพธ์';code.append(empty);}
+      renderSandboxPreview();
+      setSandboxOutputView(sandboxOutputView);
+    }
+
+    function setSandboxOutputView(view) {
+      sandboxOutputView=view==='code'?'code':'preview';
+      document.getElementById('sandbox-output-code').classList.toggle('hidden',sandboxOutputView!=='code');
+      document.getElementById('sandbox-output-frame').classList.toggle('hidden',sandboxOutputView!=='preview');
+      const previewButton=document.getElementById('sandbox-view-preview');
+      const codeButton=document.getElementById('sandbox-view-code');
+      previewButton.className=sandboxOutputView==='preview'?'text-[11px] px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-200 border border-cyan-400/30':'text-[11px] px-2.5 py-1 rounded-lg bg-white/5 text-slate-300 border border-white/10';
+      codeButton.className=sandboxOutputView==='code'?'text-[11px] px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-200 border border-cyan-400/30':'text-[11px] px-2.5 py-1 rounded-lg bg-white/5 text-slate-300 border border-white/10';
+    }
+
+    function setSandboxStyleTab(tab) {
+      const showTag=tab!=='css';
+      document.getElementById('sandbox-style-tab-tag').classList.toggle('hidden',!showTag);
+      document.getElementById('sandbox-style-tab-css').classList.toggle('hidden',showTag);
+      const tagButton=document.getElementById('sandbox-style-tab-button');
+      const cssButton=document.getElementById('sandbox-css-tab-button');
+      tagButton.className=showTag?'px-3 py-2.5 text-xs font-medium text-violet-200 border-b-2 border-violet-400 bg-violet-400/10':'px-3 py-2.5 text-xs font-medium text-slate-400 border-b-2 border-transparent';
+      cssButton.className=!showTag?'px-3 py-2.5 text-xs font-medium text-violet-200 border-b-2 border-violet-400 bg-violet-400/10':'px-3 py-2.5 text-xs font-medium text-slate-400 border-b-2 border-transparent';
+    }
+
+    function copySandboxCss() {
+      const css=document.getElementById('sandbox-global-css').value;
+      if(css) copyToClipboard(css,'คัดลอก CSS ส่วนกลางแล้ว');
+    }
+
+    function sanitizeSandboxHTML(html) {
+      const documentFragment=new DOMParser().parseFromString(html,'text/html');
+      const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','MAIN','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','BR','HR','PRE','CODE','BLOCKQUOTE','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','STYLE']);
+      const blocked=new Set(['SCRIPT','IFRAME','FRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','META','LINK','BASE']);
+      const clean=(node)=>{
+        if(node.nodeType===Node.TEXT_NODE) return document.createTextNode(node.textContent||'');
+        if(node.nodeType!==Node.ELEMENT_NODE) return document.createDocumentFragment();
+        if(blocked.has(node.tagName)) return document.createDocumentFragment();
+        if(!allowed.has(node.tagName)) return document.createTextNode(node.textContent||node.getAttribute('alt')||'');
+        const result=document.createElement(node.tagName.toLowerCase());
+        for(const attr of ['class','style','title','colspan','rowspan']) if(node.hasAttribute(attr)) result.setAttribute(attr,node.getAttribute(attr));
+        if(node.tagName==='CODE') { result.textContent=node.innerHTML; return result; }
+        for(const child of node.childNodes) result.append(clean(child));
+        return result;
+      };
+      const safe=document.createElement('div');
+      for(const child of documentFragment.body.childNodes) safe.append(clean(child));
+      return safe.innerHTML;
+    }
+
+    function sandboxScopeOptions(selected) {
+      return [
+        ['all', 'ทุกข้อความ'],
+        ['character', 'ข้อความตัวละคร'],
+        ['user', 'ข้อความผู้ใช้']
+      ].map(([value, label]) => `<option value="${value}" ${selected === value ? 'selected' : ''}>${label}</option>`).join('');
+    }
+
+    function rememberSandboxCardState(container, items) {
+      if (!container) return;
+      const openById = new Map([...container.querySelectorAll('details[data-card-id]')].map(card => [Number(card.dataset.cardId), card.open]));
+      items.forEach(item => { if (openById.has(item.id)) item.open = openById.get(item.id); });
+    }
+
+    function addSandboxRegexRule() {
+      rememberSandboxCardState(document.getElementById('sandbox-extra-regex-list'), sandboxRegexRules);
+      sandboxRegexRules.push({ id: nextSandboxRuleId++, name: `Regex ${sandboxRegexRules.length + 2}`, pattern: '', flags: 'g', replacement: '', applyTo: 'all', open: true });
+      renderSandboxRegexRules();
+      document.getElementById('sandbox-extra-regex-list').lastElementChild?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      triggerSandboxRun();
+    }
+
+    function moveSandboxRegexRule(id, direction) {
+      rememberSandboxCardState(document.getElementById('sandbox-extra-regex-list'), sandboxRegexRules);
+      const index = sandboxRegexRules.findIndex(rule => rule.id === id);
+      const target = index + direction;
+      if (index < 0 || target < 0 || target >= sandboxRegexRules.length) return;
+      [sandboxRegexRules[index], sandboxRegexRules[target]] = [sandboxRegexRules[target], sandboxRegexRules[index]];
+      renderSandboxRegexRules();
+      triggerSandboxRun();
+    }
+
+    function removeSandboxRegexRule(id) {
+      rememberSandboxCardState(document.getElementById('sandbox-extra-regex-list'), sandboxRegexRules);
+      const index = sandboxRegexRules.findIndex(rule => rule.id === id);
+      if (index < 0) return;
+      sandboxRegexRules.splice(index, 1);
+      renderSandboxRegexRules();
+      triggerSandboxRun();
+    }
+
+    function renderSandboxRegexRules() {
+      const list = document.getElementById('sandbox-extra-regex-list');
+      if (!list) return;
+      list.replaceChildren();
+      if (!sandboxRegexRules.length) {
+        const empty = document.createElement('p');
+        empty.className = 'text-xs text-slate-500 rounded-xl border border-dashed border-white/10 p-3';
+        empty.textContent = 'ยังไม่มีกฎ Regex เพิ่มเติม';
+        list.append(empty);
+        return;
+      }
+      sandboxRegexRules.forEach((rule, index) => {
+        const card = document.createElement('details');
+        card.className = 'glass-card rounded-xl border border-white/10';
+        card.dataset.cardId = String(rule.id);
+        card.open = !!rule.open;
+        card.addEventListener('toggle', () => { rule.open = card.open; });
+
+        const summary = document.createElement('summary');
+        summary.className = 'cursor-pointer list-none flex items-center justify-between gap-2 p-3 text-xs';
+        const heading = document.createElement('span');
+        heading.className = 'min-w-0 truncate text-indigo-200 font-medium';
+        heading.textContent = `${index + 2}. ${rule.name || `Regex ${index + 2}`} · ${rule.pattern || 'ยังไม่ใส่ Pattern'}`;
+        const controls = document.createElement('span');
+        controls.className = 'flex shrink-0 items-center gap-1';
+        const makeButton = (label, title, action, disabled = false) => {
+          const button = document.createElement('button');
+          button.type = 'button'; button.textContent = label; button.title = title; button.disabled = disabled;
+          button.className = 'px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30';
+          button.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); action(); });
+          return button;
+        };
+        controls.append(
+          makeButton('↑', 'เลื่อนขึ้น', () => moveSandboxRegexRule(rule.id, -1), index === 0),
+          makeButton('↓', 'เลื่อนลง', () => moveSandboxRegexRule(rule.id, 1), index === sandboxRegexRules.length - 1),
+          makeButton('ลบ', 'ลบ Regex นี้', () => removeSandboxRegexRule(rule.id))
+        );
+        summary.append(heading, controls);
+        card.append(summary);
+
+        const body = document.createElement('div');
+        body.className = 'p-3 pt-0 space-y-3';
+        const nameLabel = document.createElement('label'); nameLabel.className = 'block space-y-1 text-xs text-slate-300'; nameLabel.textContent = 'ชื่อช่วยจำ';
+        const nameInput = document.createElement('input'); nameInput.value = rule.name; nameInput.className = 'glass-input w-full px-3 py-2 rounded-lg'; nameInput.placeholder = 'เช่น แปลงค่าสถานะ';
+        nameInput.addEventListener('input', () => { rule.name = nameInput.value; heading.textContent = `${index + 2}. ${rule.name || `Regex ${index + 2}`} · ${rule.pattern || 'ยังไม่ใส่ Pattern'}`; });
+        nameLabel.append(nameInput); body.append(nameLabel);
+
+        const scopeLabel = document.createElement('label'); scopeLabel.className = 'block space-y-1 text-xs text-slate-300'; scopeLabel.textContent = 'ใช้กับ';
+        const scope = document.createElement('select'); scope.className = 'glass-input w-full px-3 py-2 rounded-lg'; scope.innerHTML = sandboxScopeOptions(rule.applyTo);
+        scope.addEventListener('change', () => { rule.applyTo = scope.value; triggerSandboxRun(); });
+        scopeLabel.append(scope); body.append(scopeLabel);
+
+        const patternLabel = document.createElement('label'); patternLabel.className = 'block space-y-1 text-xs text-slate-300'; patternLabel.textContent = 'Pattern';
+        const pattern = document.createElement('textarea'); pattern.rows = 2; pattern.value = rule.pattern; pattern.placeholder = 'เช่น (Mood):\\s*(\\w+)'; pattern.className = 'glass-input w-full px-3 py-2 rounded-lg code-font text-xs resize-y';
+        pattern.addEventListener('input', () => { rule.pattern = pattern.value; heading.textContent = `${index + 2}. ${rule.name || `Regex ${index + 2}`} · ${rule.pattern || 'ยังไม่ใส่ Pattern'}`; triggerSandboxRun(); });
+        patternLabel.append(pattern); body.append(patternLabel);
+
+        const flagsWrap = document.createElement('fieldset'); flagsWrap.className = 'space-y-1';
+        const flagsLegend = document.createElement('legend'); flagsLegend.className = 'text-xs text-slate-300'; flagsLegend.textContent = 'Flags'; flagsWrap.append(flagsLegend);
+        const flagsRow = document.createElement('div'); flagsRow.className = 'flex flex-wrap gap-2';
+        for (const flag of ['g', 'i', 'm', 's', 'u']) {
+          const label = document.createElement('label'); label.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-950/50 text-[11px] text-slate-300';
+          const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = rule.flags.includes(flag); checkbox.className = 'accent-indigo-400';
+          checkbox.addEventListener('change', () => { rule.flags = ['g', 'i', 'm', 's', 'u'].filter(value => flagsRow.querySelector(`[data-flag="${value}"]`)?.checked).join(''); triggerSandboxRun(); });
+          checkbox.dataset.flag = flag; label.append(checkbox, document.createTextNode(`${flag} (${({g:'Global',i:'Ignore Case',m:'Multiline',s:'DotAll',u:'Unicode'})[flag]})`)); flagsRow.append(label);
+        }
+        flagsWrap.append(flagsRow); body.append(flagsWrap);
+
+        const replacementLabel = document.createElement('label'); replacementLabel.className = 'block space-y-1 text-xs text-slate-300'; replacementLabel.textContent = 'Replacement · ใช้ $1, $2 อ้างกลุ่มจับ';
+        const replacement = document.createElement('textarea'); replacement.rows = 2; replacement.value = rule.replacement; replacement.placeholder = 'เช่น <b>$1</b>'; replacement.className = 'glass-input w-full px-3 py-2 rounded-lg code-font text-xs resize-y';
+        replacement.addEventListener('input', () => { rule.replacement = replacement.value; triggerSandboxRun(); });
+        replacementLabel.append(replacement); body.append(replacementLabel);
+        card.append(body); list.append(card);
+      });
+    }
+
+    function addSandboxStyleTag() {
+      rememberSandboxCardState(document.getElementById('sandbox-style-tags'), sandboxStyleTags);
+      const id = nextSandboxTagId++;
+      sandboxStyleTags.push({ id, name: `tag-${id}`, applyTo: 'all', template: '<span class="tag-content">$1</span>', open: true });
+      renderSandboxStyleTags();
+      document.getElementById('sandbox-style-tags').lastElementChild?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      renderSandboxPreview();
+    }
+
+    function moveSandboxStyleTag(id, direction) {
+      rememberSandboxCardState(document.getElementById('sandbox-style-tags'), sandboxStyleTags);
+      const index = sandboxStyleTags.findIndex(tag => tag.id === id);
+      const target = index + direction;
+      if (index < 0 || target < 0 || target >= sandboxStyleTags.length) return;
+      [sandboxStyleTags[index], sandboxStyleTags[target]] = [sandboxStyleTags[target], sandboxStyleTags[index]];
+      renderSandboxStyleTags(); renderSandboxPreview();
+    }
+
+    function removeSandboxStyleTag(id) {
+      rememberSandboxCardState(document.getElementById('sandbox-style-tags'), sandboxStyleTags);
+      const index = sandboxStyleTags.findIndex(tag => tag.id === id);
+      if (index < 0) return;
+      sandboxStyleTags.splice(index, 1);
+      renderSandboxStyleTags(); renderSandboxPreview();
+    }
+
+    function renderSandboxStyleTags() {
+      const list = document.getElementById('sandbox-style-tags');
+      if (!list) return;
+      list.replaceChildren();
+      if (!sandboxStyleTags.length) {
+        const empty = document.createElement('p'); empty.className = 'text-xs text-slate-500 rounded-xl border border-dashed border-white/10 p-3'; empty.textContent = 'ยังไม่มี Tag ตกแต่ง เพิ่ม Tag เพื่อแปลงแท็กในผลลัพธ์'; list.append(empty); return;
+      }
+      sandboxStyleTags.forEach((tag, index) => {
+        const card = document.createElement('details'); card.className = 'glass-card rounded-xl border border-white/10'; card.dataset.cardId = String(tag.id); card.open = !!tag.open;
+        card.addEventListener('toggle', () => { tag.open = card.open; });
+        const summary = document.createElement('summary'); summary.className = 'cursor-pointer list-none flex items-center justify-between gap-2 p-3 text-xs';
+        const heading = document.createElement('span'); heading.className = 'min-w-0 truncate text-violet-200 font-medium'; heading.textContent = `${index + 1}. <${tag.name || 'ชื่อแท็ก'}>`;
+        const controls = document.createElement('span'); controls.className = 'flex shrink-0 items-center gap-1';
+        const makeButton = (label, title, action, disabled = false) => { const button = document.createElement('button'); button.type = 'button'; button.textContent = label; button.title = title; button.disabled = disabled; button.className = 'px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30'; button.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); action(); }); return button; };
+        controls.append(makeButton('↑', 'เลื่อนขึ้น', () => moveSandboxStyleTag(tag.id, -1), index === 0), makeButton('↓', 'เลื่อนลง', () => moveSandboxStyleTag(tag.id, 1), index === sandboxStyleTags.length - 1), makeButton('ลบ', 'ลบ Tag นี้', () => removeSandboxStyleTag(tag.id)));
+        summary.append(heading, controls); card.append(summary);
+        const body = document.createElement('div'); body.className = 'p-3 pt-0 space-y-3';
+        const fields = document.createElement('div'); fields.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+        const nameLabel = document.createElement('label'); nameLabel.className = 'block space-y-1 text-xs text-slate-300'; nameLabel.textContent = 'ชื่อ Tag';
+        const name = document.createElement('input'); name.value = tag.name; name.placeholder = 'เช่น status'; name.className = 'glass-input w-full px-3 py-2 rounded-lg code-font';
+        name.addEventListener('input', () => { tag.name = name.value; heading.textContent = `${index + 1}. <${tag.name || 'ชื่อแท็ก'}>`; renderSandboxPreview(); }); nameLabel.append(name);
+        const scopeLabel = document.createElement('label'); scopeLabel.className = 'block space-y-1 text-xs text-slate-300'; scopeLabel.textContent = 'ใช้กับ';
+        const scope = document.createElement('select'); scope.className = 'glass-input w-full px-3 py-2 rounded-lg'; scope.innerHTML = sandboxScopeOptions(tag.applyTo); scope.addEventListener('change', () => { tag.applyTo = scope.value; renderSandboxPreview(); }); scopeLabel.append(scope);
+        fields.append(nameLabel, scopeLabel); body.append(fields);
+        const templateLabel = document.createElement('label'); templateLabel.className = 'block space-y-1 text-xs text-slate-300'; templateLabel.textContent = 'เทมเพลต HTML · $1 แทนเนื้อหาภายใน Tag';
+        const template = document.createElement('textarea'); template.rows = 3; template.value = tag.template; template.className = 'glass-input w-full p-2.5 rounded-lg code-font text-xs resize-y'; template.addEventListener('input', () => { tag.template = template.value; renderSandboxPreview(); });
+        templateLabel.append(template); body.append(templateLabel);
+        card.append(body); list.append(card);
+      });
+    }
+
+    function renderSandboxPreview() {
+      const frame=document.getElementById('sandbox-output-frame');
+      if(!frame) return;
+      let html=sandboxOutputRaw;
+      const target=document.getElementById('sandbox-preview-target')?.value==='user'?'user':'character';
+      for(const tagRule of sandboxStyleTags) {
+        const tag=tagRule.name.trim();
+        if(tagRule.applyTo!=='all' && tagRule.applyTo!==target) continue;
+        if(!/^[a-z][a-z0-9-]{0,40}$/i.test(tag)) continue;
+        const escaped=tag.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        const template=tagRule.template||'$1';
+        html=html.replace(new RegExp('<'+escaped+'>([\\s\\S]*?)</'+escaped+'>','gi'),(_,body)=>template.split('$1').join(body));
+      }
+      const safeHTML=sanitizeSandboxHTML(html);
+      const baseThemeCss = `
+        html { color-scheme: dark; }
+        body {
+          box-sizing: border-box; min-height: 100vh; margin: 0; padding: 14px;
+          background: #050b18; color: #e2e8f0;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 13.5px; line-height: 1.6; overflow-wrap: anywhere;
+        }
+        main { min-height: 40px; }
+        .rubii-message-character {
+          background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25);
+          border-radius: 16px; padding: 14px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .rubii-message-character::before {
+          content: 'Character Message Preview'; display: block; font-size: 10px; font-weight: 700;
+          color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; opacity: 0.85;
+        }
+        .rubii-message-user {
+          background: rgba(30, 27, 75, 0.6); border: 1px solid rgba(168, 85, 247, 0.25);
+          border-radius: 16px; padding: 14px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .rubii-message-user::before {
+          content: 'User Message Preview'; display: block; font-size: 10px; font-weight: 700;
+          color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; opacity: 0.85;
+        }
+      `;
+      const css=document.getElementById('sandbox-global-css')?.value||'';
+      const safeCSS=css.replace(new RegExp('</style','gi'),'<\\\\/style');
+      frame.srcdoc=`<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; media-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'"><style>${baseThemeCss}\n${safeCSS}</style></head><body><main class="rubii-message-${target}">${safeHTML}</main></body></html>`;
+    }
+
+    function loadPractice(id, index = 0) {
+      const p = state.patterns.find(p => p.id === id);
+      if (!p) return;
+      const exampleIndex = (index >= 0 && index < p.examples.length) ? index : 0;
+      const e = p.examples[exampleIndex];
+      const lvl = levelConfig[p.level] || levelConfig.beginner;
+
+      document.getElementById('practice-picker').value = id;
+      sendToSandbox(encodeURIComponent(p.pattern), encodeURIComponent(p.flags || ''), encodeURIComponent(p.replacement || ''), encodeURIComponent(e.input));
+
+      const guide = document.getElementById('practice-guide');
+      guide.innerHTML = `
+        <div class="space-y-4 pt-1">
+          <!-- Header Banner -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300 shadow-sm">
+                <!-- Cute Book / Journal SVG -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                  <path d="M6 6h10"/>
+                  <path d="M6 10h10"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-100">${escapeHtml(p.title)}</h3>
+                <p class="text-[11px] text-slate-400 font-light">${escapeHtml(p.summary)}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium ${lvl.bg} ${lvl.text} border ${lvl.border}">
+                ${lvl.label}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] bg-white/5 text-slate-300 border border-white/10">
+                ${categoryLabels[p.category] || p.category}
+              </span>
+            </div>
+          </div>
+
+          <!-- BuJo Card 1: Token Breakdown -->
+          <div class="glass-card rounded-2xl p-4 space-y-2.5 border-cyan-500/20 bg-slate-900/50">
+            <h4 class="text-xs font-bold text-cyan-300 flex items-center gap-2">
+              <!-- Cute Sparkle SVG -->
+              <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              บันทึกโครงสร้างนิพจน์ (Bullet Journal Breakdown):
+            </h4>
+            <div class="space-y-1.5 pl-0.5">
+              ${p.explanation.map(exp => `
+                <div class="flex items-start gap-2.5 py-1.5 px-3 rounded-xl bg-slate-950/40 border border-white/5 text-xs text-slate-200">
+                  <svg class="w-3.5 h-3.5 text-cyan-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+                  <div class="flex-1 leading-relaxed">${highlightRegexTokens(exp)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- BuJo Card 2: Expected Output & Matches -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-emerald-500/25 space-y-1.5">
+              <div class="text-[11px] text-emerald-300 font-semibold flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+                ผลที่คาดหวัง (Expected Matches)
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold ${e.expectedMatches.length ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">
+                  ${e.expectedMatches.length} Match
+                </span>
+                <span class="text-xs text-slate-300 font-light truncate">
+                  ${e.expectedMatches.length ? 'ตรงตามเงื่อนไขที่กำหนด' : 'ไม่ควรจับข้อความนี้'}
+                </span>
+              </div>
+            </div>
+
+            <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-indigo-500/25 space-y-1.5">
+              <div class="text-[11px] text-indigo-300 font-semibold flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Output จำลองหลังแทนที่
+              </div>
+              <div class="code-font text-xs text-indigo-200 bg-indigo-950/40 p-2 rounded-xl border border-indigo-500/20 break-all select-all">
+                ${escapeHtml(e.expectedOutput || '(เว้นว่าง)')}
+              </div>
+            </div>
+          </div>
+
+          <!-- BuJo Card 3: Limitations Sticky Note -->
+          ${p.limitations && p.limitations.length ? `
+            <div class="bg-amber-950/20 p-3.5 rounded-2xl border border-amber-500/25 space-y-1.5">
+              <div class="text-[11px] text-amber-300 font-semibold flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                ข้อจำกัดที่ควรทราบ (Limitations):
+              </div>
+              <div class="space-y-1 text-xs text-amber-200/90 pl-1">
+                ${p.limitations.map(lim => `
+                  <div class="flex items-start gap-2">
+                    <svg class="w-3 h-3 text-amber-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/></svg>
+                    <span>${escapeHtml(lim)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- BuJo Card 4: Candy Selector Buttons -->
+          <div class="space-y-2 pt-1">
+            <div class="text-xs text-slate-300 font-semibold flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              กดสลับตัวอย่างทดสอบ:
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${p.examples.map((example, i) => {
+                const isSelected = i === exampleIndex;
+                const willMatch = example.expectedMatches.length > 0;
+                return `
+                  <button onclick="loadPractice('${escapeJs(p.id)}', ${i})" class="px-3.5 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition-all ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/40'
+                      : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-white/10 hover:border-cyan-500/30'
+                  }">
+                    <svg class="w-3.5 h-3.5 ${willMatch ? (isSelected ? 'text-white' : 'text-emerald-400') : (isSelected ? 'text-white' : 'text-rose-400')}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      ${willMatch ? '<polyline points="20 6 9 17 4 12"/>' : '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>'}
+                    </svg>
+                    <span>ตัวอย่าง ${i + 1} · ${willMatch ? 'ควรตรวจจับได้' : 'ไม่ควรจับ'}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- BuJo Card 5: Reading Guide Legend -->
+          <div class="bg-slate-950/40 p-3 rounded-xl border border-white/5 text-[11px] text-slate-400 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span class="text-slate-300 font-semibold flex items-center gap-1">
+              <svg class="w-3 h-3 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              อ่านผล:
+            </span>
+            <span class="inline-flex items-center gap-1"><span class="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold text-[10px]">Match</span> ส่วนที่พบ</span>
+            <span class="inline-flex items-center gap-1"><span class="px-1.5 py-0.2 rounded bg-fuchsia-500/20 text-fuchsia-300 font-mono font-bold text-[10px]">$1</span> ค่าจากวงเล็บแรก</span>
+            <span class="inline-flex items-center gap-1"><span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold text-[10px]">Output</span> ข้อความหลังแทนที่</span>
+            <span class="text-slate-500 text-[10px]">(Replacement ว่างจะลบส่วนที่จับได้ หากต้องการคงข้อความเดิมให้ใส่ $&amp; หรือกลุ่มจับ)</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function getSandboxFlags() {
+      let flags = '';
+      if (document.getElementById('flag-g').checked) flags += 'g';
+      if (document.getElementById('flag-i').checked) flags += 'i';
+      if (document.getElementById('flag-m').checked) flags += 'm';
+      if (document.getElementById('flag-s').checked) flags += 's';
+      if (document.getElementById('flag-u').checked) flags += 'u';
+      return flags;
+    }
+
+    function triggerSandboxRun(skipLiteralSync = false) {
+      if (!skipLiteralSync) updateFullLiteralDisplay();
+      renderPatternGuide();
+      sandboxRunRevision++;
+      clearTimeout(state.debounceTimer);
+      state.debounceTimer = setTimeout(() => {
+        runRegexWorkerTest();
+      }, 250);
+    }
+
+    function formatRegexApiError(error) {
+      if (error?.code !== 'INVALID_REQUEST') return error?.message || 'ทดลองไม่สำเร็จ';
+      const labels = { pattern: 'Pattern', flags: 'Flags', replacement: 'Replacement', input: 'Input Text' };
+      const details = Array.isArray(error.details) ? error.details : [];
+      const messages = details.map((item) => {
+        const label = labels[item.field] || item.field || 'ข้อมูล';
+        if (item.rule === 'maxLength' && Number.isFinite(item.limit)) return `${label} ยาวเกินขีดจำกัด ${item.limit.toLocaleString()} ตัวอักษร`;
+        if (item.rule === 'minLength') return `${label} ต้องมีข้อมูลอย่างน้อย 1 ตัวอักษร`;
+        if (item.field === 'flags' && item.rule === 'pattern') return 'Flags รองรับเฉพาะ g, i, m, s, u';
+        if (item.rule === 'required') return `ขาดข้อมูล ${label}`;
+        if (item.rule === 'additionalProperties') return 'มีช่องข้อมูลที่ API ไม่รู้จัก';
+        return `${label} ไม่ตรงรูปแบบที่ API รองรับ`;
+      });
+      return messages.length ? `API ไม่รับข้อมูลนี้: ${[...new Set(messages)].join(' · ')}` : 'ข้อมูลไม่ตรงกับข้อกำหนด API';
+    }
+
+    function getRegexRequestLimit(pattern, flags, replacement, input) {
+      const requestBody = JSON.stringify({ pattern, flags, replacement, input });
+      const requestBodyBytes = new TextEncoder().encode(requestBody).length;
+      return Array.from(pattern).length > 2048
+        ? 'Pattern ยาวเกินขีดจำกัด 2,048 ตัวอักษร'
+        : Array.from(replacement).length > 2048
+          ? 'Replacement ยาวเกินขีดจำกัด 2,048 ตัวอักษร'
+          : Array.from(input).length > 16384
+            ? 'Input Text ยาวเกินขีดจำกัด 16,384 ตัวอักษร'
+            : new TextEncoder().encode(input).length > 16 * 1024
+              ? 'Input Text มีขนาดเกิน 16 KiB เมื่อเข้ารหัส UTF-8'
+              : requestBodyBytes > 24 * 1024
+                ? 'ข้อมูลรวมในคำขอยาวเกินขีดจำกัด 24 KiB'
+                : '';
+    }
+
+    function renderPipelineGroups(ruleRuns, container) {
+      container.replaceChildren();
+      if (!ruleRuns.length) {
+        renderCaptureGroups([], container);
+        return;
+      }
+      for (const run of ruleRuns) {
+        const section = document.createElement('section');
+        section.className = 'rounded-xl border border-white/5 bg-slate-950/30 p-2 space-y-1';
+        const title = document.createElement('h4'); title.className = 'px-1 text-[11px] text-indigo-200';
+        title.textContent = `${run.label} · ${run.matches.length} Match`;
+        const groups = document.createElement('div'); groups.className = 'space-y-2';
+        renderCaptureGroups(run.matches, groups);
+        section.append(title, groups); container.append(section);
+      }
+    }
+
+    async function runRegexWorkerTest() {
+      const runId = ++sandboxRunRevision;
+      updateFullLiteralDisplay();
+      renderPatternGuide();
+      const primaryPattern = document.getElementById('sandbox-pattern').value;
+      const input = document.getElementById('sandbox-input').value;
+      const target = document.getElementById('sandbox-preview-target')?.value === 'user' ? 'user' : 'character';
+      const configuredRules = [
+        { name: 'Regex หลัก', pattern: primaryPattern, flags: getSandboxFlags(), replacement: document.getElementById('sandbox-replacement').value, applyTo: 'all' },
+        ...sandboxRegexRules.map(rule => ({ ...rule }))
+      ];
+      const rules = configuredRules.filter(rule => rule.pattern.trim() && (rule.applyTo === 'all' || rule.applyTo === target));
+
+      const badge = document.getElementById('sandbox-match-badge');
+      const highlightBox = document.getElementById('sandbox-highlight-box');
+      const groupsBox = document.getElementById('sandbox-groups-box');
+      const timeText = document.getElementById('sandbox-time-text');
+
+      if (!input) {
+        badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400';
+        badge.textContent = 'รอข้อมูลทดสอบ';
+        highlightBox.innerHTML = '<span class="text-slate-500 italic">กรอก Input Text เพื่อดูผล...</span>';
+        renderPipelineGroups([], groupsBox);
+        renderOutputCode(''); timeText.textContent = '0 ms';
+        return;
+      }
+
+      if (!rules.length) {
+        badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300';
+        badge.textContent = 'ไม่มี Regex ที่ใช้กับตัวอย่างนี้';
+        highlightBox.textContent = input;
+        renderPipelineGroups([], groupsBox);
+        renderOutputCode(input); timeText.textContent = '0 ms';
+        return;
+      }
+
+      badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-300 animate-pulse';
+      badge.textContent = `กำลังประมวลผล ${rules.length} Regex ตามลำดับ...`;
+      groupsBox.textContent = 'กำลังตรวจกลุ่มจับ…';
+      renderOutputCode('กำลังตรวจผลแทนที่…');
+      const started = performance.now();
+      let currentText = input;
+      let errorMessage = '';
+      const ruleRuns = [];
+
+      try {
+        for (let index = 0; index < rules.length; index++) {
+          if (runId !== sandboxRunRevision) return;
+          const rule = rules[index];
+          const label = rule.name?.trim() || `Regex ${index + 1}`;
+          const limit = getRegexRequestLimit(rule.pattern, rule.flags, rule.replacement, currentText);
+          if (limit) { errorMessage = `${label}: ${limit}`; break; }
+          const response = await fetch('/v1/regex/test', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pattern: rule.pattern, flags: rule.flags, replacement: rule.replacement, input: currentText })
+          });
+          const json = await response.json();
+          if (runId !== sandboxRunRevision) return;
+          if (!response.ok) { errorMessage = `${label}: ${formatRegexApiError(json.error)}`; break; }
+          const data = json.data;
+          ruleRuns.push({ label, input: currentText, matches: data.matches || [] });
+          currentText = data.output ?? currentText;
+        }
+      } catch (err) {
+        console.error('Worker run failed:', err);
+        errorMessage = 'เชื่อมต่อกับตัวทดสอบไม่สำเร็จ';
+      }
+
+      if (runId !== sandboxRunRevision) return;
+      timeText.textContent = `${(performance.now() - started).toFixed(1)} ms`;
+      const firstRun = ruleRuns[0];
+      renderVisualHighlight(firstRun?.input || input, firstRun?.matches || [], highlightBox);
+      renderPipelineGroups(ruleRuns, groupsBox);
+      renderOutputCode(currentText);
+
+      if (errorMessage) {
+        badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/20 text-rose-300 border border-rose-500/30';
+        badge.textContent = `หยุดที่กฎ ${ruleRuns.length + 1}: ${errorMessage}`;
+        const note = document.createElement('p'); note.className = 'text-xs text-rose-300'; note.textContent = errorMessage; groupsBox.prepend(note);
+        return;
+      }
+      const totalMatches = ruleRuns.reduce((sum, run) => sum + run.matches.length, 0);
+      if (totalMatches) {
+        badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        badge.textContent = `พบ ${totalMatches} Match · ประมวลผล ${ruleRuns.length} Regex`;
+      } else {
+        badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        badge.textContent = `ไม่พบ Match · ประมวลผล ${ruleRuns.length} Regex`;
+      }
+    }
+
+    function renderVisualHighlight(text, matches, container) {
+      if (!matches || matches.length === 0) {
+        container.textContent = text;
+        return;
+      }
+
+      let html = '';
+      let lastIndex = 0;
+
+      // Sort matches by index
+      const sortedMatches = [...matches].sort((a, b) => a.index - b.index);
+
+      sortedMatches.forEach((m, idx) => {
+        if (m.index > lastIndex) {
+          html += escapeHtml(text.substring(lastIndex, m.index));
+        }
+        html += `<mark class="match-highlight font-bold" title="Match #${idx + 1}">${escapeHtml(m.match)}</mark>`;
+        lastIndex = m.index + m.match.length;
+      });
+
+      if (lastIndex < text.length) {
+        html += escapeHtml(text.substring(lastIndex));
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderCaptureGroups(matches, container) {
+      const allGroups = [];
+      matches.forEach((m, mIdx) => {
+        if (m.captures && m.captures.length > 0) {
+          m.captures.forEach((val, gIdx) => {
+            allGroups.push({ matchIdx: mIdx + 1, groupIdx: gIdx + 1, value: val });
+          });
+        }
+      });
+
+      if (allGroups.length === 0) {
+        container.innerHTML = '<div class="text-xs text-slate-500 italic bg-slate-950/40 p-3 rounded-xl border border-white/5">ไม่มีกลุ่มจับที่นิยามใน Pattern หรือไม่พบค่าที่จับได้</div>';
+        return;
+      }
+
+      container.innerHTML = allGroups.map(g => `
+        <div class="flex items-center justify-between text-xs bg-slate-950/70 px-3 py-2 rounded-xl border border-white/5">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 font-mono font-bold text-[11px]">$${g.groupIdx}</span>
+            <span class="text-slate-400 text-[11px]">(Match #${g.matchIdx})</span>
+          </div>
+          <span class="code-font text-cyan-200 font-medium truncate max-w-[200px] select-all">${escapeHtml(g.value)}</span>
+        </div>
+      `).join('');
+    }
+
+    function resetSandbox() {
+      if (state.patterns.some(p => p.id === 'key-value-generic')) {
+        loadPractice('key-value-generic', 1);
+        showToast('รีเซ็ตหน้าทดลองเป็นนิพจน์หลัก Universal Key-Value แล้ว');
+      } else {
+        document.getElementById('sandbox-pattern').value = '^([^:：\\n]{1,100})[:：]\\s*(.+)$';
+        document.getElementById('sandbox-replacement').value = '<div class="model-status-row"><b>$1</b><span>$2</span></div>';
+        document.getElementById('sandbox-input').value = 'Location: สถานีรถไฟลอยฟ้า\nMood: ร่าเริงสดใส\nAffection: 98\nสถานะ：พร้อมออกเดินทาง';
+        document.getElementById('flag-g').checked = true;
+        document.getElementById('flag-i').checked = false;
+        document.getElementById('flag-m').checked = true;
+        document.getElementById('flag-s').checked = false;
+        document.getElementById('flag-u').checked = false;
+        sandboxRegexRules.length = 0;
+        renderSandboxRegexRules();
+        updateFullLiteralDisplay();
+        triggerSandboxRun();
+        showToast('รีเซ็ตหน้าทดลองเป็นนิพจน์หลัก Universal Key-Value แล้ว');
+      }
+    }
+
+    // Utility Helpers
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeJs(str) {
+      if (!str) return '';
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    function copyToClipboard(text, msg = 'คัดลอกเรียบร้อยแล้ว') {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(msg);
+      }).catch(() => {
+        showToast('ไม่สามารถคัดลอกได้');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    // Run initialization on DOM load
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+  <script src="/cookbook.js"></script>
+</body>
+</html>

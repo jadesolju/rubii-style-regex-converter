@@ -20,6 +20,7 @@ export type Lesson = {
   sections: Array<{ heading: string; body: string }>;
   exercises: Array<{ prompt: string; answer: string }>;
   sourceRefs: string[];
+  practicePatternId?: string;
 };
 
 export type Pattern = {
@@ -123,6 +124,9 @@ export function validateContent(): void {
     }
   }
   for (const lesson of content.lessons) {
+    if (lesson.practicePatternId && !content.patterns.some((pattern) => pattern.id === lesson.practicePatternId && pattern.status === "published")) {
+      throw new Error(`${lesson.id} references unknown practice pattern ${lesson.practicePatternId}`);
+    }
     if (!lesson.audiences.includes("app_user") || !lesson.audiences.includes("developer")) {
       throw new Error(`${lesson.id} must include both reader tracks`);
     }
@@ -161,7 +165,11 @@ export function validateContent(): void {
 }
 
 export function getCollection(kind: "lessons" | "patterns" | "recipes") {
-  return content[kind].filter((item) => item.status === "published");
+  const published = content[kind].filter((item) => item.status === "published");
+  if (kind === "patterns") {
+    published.sort((a, b) => Number(b.id === "key-value-generic") - Number(a.id === "key-value-generic"));
+  }
+  return published;
 }
 
 export function getById(kind: "lessons" | "patterns" | "recipes", id: string) {

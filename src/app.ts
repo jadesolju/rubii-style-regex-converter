@@ -1,5 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import openApi from "./openapi.json" with { type: "json" };
 import { getById, getCollection, getRecipeBundle, validateContent, type Lesson } from "./content.ts";
 import { runRegexTest, type RegexTestInput } from "./regex-worker.ts";
@@ -15,6 +17,18 @@ const errorSchema = {
         code: { type: "string" },
         message: { type: "string" },
         requestId: { type: "string" },
+        details: {
+          type: "array",
+          items: {
+            type: "object",
+            required: ["field", "rule"],
+            properties: {
+              field: { type: "string" },
+              rule: { type: "string" },
+              limit: { type: "integer" },
+            },
+          },
+        },
       },
     },
   },
@@ -38,6 +52,15 @@ const lessonListQuerySchema = {
   properties: {
     ...listQuerySchema.properties,
     audience: { type: "string", enum: ["app_user", "developer"] },
+  },
+};
+
+const searchQuerySchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    term: { type: "string", maxLength: 100 },
+    q: { type: "string", maxLength: 100 },
   },
 };
 
@@ -75,9 +98,21 @@ export function buildApp(enableLogging = true): FastifyInstance {
   let activeRegexWorkers = 0;
 
   app.setErrorHandler((error, request, reply) => {
-    if ((error as Error & { validation?: unknown }).validation) {
+    const validation = (error as Error & {
+      validation?: Array<{
+        instancePath?: string;
+        keyword?: string;
+        params?: { limit?: number; missingProperty?: string };
+      }>;
+    }).validation;
+    if (validation) {
+      const details = validation.map((issue) => ({
+        field: issue.params?.missingProperty ?? issue.instancePath?.replace(/^\//, "").replace(/~1/g, "/").replace(/~0/g, "~") ?? "body",
+        rule: issue.keyword ?? "validation",
+        ...(typeof issue.params?.limit === "number" ? { limit: issue.params.limit } : {}),
+      }));
       return reply.code(400).send({
-        error: { code: "INVALID_REQUEST", message: "Request does not match the API schema", requestId: request.id },
+        error: { code: "INVALID_REQUEST", message: "Request does not match the API schema", requestId: request.id, details },
       });
     }
     request.log.error({ err: error, requestId: request.id }, "Request failed");
@@ -87,7 +122,78 @@ export function buildApp(enableLogging = true): FastifyInstance {
   });
 
   app.get("/healthz", async () => ({ status: "ok", contentVersion: "0.1.0" }));
+  app.get("/cookbook.js", async (_request, reply) => {
+    const script = await readFile(join(process.cwd(), "public", "cookbook.js"), "utf8");
+    return reply.type("application/javascript; charset=utf-8").send(script);
+  });
+  app.get("/bg.jpg", async (_request, reply) => {
+    try {
+      const img = await readFile(join(process.cwd(), "public", "bg.jpg"));
+      return reply.type("image/jpeg").send(img);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Background image not found" } });
+    }
+  });
+  app.get("/mascot.jpg", async (_request, reply) => {
+    try {
+      const img = await readFile(join(process.cwd(), "public", "mascot.jpg"));
+      return reply.type("image/jpeg").send(img);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Mascot image not found" } });
+    }
+  });
   app.get(`${API_PREFIX}/openapi.json`, async () => openApi);
+
+  app.get("/", async (_request, reply) => {
+    try {
+      const html = await readFile(join(process.cwd(), "public", "index.html"), "utf8");
+      return reply.type("text/html; charset=utf-8").send(html);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
+    }
+  });
+
+  app.get("/index.html", async (_request, reply) => {
+    try {
+      const html = await readFile(join(process.cwd(), "public", "index.html"), "utf8");
+      return reply.type("text/html; charset=utf-8").send(html);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
+    }
+  });
+
+  app.get(`${API_PREFIX}/search`, {
+    schema: { querystring: searchQuerySchema },
+  }, async (request) => {
+    const query = request.query as { term?: string; q?: string };
+    const term = (query.term ?? query.q ?? "").toLocaleLowerCase("th").trim();
+
+    const filterCollection = (kind: "lessons" | "patterns" | "recipes") => {
+      if (!term) return getCollection(kind);
+      return getCollection(kind).filter((item) => {
+        const record = item as Record<string, unknown>;
+        const searchTarget = `${record.title ?? ""} ${record.summary ?? ""} ${record.pattern ?? ""}`.toLocaleLowerCase("th");
+        return searchTarget.includes(term);
+      });
+    };
+
+    const patterns = filterCollection("patterns");
+    const recipes = filterCollection("recipes");
+    const lessons = filterCollection("lessons");
+
+    return {
+      data: {
+        patterns,
+        recipes,
+        lessons,
+      },
+      meta: {
+        query: term,
+        totalCount: patterns.length + recipes.length + lessons.length,
+        contentVersion: "0.1.0",
+      },
+    };
+  });
 
   for (const kind of ["lessons", "patterns", "recipes"] as const) {
     app.get(`${API_PREFIX}/${kind}`, {

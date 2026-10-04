@@ -1,5 +1,64 @@
 [
   {
+    "id": "datetime-status-card",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับวันที่และเวลาแบบหลายบรรทัด",
+    "summary": "ดึงข้อมูลวันที่และเวลาที่มีสัญลักษณ์กำกับแบบหลายบรรทัดต่อเนื่อง",
+    "category": "status",
+    "level": "intermediate",
+    "pattern": "^📅\\s*วันที่[:：]\\s*(.+)\\n🕒\\s*เวลา[:：]\\s*(.+)$",
+    "flags": "gm",
+    "replacement": "<div class=\"datetime-badge\"><span class=\"date\">$1</span><span class=\"time\">$2</span></div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความวันที่"
+      },
+      {
+        "index": 2,
+        "meaning": "ข้อความเวลา"
+      }
+    ],
+    "explanation": [
+      "^ และ $ พร้อม flag m เพื่อจับแบบแยกทีละบรรทัด",
+      "📅\\s*วันที่[:：]\\s*(.+) บรรทัดแรกจับวันที่และเก็บค่าใน $1",
+      "\\n ขึ้นบรรทัดใหม่",
+      "🕒\\s*เวลา[:：]\\s*(.+) บรรทัดที่สองจับเวลาและเก็บค่าใน $2"
+    ],
+    "instructions": [
+      "วางนิพจน์แบบเต็ม /^📅\\s*วันที่[:：]\\s*(.+)\\n🕒\\s*เวลา[:：]\\s*(.+)$/gm ลงในช่อง Expression",
+      "หรือแยกช่อง Pattern และ Flags gm ตามหน้าต่างการตั้งค่า",
+      "ตั้งค่า Replacement ให้ห่อด้วย tag ที่ต้องการ"
+    ],
+    "examples": [
+      {
+        "input": "📅 วันที่: 3 ตุลาคม 2026\n🕒 เวลา: 18:00",
+        "expectedMatches": [
+          "📅 วันที่: 3 ตุลาคม 2026\n🕒 เวลา: 18:00"
+        ],
+        "expectedCaptures": [
+          [
+            "3 ตุลาคม 2026",
+            "18:00"
+          ]
+        ],
+        "expectedOutput": "<div class=\"datetime-badge\"><span class=\"date\">3 ตุลาคม 2026</span><span class=\"time\">18:00</span></div>"
+      }
+    ],
+    "limitations": [
+      "ต้องมีทั้งสองบรรทัดเรียงลำดับกัน วันที่ตามด้วยเวลา",
+      "ขึ้นบรรทัดใหม่ต้องเป็น LF (\\n)"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
+  },
+  {
     "id": "affection-number",
     "schemaVersion": 1,
     "revision": 1,
@@ -14,12 +73,45 @@
     "replacement": "Affection: $1",
     "applyTo": "character",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ค่าความสัมพันธ์หนึ่งถึงสามหลัก" }],
-    "explanation": ["Affection จับชื่อค่าตามตัวอักษร", "[:：] ยอมรับโคลอนแบบครึ่งความกว้างหรือเต็มความกว้าง", "\\s* ยอมรับช่องว่างที่อาจมี", "(\\d{1,3}) เก็บตัวเลขหนึ่งถึงสามหลักไว้ใน $1"],
-    "instructions": ["เลือก Raw content", "วาง pattern, flags และ replacement ลงช่องที่ตรงกัน", "ปรับคำ Affection ให้ตรงกับป้ายชื่อที่โมเดลเขียน"],
-    "examples": [{ "input": "Affection: 72", "expectedMatches": ["Affection: 72"], "expectedCaptures": [["72"]], "expectedOutput": "Affection: 72" }],
-    "limitations": ["ไม่ตรวจว่าค่าอยู่ในช่วง 0 ถึง 100", "รับตัวเลขอารบิก ไม่รับเลขไทย", "ค่ามากกว่าสามหลักจะถูกจับเพียงสามหลักแรก"],
-    "sourceRefs": ["rubii-styles-regex"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าความสัมพันธ์หนึ่งถึงสามหลัก"
+      }
+    ],
+    "explanation": [
+      "Affection จับชื่อค่าตามตัวอักษร",
+      "[:：] ยอมรับโคลอนแบบครึ่งความกว้างหรือเต็มความกว้าง",
+      "\\s* ยอมรับช่องว่างที่อาจมี",
+      "(\\d{1,3}) เก็บตัวเลขหนึ่งถึงสามหลักไว้ใน $1"
+    ],
+    "instructions": [
+      "เลือก Raw content",
+      "วาง pattern, flags และ replacement ลงช่องที่ตรงกัน",
+      "ปรับคำ Affection ให้ตรงกับป้ายชื่อที่โมเดลเขียน"
+    ],
+    "examples": [
+      {
+        "input": "Affection: 72",
+        "expectedMatches": [
+          "Affection: 72"
+        ],
+        "expectedCaptures": [
+          [
+            "72"
+          ]
+        ],
+        "expectedOutput": "Affection: 72"
+      }
+    ],
+    "limitations": [
+      "ไม่ตรวจว่าค่าอยู่ในช่วง 0 ถึง 100",
+      "รับตัวเลขอารบิก ไม่รับเลขไทย",
+      "ค่ามากกว่าสามหลักจะถูกจับเพียงสามหลักแรก"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "drop-note-line",
@@ -37,11 +129,34 @@
     "applyTo": "character",
     "matchStage": "raw",
     "captureGroups": [],
-    "explanation": ["^ จับจุดเริ่มต้นบรรทัดเมื่อใช้ m", "\\[ และ \\] จับวงเล็บเหลี่ยมตามตัวอักษร", " .* จับข้อความที่เหลือของบรรทัด", "replacement ว่างทำให้ส่วนที่ match ถูกลบ"],
-    "instructions": ["เลือก Raw content", "ใช้ replacement ว่าง", "เปลี่ยนคำ Note หากใช้ marker อื่น"],
-    "examples": [{ "input": "Scene text\n[Note] Next turn: ask about her past.\nMore text", "expectedMatches": ["[Note] Next turn: ask about her past."], "expectedCaptures": [], "expectedOutput": "Scene text\n\nMore text" }],
-    "limitations": ["ลบบรรทัดที่ขึ้นต้นด้วย [Note] เท่านั้น", "กฎดูลำดับก่อนหลัง หากกฎก่อนหน้าแก้บรรทัดไปแล้วผลอาจเปลี่ยน"],
-    "sourceRefs": ["rubii-styles-regex"]
+    "explanation": [
+      "^ จับจุดเริ่มต้นบรรทัดเมื่อใช้ m",
+      "\\[ และ \\] จับวงเล็บเหลี่ยมตามตัวอักษร",
+      " .* จับข้อความที่เหลือของบรรทัด",
+      "replacement ว่างทำให้ส่วนที่ match ถูกลบ"
+    ],
+    "instructions": [
+      "เลือก Raw content",
+      "ใช้ replacement ว่าง",
+      "เปลี่ยนคำ Note หากใช้ marker อื่น"
+    ],
+    "examples": [
+      {
+        "input": "Scene text\n[Note] Next turn: ask about her past.\nMore text",
+        "expectedMatches": [
+          "[Note] Next turn: ask about her past."
+        ],
+        "expectedCaptures": [],
+        "expectedOutput": "Scene text\n\nMore text"
+      }
+    ],
+    "limitations": [
+      "ลบบรรทัดที่ขึ้นต้นด้วย [Note] เท่านั้น",
+      "กฎดูลำดับก่อนหลัง หากกฎก่อนหน้าแก้บรรทัดไปแล้วผลอาจเปลี่ยน"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "parenthetical-action",
@@ -53,17 +168,49 @@
     "summary": "จับข้อความสั้นในวงเล็บแล้วครอบด้วย Style tag action",
     "category": "dialogue",
     "level": "intermediate",
-    "pattern": "\\(([^()\\n]{1,60})\\)",
+    "pattern": "\\(([^()\\r\\n]{1,500})\\)",
     "flags": "g",
     "replacement": "<action>$1</action>",
     "applyTo": "character",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความการกระทำที่ไม่มีวงเล็บซ้อนและยาวไม่เกิน 60 ตัวอักษร" }],
-    "explanation": ["\\( และ \\) จับวงเล็บตามตัวอักษร", "([^()\\n]{1,60}) เก็บเนื้อหาที่ไม่มีวงเล็บซ้อนหรือขึ้นบรรทัดใหม่", "$1 นำข้อความในวงเล็บไปวางระหว่าง action tags"],
-    "instructions": ["สร้าง Style tag ชื่อ action", "ตั้ง template เป็น <span class=\"action\">$1</span>", "ใช้ pattern นี้ก่อนการขยาย Style tags"],
-    "examples": [{ "input": "(She opens the door.) Hello.", "expectedMatches": ["(She opens the door.)"], "expectedCaptures": [["She opens the door."]], "expectedOutput": "<action>She opens the door.</action> Hello." }],
-    "limitations": ["ไม่จับวงเล็บซ้อน", "จำกัดความยาว 60 ตัวอักษร", "ข้อความใน HTML attribute อาจ match หากใช้ raw content"],
-    "sourceRefs": ["rubii-styles-regex"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความการกระทำที่ไม่มีวงเล็บซ้อนและยาวไม่เกิน 500 ตัวอักษร"
+      }
+    ],
+    "explanation": [
+      "\\( และ \\) จับวงเล็บตามตัวอักษร",
+      "([^()\\r\\n]{1,500}) เก็บเนื้อหาที่ไม่มีวงเล็บซ้อนหรือขึ้นบรรทัดใหม่",
+      "$1 นำข้อความในวงเล็บไปวางระหว่าง action tags"
+    ],
+    "instructions": [
+      "สร้าง Style tag ชื่อ action",
+      "ตั้ง template เป็น <span class=\"action\">$1</span>",
+      "ใช้ pattern นี้ก่อนการขยาย Style tags"
+    ],
+    "examples": [
+      {
+        "input": "(She opens the door.) Hello.",
+        "expectedMatches": [
+          "(She opens the door.)"
+        ],
+        "expectedCaptures": [
+          [
+            "She opens the door."
+          ]
+        ],
+        "expectedOutput": "<action>She opens the door.</action> Hello."
+      }
+    ],
+    "limitations": [
+      "ไม่จับวงเล็บซ้อน",
+      "จำกัดความยาว 500 ตัวอักษรและไม่จับวงเล็บซ้อน",
+      "ข้อความใน HTML attribute อาจ match หากใช้ raw content"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "quoted-dialogue",
@@ -77,15 +224,48 @@
     "level": "intermediate",
     "pattern": "[“\"]([^”\"\\n]{1,160})[”\"]",
     "flags": "g",
-    "replacement": "<span class=\"dialogue\">$1</span>",
+    "replacement": "<dialogue>$1</dialogue>",
     "applyTo": "character",
-    "matchStage": "displayed_text",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความบทพูดความยาวหนึ่งถึง 160 ตัวอักษร" }],
-    "explanation": ["[“\"] ยอมรับเครื่องหมายเปิดสองแบบ", "([^”\"\\n]{1,160}) เก็บเนื้อหาที่ไม่รวมเครื่องหมายปิดและไม่ข้ามบรรทัด", "[”\"] ยอมรับเครื่องหมายปิดสองแบบ", "span เป็น inline element เหมาะกับการแทนข้อความภายในย่อหน้า"],
-    "instructions": ["เลือก Displayed text เพื่อไม่ให้จับเครื่องหมายใน HTML", "เปลี่ยน class dialogue ให้ตรงกับ CSS ของคุณ", "ทดสอบเมื่อข้อความถูกแบ่งด้วยตัวหนาหรือองค์ประกอบ HTML"],
-    "examples": [{ "input": "She said, “Come back soon.”", "expectedMatches": ["“Come back soon.”"], "expectedCaptures": [["Come back soon."]], "expectedOutput": "She said, <span class=\"dialogue\">Come back soon.</span>" }],
-    "limitations": ["ไม่รองรับอัญประกาศซ้อน", "การทดลองใน API ทำงานกับสตริงธรรมดาและไม่จำลองขอบเขต text node ของ Rubii", "อาจไม่ match หากข้อความหนึ่งประโยคถูกแยกด้วย HTML"],
-    "sourceRefs": ["rubii-styles-regex"]
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความบทพูดความยาวหนึ่งถึง 160 ตัวอักษร"
+      }
+    ],
+    "explanation": [
+      "[“\"] ยอมรับเครื่องหมายเปิดสองแบบ",
+      "([^”\"\\n]{1,160}) เก็บเนื้อหาที่ไม่รวมเครื่องหมายปิดและไม่ข้ามบรรทัด",
+      "[”\"] ยอมรับเครื่องหมายปิดสองแบบ",
+        "ใช้ $1 ใน Style tag เพื่อเก็บเฉพาะข้อความบทพูด"
+    ],
+    "instructions": [
+        "สร้าง Style tag ชื่อ dialogue แล้วกำหนด HTML template และ CSS ให้ตรงกับแท็ก",
+        "Raw content เหมาะกับข้อความที่ยังไม่ถูกแปลงเป็น HTML",
+      "ทดสอบเมื่อข้อความถูกแบ่งด้วยตัวหนาหรือองค์ประกอบ HTML"
+    ],
+    "examples": [
+      {
+        "input": "She said, “Come back soon.”",
+        "expectedMatches": [
+          "“Come back soon.”"
+        ],
+        "expectedCaptures": [
+          [
+            "Come back soon."
+          ]
+        ],
+        "expectedOutput": "She said, <dialogue>Come back soon.</dialogue>"
+      }
+    ],
+    "limitations": [
+      "ไม่รองรับอัญประกาศซ้อน",
+      "Raw content อาจเห็นข้อความใน HTML attribute ที่มีอยู่แล้ว",
+      "อาจไม่ match หากข้อความหนึ่งประโยคถูกแยกด้วย HTML"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
   },
   {
     "id": "status-block",
@@ -102,11 +282,1853 @@
     "replacement": "<section class=\"status-card\">$1</section>",
     "applyTo": "character",
     "matchStage": "raw",
-    "captureGroups": [{ "index": 1, "meaning": "ข้อความทั้งหมดภายใน status marker" }],
-    "explanation": ["<status> และ </status> จับ marker ตามตัวอักษร", "([\\s\\S]*?) เก็บข้อความน้อยที่สุดรวมถึงหลายบรรทัด", "$1 นำเนื้อหาไปใส่ใน section"],
-    "instructions": ["ใช้เฉพาะเมื่อจำเป็นต้องแปลง marker เอง; หากตั้ง Style tag ได้ ให้ใช้ Style tag โดยตรง", "ทดสอบกรณีมี marker ปิดหายไป", "กำหนด CSS ของ status-card แยกต่างหาก"],
-    "examples": [{ "input": "<status>Location: Station\nMood: Calm</status>", "expectedMatches": ["<status>Location: Station\nMood: Calm</status>"], "expectedCaptures": [["Location: Station\nMood: Calm"]], "expectedOutput": "<section class=\"status-card\">Location: Station\nMood: Calm</section>" }],
-    "limitations": ["Regex ไม่ใช่ parser สำหรับ HTML ซับซ้อนหรือแท็กซ้อน", "อย่าใช้กับเนื้อหาที่ไม่เชื่อถือโดยไม่ผ่านการ sanitize", "ถ้าบล็อกมี </status> หลายตำแหน่งจะหยุดที่ตำแหน่งแรก"],
-    "sourceRefs": ["rubii-styles-regex"]
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความทั้งหมดภายใน status marker"
+      }
+    ],
+    "explanation": [
+      "<status> และ </status> จับ marker ตามตัวอักษร",
+      "([\\s\\S]*?) เก็บข้อความน้อยที่สุดรวมถึงหลายบรรทัด",
+      "$1 นำเนื้อหาไปใส่ใน section"
+    ],
+    "instructions": [
+      "ใช้เฉพาะเมื่อจำเป็นต้องแปลง marker เอง; หากตั้ง Style tag ได้ ให้ใช้ Style tag โดยตรง",
+      "ทดสอบกรณีมี marker ปิดหายไป",
+      "กำหนด CSS ของ status-card แยกต่างหาก"
+    ],
+    "examples": [
+      {
+        "input": "<status>Location: Station\nMood: Calm</status>",
+        "expectedMatches": [
+          "<status>Location: Station\nMood: Calm</status>"
+        ],
+        "expectedCaptures": [
+          [
+            "Location: Station\nMood: Calm"
+          ]
+        ],
+        "expectedOutput": "<section class=\"status-card\">Location: Station\nMood: Calm</section>"
+      }
+    ],
+    "limitations": [
+      "Regex ไม่ใช่ parser สำหรับ HTML ซับซ้อนหรือแท็กซ้อน",
+      "อย่าใช้กับเนื้อหาที่ไม่เชื่อถือโดยไม่ผ่านการ sanitize",
+      "ถ้าบล็อกมี </status> หลายตำแหน่งจะหยุดที่ตำแหน่งแรก"
+    ],
+    "sourceRefs": [
+      "rubii-styles-regex"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "horizontal-spaces",
+    "title": "จัดช่องว่างในบรรทัด",
+    "summary": "จัดช่องว่างในบรรทัด พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "cleanup",
+    "pattern": "[ \\t]{2,}",
+    "flags": "g",
+    "replacement": " ",
+    "captureGroups": [],
+    "explanation": [
+      "[ \\t] รับช่องว่างหรือแท็บ โดยไม่กินบรรทัดใหม่",
+      "{2,} รับตั้งแต่สองตัวแล้วแทนด้วยช่องว่างเดียว"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "Hello   world\t\t!",
+        "expectedMatches": [
+          "   ",
+          "\t\t"
+        ],
+        "expectedCaptures": [
+          [],
+          []
+        ],
+        "expectedOutput": "Hello world !"
+      },
+      {
+        "input": "Hello world",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "Hello world"
+      },
+      {
+        "input": "a\nb",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "a\nb"
+      }
+    ],
+    "limitations": [
+      "ยังคงช่องว่างเดี่ยวและช่องว่างหัวท้าย",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "literal-price",
+    "title": "ค้นจุดและเครื่องหมายพิเศษ",
+    "summary": "ค้นจุดและเครื่องหมายพิเศษ พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "cleanup",
+    "pattern": "ราคา\\: 99\\.00",
+    "flags": "g",
+    "replacement": "$&",
+    "captureGroups": [],
+    "explanation": [
+      "\\. หมายถึงจุดจริง ไม่ใช่อักขระอะไรก็ได้",
+      "$& คงข้อความที่จับได้ไว้"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "ราคา: 99.00",
+        "expectedMatches": [
+          "ราคา: 99.00"
+        ],
+        "expectedCaptures": [
+          []
+        ],
+        "expectedOutput": "ราคา: 99.00"
+      },
+      {
+        "input": "ราคา: 99x00",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ราคา: 99x00"
+      }
+    ],
+    "limitations": [
+      "ตัวอย่างนี้รับราคา 99.00 เท่านั้น",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "score-range",
+    "title": "คะแนน 0–100 แบบทั้งบรรทัด",
+    "summary": "คะแนน 0–100 แบบทั้งบรรทัด พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "status",
+    "pattern": "^Affection[:：][ \\t]*(100|[1-9]?\\d)[ \\t]*$",
+    "flags": "gmi",
+    "replacement": "Affection: $1",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าที่เก็บจากวงเล็บชุดที่ 1"
+      }
+    ],
+    "explanation": [
+      "^ กับ $ และ m จำกัดแต่ละบรรทัด",
+      "100|[1-9]?\\d รับเฉพาะ 0–100 และไม่รับศูนย์นำหน้า",
+      "[ \\t]* ไม่ข้ามบรรทัด"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "Affection: 72\nAffection：100",
+        "expectedMatches": [
+          "Affection: 72",
+          "Affection：100"
+        ],
+        "expectedCaptures": [
+          [
+            "72"
+          ],
+          [
+            "100"
+          ]
+        ],
+        "expectedOutput": "Affection: 72\nAffection: 100"
+      },
+      {
+        "input": "Affection: 1000\nAffection: -1\nAffection: 01",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "Affection: 1000\nAffection: -1\nAffection: 01"
+      }
+    ],
+    "limitations": [
+      "ใช้ป้าย Affection และเลขอารบิกเท่านั้น",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "thai-digits",
+    "title": "แปลงเลขไทยเป็นเลขอารบิก: ตัวอย่างเลข ๑",
+    "summary": "แปลงเลขไทยเป็นเลขอารบิก: ตัวอย่างเลข ๑ พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "cleanup",
+    "pattern": "๑",
+    "flags": "g",
+    "replacement": "1",
+    "captureGroups": [],
+    "explanation": [
+      "จับเลขไทย ๑ ตรง ๆ",
+      "g แทนทุกตำแหน่ง"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "วันที่ ๑๑",
+        "expectedMatches": [
+          "๑",
+          "๑"
+        ],
+        "expectedCaptures": [
+          [],
+          []
+        ],
+        "expectedOutput": "วันที่ 11"
+      },
+      {
+        "input": "วันที่ 22",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "วันที่ 22"
+      }
+    ],
+    "limitations": [
+      "สูตรนี้แปลงเฉพาะ ๑; ต้องเพิ่มกฎสำหรับเลขไทยตัวอื่น",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "thai-label",
+    "title": "ดึงชื่อจากป้ายภาษาไทย",
+    "summary": "ดึงชื่อจากป้ายภาษาไทย พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "status",
+    "pattern": "ชื่อ[:：][ \\t]*([^\\r\\n]+)",
+    "flags": "g",
+    "replacement": "ชื่อ: $1",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าที่เก็บจากวงเล็บชุดที่ 1"
+      }
+    ],
+    "explanation": [
+      "ใช้คำไทยตรง ๆ ได้โดยไม่ต้องใช้ \\w",
+      "([^\\r\\n]+) เก็บค่าจนจบบรรทัด"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "ชื่อ： มะลิ\nอายุ: 20",
+        "expectedMatches": [
+          "ชื่อ： มะลิ"
+        ],
+        "expectedCaptures": [
+          [
+            "มะลิ"
+          ]
+        ],
+        "expectedOutput": "ชื่อ: มะลิ\nอายุ: 20"
+      },
+      {
+        "input": "ชื่อ\nมะลิ",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ชื่อ\nมะลิ"
+      }
+    ],
+    "limitations": [
+      "อาจรวมช่องว่างท้ายค่า; ไม่รับค่าว่าง",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "time-24h",
+    "title": "ตรวจเวลา 24 ชั่วโมง",
+    "summary": "ตรวจเวลา 24 ชั่วโมง พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "status",
+    "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$",
+    "flags": "",
+    "replacement": "$&",
+    "captureGroups": [],
+    "explanation": [
+      "(?:...) รวมตัวเลือกโดยไม่สร้างกลุ่มจับ",
+      "ชั่วโมงรับ 00–23 และนาทีรับ 00–59"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "23:59",
+        "expectedMatches": [
+          "23:59"
+        ],
+        "expectedCaptures": [
+          []
+        ],
+        "expectedOutput": "23:59"
+      },
+      {
+        "input": "00:00",
+        "expectedMatches": [
+          "00:00"
+        ],
+        "expectedCaptures": [
+          []
+        ],
+        "expectedOutput": "00:00"
+      },
+      {
+        "input": "24:00",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "24:00"
+      },
+      {
+        "input": "9:30",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "9:30"
+      },
+      {
+        "input": "12:60",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "12:60"
+      }
+    ],
+    "limitations": [
+      "รับ HH:mm เท่านั้น; ไม่รับวินาทีหรือ timezone",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "markdown-heading",
+    "title": "ดึงหัวข้อ Markdown",
+    "summary": "ดึงหัวข้อ Markdown พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "cleanup",
+    "pattern": "^#{1,6}[ \\t]+([^\\r\\n]+)",
+    "flags": "gm",
+    "replacement": "<heading>$1</heading>",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าที่เก็บจากวงเล็บชุดที่ 1"
+      }
+    ],
+    "explanation": [
+      "^ และ m ต้องอยู่ต้นบรรทัด",
+      "#{1,6} รับหัวข้อระดับ 1–6",
+      "$1 ตัดเฉพาะเครื่องหมายหัวข้อออก"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "# บทแรก\n## บทสอง",
+        "expectedMatches": [
+          "# บทแรก",
+          "## บทสอง"
+        ],
+        "expectedCaptures": [
+          [
+            "บทแรก"
+          ],
+          [
+            "บทสอง"
+          ]
+        ],
+      "expectedOutput": "<heading>บทแรก</heading>\n<heading>บทสอง</heading>"
+      },
+      {
+        "input": "ข้อความ # ไม่ใช่หัวข้อ\n#ไม่มีช่องว่าง",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความ # ไม่ใช่หัวข้อ\n#ไม่มีช่องว่าง"
+      }
+    ],
+    "limitations": [
+      "ไม่แยก code fence; ไม่ใช่ Markdown parser",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "bracket-marker",
+    "title": "ดึงข้อความใน marker หลายบรรทัด",
+    "summary": "ดึงข้อความใน marker หลายบรรทัด พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "status",
+    "pattern": "\\[scene\\]([\\s\\S]*?)\\[/scene\\]",
+    "flags": "g",
+    "replacement": "$1",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าที่เก็บจากวงเล็บชุดที่ 1"
+      }
+    ],
+    "explanation": [
+      "[\\s\\S] รับอักขระรวมบรรทัดใหม่",
+      "*? หยุดที่ marker ปิดแรก"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "[scene]ฝนตก\nเธอเปิดประตู[/scene] [scene]จบ[/scene]",
+        "expectedMatches": [
+          "[scene]ฝนตก\nเธอเปิดประตู[/scene]",
+          "[scene]จบ[/scene]"
+        ],
+        "expectedCaptures": [
+          [
+            "ฝนตก\nเธอเปิดประตู"
+          ],
+          [
+            "จบ"
+          ]
+        ],
+        "expectedOutput": "ฝนตก\nเธอเปิดประตู จบ"
+      },
+      {
+        "input": "[scene]ยังไม่ปิด",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "[scene]ยังไม่ปิด"
+      }
+    ],
+    "limitations": [
+      "ไม่รองรับ marker ซ้อน; ไม่จับก้อนที่ไม่มีป้ายปิด",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "status-choice",
+    "title": "รับสถานะจากรายการที่กำหนด",
+    "summary": "รับสถานะจากรายการที่กำหนด พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "status",
+    "pattern": "^Status:[ \\t]*(idle|busy|offline)[ \\t]*$",
+    "flags": "gmi",
+    "replacement": "Status: $1",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าที่เก็บจากวงเล็บชุดที่ 1"
+      }
+    ],
+    "explanation": [
+      "| คือทางเลือก",
+      "วงเล็บจับสถานะเป็น $1",
+      "i รับตัวพิมพ์ใหญ่เล็กแต่ไม่เปลี่ยนตัวพิมพ์ในผล"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "Status: idle\nStatus: BUSY",
+        "expectedMatches": [
+          "Status: idle",
+          "Status: BUSY"
+        ],
+        "expectedCaptures": [
+          [
+            "idle"
+          ],
+          [
+            "BUSY"
+          ]
+        ],
+        "expectedOutput": "Status: idle\nStatus: BUSY"
+      },
+      {
+        "input": "Status: unknown\nStatus: busywork",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "Status: unknown\nStatus: busywork"
+      }
+    ],
+    "limitations": [
+      "ไม่แปลภาษาและไม่ปรับค่าเป็นตัวพิมพ์เล็ก",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "beginner",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ],
+    "id": "hashtag-thai",
+    "title": "ค้นแฮชแท็กไทยและอังกฤษ",
+    "summary": "ค้นแฮชแท็กไทยและอังกฤษ พร้อมตัวอย่างที่ตรงและไม่ตรง",
+    "category": "dialogue",
+    "pattern": "#[\\p{L}\\p{M}\\p{N}_]+",
+    "flags": "gu",
+    "replacement": "$&",
+    "captureGroups": [],
+    "explanation": [
+      "\\p{L} รับตัวอักษรหลายภาษา",
+      "\\p{M} รับเครื่องหมายประกอบ เช่น สระและวรรณยุกต์",
+      "u เปิดการอ่าน Unicode property escapes"
+    ],
+    "instructions": [
+      "เลือกตัวอย่างแล้วนำไป Sandbox",
+      "อ่าน match กลุ่มจับ และผลแทนที่ตามตัวอย่าง",
+      "ลองข้อความที่ไม่ควรจับก่อนคัดลอกไปใช้จริง"
+    ],
+    "examples": [
+      {
+        "input": "#สวัสดี #hello_2",
+        "expectedMatches": [
+          "#สวัสดี",
+          "#hello_2"
+        ],
+        "expectedCaptures": [
+          [],
+          []
+        ],
+        "expectedOutput": "#สวัสดี #hello_2"
+      },
+      {
+        "input": "ไม่มีแท็ก # !",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ไม่มีแท็ก # !"
+      }
+    ],
+    "limitations": [
+      "ไม่รับช่องว่างหรือขีดกลางในแท็ก; ไม่ตรวจขอบคำก่อน #",
+      "ยืนยันพฤติกรรม JavaScript RegExp; ทดลอง Preview ของแอปปลายทางอีกครั้ง"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-message-in",
+    "title": "ข้อความรับเข้า",
+    "summary": "กฎแปลง marker เป็น HTML สำหรับสูตร Cookbook",
+    "pattern": "^\\[รับ ([0-2]\\d:[0-5]\\d)\\][ \\t]*([^\\r\\n]{1,300})$",
+    "flags": "gm",
+    "replacement": "<div class=\"cb-msg cb-in\"><span>$2</span><small>$1</small></div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "เวลา"
+      },
+      {
+        "index": 2,
+        "meaning": "ข้อความ"
+      }
+    ],
+    "explanation": [
+      "$1: เวลา",
+      "$2: ข้อความ"
+    ],
+    "instructions": [
+      "เลือก Character messages และ Raw content",
+      "วาง Expression และ Replacement ตามสูตร",
+      "ติดตั้ง Global CSS ของสูตรด้วย"
+    ],
+    "examples": [
+      {
+        "input": "[รับ 19:42] ถึงสถานีแล้วนะ",
+        "expectedMatches": [
+          "[รับ 19:42] ถึงสถานีแล้วนะ"
+        ],
+        "expectedCaptures": [
+          [
+            "19:42",
+            "ถึงสถานีแล้วนะ"
+          ]
+        ],
+        "expectedOutput": "<div class=\"cb-msg cb-in\"><span>ถึงสถานีแล้วนะ</span><small>19:42</small></div>"
+      },
+      {
+        "input": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker"
+      }
+    ],
+    "limitations": [
+      "marker ต้องอยู่หนึ่งบรรทัดและไม่มีวงเล็บเหลี่ยมซ้อน",
+      "เนื้อหาที่จับได้ควรเป็นข้อความธรรมดา ไม่มี HTML",
+      "ตรวจเวลาและตัวเลขเชิงความหมายแยกต่างหาก"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-message-out",
+    "title": "ข้อความส่งออก",
+    "summary": "กฎแปลง marker เป็น HTML สำหรับสูตร Cookbook",
+    "pattern": "^\\[ส่ง ([0-2]\\d:[0-5]\\d)\\][ \\t]*([^\\r\\n]{1,300})$",
+    "flags": "gm",
+    "replacement": "<div class=\"cb-msg cb-out\"><span>$2</span><small>$1 · ส่งแล้ว</small></div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "เวลา"
+      },
+      {
+        "index": 2,
+        "meaning": "ข้อความ"
+      }
+    ],
+    "explanation": [
+      "$1: เวลา",
+      "$2: ข้อความ"
+    ],
+    "instructions": [
+      "เลือก Character messages และ Raw content",
+      "วาง Expression และ Replacement ตามสูตร",
+      "ติดตั้ง Global CSS ของสูตรด้วย"
+    ],
+    "examples": [
+      {
+        "input": "[ส่ง 19:43] รอหน้าร้านกาแฟได้เลย",
+        "expectedMatches": [
+          "[ส่ง 19:43] รอหน้าร้านกาแฟได้เลย"
+        ],
+        "expectedCaptures": [
+          [
+            "19:43",
+            "รอหน้าร้านกาแฟได้เลย"
+          ]
+        ],
+        "expectedOutput": "<div class=\"cb-msg cb-out\"><span>รอหน้าร้านกาแฟได้เลย</span><small>19:43 · ส่งแล้ว</small></div>"
+      },
+      {
+        "input": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker"
+      }
+    ],
+    "limitations": [
+      "marker ต้องอยู่หนึ่งบรรทัดและไม่มีวงเล็บเหลี่ยมซ้อน",
+      "เนื้อหาที่จับได้ควรเป็นข้อความธรรมดา ไม่มี HTML",
+      "ตรวจเวลาและตัวเลขเชิงความหมายแยกต่างหาก"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-live-comment",
+    "title": "ความคิดเห็นในไลฟ์",
+    "summary": "กฎแปลง marker เป็น HTML สำหรับสูตร Cookbook",
+    "pattern": "^\\[คนดู\\][ \\t]*([^:：\\r\\n]{1,24})[:：][ \\t]*([^\\r\\n]{1,200})$",
+    "flags": "gm",
+    "replacement": "<div class=\"cb-livechat\"><b>$1</b> $2</div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ชื่อผู้ชม"
+      },
+      {
+        "index": 2,
+        "meaning": "ความคิดเห็น"
+      }
+    ],
+    "explanation": [
+      "$1: ชื่อผู้ชม",
+      "$2: ความคิดเห็น"
+    ],
+    "instructions": [
+      "เลือก Character messages และ Raw content",
+      "วาง Expression และ Replacement ตามสูตร",
+      "ติดตั้ง Global CSS ของสูตรด้วย"
+    ],
+    "examples": [
+      {
+        "input": "[คนดู] พลอย: เพลงนี้เพราะมาก",
+        "expectedMatches": [
+          "[คนดู] พลอย: เพลงนี้เพราะมาก"
+        ],
+        "expectedCaptures": [
+          [
+            "พลอย",
+            "เพลงนี้เพราะมาก"
+          ]
+        ],
+        "expectedOutput": "<div class=\"cb-livechat\"><b>พลอย</b> เพลงนี้เพราะมาก</div>"
+      },
+      {
+        "input": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker"
+      }
+    ],
+    "limitations": [
+      "marker ต้องอยู่หนึ่งบรรทัดและไม่มีวงเล็บเหลี่ยมซ้อน",
+      "เนื้อหาที่จับได้ควรเป็นข้อความธรรมดา ไม่มี HTML",
+      "ตรวจเวลาและตัวเลขเชิงความหมายแยกต่างหาก"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-live-gift",
+    "title": "ของขวัญในไลฟ์",
+    "summary": "กฎแปลง marker เป็น HTML สำหรับสูตร Cookbook",
+    "pattern": "^\\[ของขวัญ\\][ \\t]*([^\\r\\n]{1,100})$",
+    "flags": "gm",
+    "replacement": "<div class=\"cb-gift\">🎁 $1</div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "รายละเอียดของขวัญ"
+      }
+    ],
+    "explanation": [
+      "$1: รายละเอียดของขวัญ"
+    ],
+    "instructions": [
+      "เลือก Character messages และ Raw content",
+      "วาง Expression และ Replacement ตามสูตร",
+      "ติดตั้ง Global CSS ของสูตรด้วย"
+    ],
+    "examples": [
+      {
+        "input": "[ของขวัญ] ต้นส่งดาว 5 ดวง",
+        "expectedMatches": [
+          "[ของขวัญ] ต้นส่งดาว 5 ดวง"
+        ],
+        "expectedCaptures": [
+          [
+            "ต้นส่งดาว 5 ดวง"
+          ]
+        ],
+        "expectedOutput": "<div class=\"cb-gift\">🎁 ต้นส่งดาว 5 ดวง</div>"
+      },
+      {
+        "input": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker"
+      }
+    ],
+    "limitations": [
+      "marker ต้องอยู่หนึ่งบรรทัดและไม่มีวงเล็บเหลี่ยมซ้อน",
+      "เนื้อหาที่จับได้ควรเป็นข้อความธรรมดา ไม่มี HTML",
+      "ตรวจเวลาและตัวเลขเชิงความหมายแยกต่างหาก"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-notification",
+    "title": "การแจ้งเตือนสามช่อง",
+    "summary": "กฎแปลง marker เป็น HTML สำหรับสูตร Cookbook",
+    "pattern": "^\\[แจ้งเตือน ([^|\\]\\r\\n]{1,24})\\|([^|\\]\\r\\n]{1,40})\\|([^\\]\\r\\n]{1,200})\\]$",
+    "flags": "gm",
+    "replacement": "<article class=\"cb-notice\"><small>$1</small><h3>$2</h3><p>$3</p></article>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "แอป"
+      },
+      {
+        "index": 2,
+        "meaning": "หัวข้อหรือผู้ส่ง"
+      },
+      {
+        "index": 3,
+        "meaning": "ข้อความ"
+      }
+    ],
+    "explanation": [
+      "$1: แอป",
+      "$2: หัวข้อหรือผู้ส่ง",
+      "$3: ข้อความ"
+    ],
+    "instructions": [
+      "เลือก Character messages และ Raw content",
+      "วาง Expression และ Replacement ตามสูตร",
+      "ติดตั้ง Global CSS ของสูตรด้วย"
+    ],
+    "examples": [
+      {
+        "input": "[แจ้งเตือน แชต|มะลิ|ฉันถึงแล้ว เปิดประตูหน่อย]",
+        "expectedMatches": [
+          "[แจ้งเตือน แชต|มะลิ|ฉันถึงแล้ว เปิดประตูหน่อย]"
+        ],
+        "expectedCaptures": [
+          [
+            "แชต",
+            "มะลิ",
+            "ฉันถึงแล้ว เปิดประตูหน่อย"
+          ]
+        ],
+        "expectedOutput": "<article class=\"cb-notice\"><small>แชต</small><h3>มะลิ</h3><p>ฉันถึงแล้ว เปิดประตูหน่อย</p></article>"
+      },
+      {
+        "input": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker"
+      }
+    ],
+    "limitations": [
+      "marker ต้องอยู่หนึ่งบรรทัดและไม่มีวงเล็บเหลี่ยมซ้อน",
+      "เนื้อหาที่จับได้ควรเป็นข้อความธรรมดา ไม่มี HTML",
+      "ตรวจเวลาและตัวเลขเชิงความหมายแยกต่างหาก"
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "level": "intermediate",
+    "category": "dialogue",
+    "sourceRefs": [
+      "rubii-styles-cookbook",
+      "rubii-styles-regex"
+    ],
+    "id": "cookbook-task-item",
+    "title": "รายการภารกิจ",
+    "summary": "กฎแปลง marker เป็น HTML สำหรับสูตร Cookbook",
+    "pattern": "^\\[(ทำแล้ว|รอทำ)\\][ \\t]*([^\\r\\n]{1,200})$",
+    "flags": "gm",
+    "replacement": "<div class=\"cb-task\" data-state=\"$1\"><b>$1</b> $2</div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "สถานะ"
+      },
+      {
+        "index": 2,
+        "meaning": "รายละเอียด"
+      }
+    ],
+    "explanation": [
+      "$1: สถานะ",
+      "$2: รายละเอียด"
+    ],
+    "instructions": [
+      "เลือก Character messages และ Raw content",
+      "วาง Expression และ Replacement ตามสูตร",
+      "ติดตั้ง Global CSS ของสูตรด้วย"
+    ],
+    "examples": [
+      {
+        "input": "[ทำแล้ว] พบผู้ดูแลสถานี\n[รอทำ] ตามหาเครื่องส่งสัญญาณ",
+        "expectedMatches": [
+          "[ทำแล้ว] พบผู้ดูแลสถานี",
+          "[รอทำ] ตามหาเครื่องส่งสัญญาณ"
+        ],
+        "expectedCaptures": [
+          [
+            "ทำแล้ว",
+            "พบผู้ดูแลสถานี"
+          ],
+          [
+            "รอทำ",
+            "ตามหาเครื่องส่งสัญญาณ"
+          ]
+        ],
+        "expectedOutput": "<div class=\"cb-task\" data-state=\"ทำแล้ว\"><b>ทำแล้ว</b> พบผู้ดูแลสถานี</div>\n<div class=\"cb-task\" data-state=\"รอทำ\"><b>รอทำ</b> ตามหาเครื่องส่งสัญญาณ</div>"
+      },
+      {
+        "input": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "ข้อความเล่าเรื่องทั่วไป ไม่ใช่ marker"
+      }
+    ],
+    "limitations": [
+      "marker ต้องอยู่หนึ่งบรรทัดและไม่มีวงเล็บเหลี่ยมซ้อน",
+      "เนื้อหาที่จับได้ควรเป็นข้อความธรรมดา ไม่มี HTML",
+      "ตรวจเวลาและตัวเลขเชิงความหมายแยกต่างหาก"
+    ]
+  },
+  {
+    "id": "model-neutral-status-fields",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "รูปแบบกลาง: ป้ายสถานะจากหลายโมเดล",
+    "summary": "รับรายการสถานะที่รู้จัก ทั้งไทย/อังกฤษ ตัวหนา Markdown bullet และโคลอนสองแบบ",
+    "category": "status",
+    "level": "intermediate",
+    "pattern": "^[ \\t]*(?:[-*•][ \\t]*)?\\*{0,2}(Location|Place|สถานที่|ตำแหน่ง|Time|เวลา|Mood|อารมณ์|Affection|ความสัมพันธ์|Status|สถานะ)\\*{0,2}[ \\t]*[:：][ \\t]*(?:\\*{2}[ \\t]*)?(.+?)[ \\t]*\\*{0,2}$",
+    "flags": "gmi",
+    "replacement": "<div class=\"model-status-row\"><b>$1</b><span>$2</span></div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ชื่อป้ายตามที่โมเดลเขียน; รองรับเฉพาะรายการที่กำหนด"
+      },
+      {
+        "index": 2,
+        "meaning": "ค่าของป้ายในบรรทัดเดียว"
+      }
+    ],
+    "explanation": [
+      "^ และ $ จำกัดให้ตรวจทีละบรรทัดด้วย m",
+      "ยอมให้มี bullet และ ** รอบชื่อป้าย",
+      "รายชื่อในวงเล็บคือคำที่อนุญาต ไม่จับประโยคอิสระ",
+      "[:：] รับโคลอนปกติและ full-width พร้อมตัด Markdown ** รอบป้ายและค่า",
+      "[ \\t] ใช้ช่องว่างแนวนอน ไม่กินบรรทัดใหม่"
+    ],
+    "instructions": [
+      "ใช้กับ Raw content ของข้อความตัวละคร",
+      "ขอให้ทุกโมเดลส่งป้ายหนึ่งรายการต่อบรรทัด; อนุญาตเฉพาะ key ที่ระบุ",
+      "เพิ่มคำพ้องในกลุ่ม key หากต้องรองรับชื่ออื่น แล้วลองตัวอย่างไม่ตรง"
+    ],
+    "examples": [
+      {
+        "input": "Location: Station 4\n**Time:** 19:42\n- สถานที่： ชานชาลา 2\n**Mood**: Calm\nRandom thought: I should leave.",
+        "expectedMatches": [
+          "Location: Station 4",
+          "**Time:** 19:42",
+          "- สถานที่： ชานชาลา 2",
+          "**Mood**: Calm"
+        ],
+        "expectedCaptures": [
+          [
+            "Location",
+            "Station 4"
+          ],
+          [
+            "Time",
+            "19:42"
+          ],
+          [
+            "สถานที่",
+            "ชานชาลา 2"
+          ],
+          [
+            "Mood",
+            "Calm"
+          ]
+        ],
+        "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>Station 4</span></div>\n<div class=\"model-status-row\"><b>Time</b><span>19:42</span></div>\n<div class=\"model-status-row\"><b>สถานที่</b><span>ชานชาลา 2</span></div>\n<div class=\"model-status-row\"><b>Mood</b><span>Calm</span></div>\nRandom thought: I should leave."
+      },
+      {
+        "input": "Narration without a status label.\nLocation is not a field\nMoodboard: blue",
+        "expectedMatches": [],
+        "expectedCaptures": [],
+        "expectedOutput": "Narration without a status label.\nLocation is not a field\nMoodboard: blue"
+      }
+    ],
+    "limitations": [
+      "รองรับเฉพาะ key ในวงเล็บและหนึ่งค่าต่อบรรทัด; ไม่เข้าใจสำนวนอิสระ",
+      "ค่าเป็นข้อความจนจบบรรทัด ไม่แยกความหมายหรือยืนยันความถูกต้อง",
+      "ถ้าควบคุมคำสั่งโมเดลได้ ให้ใช้ marker/label ชุดเดียวกันทุกโมเดล จะเสถียรกว่าการเพิ่มคำพ้องไม่รู้จบ"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
+  },
+  {
+    "id": "ooc-line",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับบรรทัด OOC",
+    "summary": "จับข้อความนอกบทสนทนาที่ขึ้นต้นด้วย OOC, [OOC] หรือ (OOC)",
+    "category": "dialogue",
+    "level": "beginner",
+    "pattern": "^[ \\t]*(?:\\[OOC\\]|\\(OOC\\)|OOC)[ \\t]*[:：]?[ \\t]*(.+)$",
+    "flags": "gim",
+    "replacement": "<ooc>$1</ooc>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "ข้อความ OOC โดยไม่รวม marker" }],
+    "explanation": [
+      "^ และ $ กับ m จำกัดการจับไว้หนึ่งบรรทัด",
+      "(?:...) รับ marker ได้สามแบบ: [OOC], (OOC) หรือ OOC",
+      "[:：]? รับโคลอนได้ถ้ามี ส่วน [ \\t]* รับช่องว่างโดยไม่ข้ามบรรทัด",
+      "(.+) เก็บเนื้อหา OOC ไว้ใน $1"
+    ],
+    "instructions": [
+      "ใช้กับข้อความที่ตั้งใจขึ้นต้นบรรทัดด้วย OOC marker",
+      "เปลี่ยน <ooc> ใน Replacement ให้ตรงกับชื่อ Style tag ที่ตั้งไว้",
+      "ทดลองบรรทัดที่ไม่มี marker เพื่อยืนยันว่าไม่ถูกจับ"
+    ],
+    "examples": [
+      {
+        "input": "[OOC] พักฉากตรงนี้ได้เลย\nOOC: เดี๋ยวมาต่อพรุ่งนี้\nบทสนทนาปกติ",
+        "expectedMatches": ["[OOC] พักฉากตรงนี้ได้เลย", "OOC: เดี๋ยวมาต่อพรุ่งนี้"],
+        "expectedCaptures": [["พักฉากตรงนี้ได้เลย"], ["เดี๋ยวมาต่อพรุ่งนี้"]],
+        "expectedOutput": "<ooc>พักฉากตรงนี้ได้เลย</ooc>\n<ooc>เดี๋ยวมาต่อพรุ่งนี้</ooc>\nบทสนทนาปกติ"
+      }
+    ],
+    "limitations": [
+      "จับเฉพาะ OOC แบบหนึ่งบรรทัด ไม่จับบล็อกหลายบรรทัด",
+      "ใช้ raw content จึงควรสงวน marker นี้ไว้ให้ข้อความ OOC จริง"
+    ],
+    "sourceRefs": ["mdn-js-regex-guide", "rubii-styles-regex"]
+  },
+  {
+    "id": "markdown-bullet",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับรายการ Markdown",
+    "summary": "จับรายการที่ขึ้นต้นด้วย -, * หรือ • ทีละบรรทัด",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "^[ \\t]*[-*•][ \\t]+([^\\r\\n]+)$",
+    "flags": "gm",
+    "replacement": "<listitem>$1</listitem>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "ข้อความของรายการ" }],
+    "explanation": ["^ และ m เริ่มตรวจที่ต้นบรรทัด", "[-*•] รับสัญลักษณ์รายการสามแบบ", "กลุ่มจับเก็บข้อความรายการโดยไม่รวม marker"],
+    "instructions": ["ใช้กับรายการทีละบรรทัด", "ค่าเริ่มต้นจะสร้าง <listitem> ให้ใช้กับ Style tag ชื่อ listitem"],
+    "examples": [{ "input": "- แวะซื้อกาแฟ\n• ส่งข้อความถึงเพื่อน\nประโยคธรรมดา", "expectedMatches": ["- แวะซื้อกาแฟ", "• ส่งข้อความถึงเพื่อน"], "expectedCaptures": [["แวะซื้อกาแฟ"], ["ส่งข้อความถึงเพื่อน"]], "expectedOutput": "<listitem>แวะซื้อกาแฟ</listitem>\n<listitem>ส่งข้อความถึงเพื่อน</listitem>\nประโยคธรรมดา" }],
+    "limitations": ["ไม่อ่าน nesting หรือ code fence; ใช้ Markdown parser สำหรับเอกสารซับซ้อน"],
+    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+  },
+  {
+    "id": "markdown-bold",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับ Markdown ตัวหนา",
+    "summary": "จับข้อความที่ครอบด้วยเครื่องหมาย ** สองข้าง",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "\\*\\*([^*\\r\\n]{1,160})\\*\\*",
+    "flags": "g",
+    "replacement": "<strong class=\"premium-strong\">$1</strong>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "ข้อความตัวหนา" }],
+    "explanation": ["\\* จับเครื่องหมายดอกจันตามตัวอักษร", "กลุ่มจับเก็บข้อความด้านใน โดยจำกัดไว้บรรทัดเดียว", "$1 นำเนื้อหาไปใช้ต่อใน Replacement"],
+    "instructions": ["ใน Replacement ใช้ <strong>$1</strong> เพื่อเปลี่ยนเป็น HTML", "ทดสอบกับ Markdown ที่มีเครื่องหมาย * ซ้อนก่อนนำไปใช้จริง"],
+    "examples": [{ "input": "นี่คือ **จุดสำคัญ** ของฉาก", "expectedMatches": ["**จุดสำคัญ**"], "expectedCaptures": [["จุดสำคัญ"]], "expectedOutput": "นี่คือ <strong class=\"premium-strong\">จุดสำคัญ</strong> ของฉาก" }],
+    "limitations": ["รองรับเฉพาะ **ตัวหนา** แบบบรรทัดเดียว ไม่ได้ parse Markdown ทั้งภาษา"],
+    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+  },
+  {
+    "id": "markdown-italic",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับ Markdown ตัวเอียง",
+    "summary": "จับข้อความที่ครอบด้วยเครื่องหมาย * เดี่ยวสองข้าง",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "\\*([^*\\r\\n]{1,160})\\*",
+    "flags": "g",
+    "replacement": "<em class=\"premium-em\">$1</em>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "ข้อความตัวเอียง" }],
+    "explanation": ["\\* จับเครื่องหมายดอกจันตามตัวอักษร", "([^*\\r\\n]{1,160}) เก็บข้อความด้านในโดยไม่ข้ามบรรทัด", "$1 คือข้อความที่นำไปจัดรูปแบบต่อได้"],
+    "instructions": ["ใน Replacement ใช้ <em>$1</em> เพื่อเปลี่ยนเป็น HTML", "วางกฎนี้หลัง Pattern ตัวหนาเพื่อไม่ให้แย่งเครื่องหมาย **"],
+    "examples": [{ "input": "เสียง *แผ่วเบา* ลอยมา", "expectedMatches": ["*แผ่วเบา*"], "expectedCaptures": [["แผ่วเบา"]], "expectedOutput": "เสียง <em class=\"premium-em\">แผ่วเบา</em> ลอยมา" }],
+    "limitations": ["รองรับ Markdown ตัวเอียงแบบ *...* เท่านั้น ไม่รองรับ underscore หรือซ้อนรูปแบบ"],
+    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+  },
+  {
+    "id": "markdown-inline-code",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับ Markdown โค้ดในบรรทัด",
+    "summary": "จับข้อความที่ครอบด้วย backtick หนึ่งคู่",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "`([^`\\r\\n]{1,160})`",
+    "flags": "g",
+    "replacement": "<code class=\"premium-code\">$1</code>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [{ "index": 1, "meaning": "ข้อความหรือโค้ดภายใน backtick" }],
+    "explanation": ["` จับ backtick ตามตัวอักษร", "กลุ่มจับเก็บข้อความด้านในโดยไม่ข้ามบรรทัด", "$1 นำข้อความไปใช้ใน Replacement"],
+    "instructions": ["ใช้กับโค้ดสั้น เช่น `Platform 04`", "ใน Replacement ใช้ <code>$1</code> เพื่อให้ CSS จัดรูปแบบได้"],
+    "examples": [{ "input": "ชานชาลา `Platform 04` ปิดแล้ว", "expectedMatches": ["`Platform 04`"], "expectedCaptures": [["Platform 04"]], "expectedOutput": "ชานชาลา <code class=\"premium-code\">Platform 04</code> ปิดแล้ว" }],
+    "limitations": ["รองรับ inline code บรรทัดเดียว ไม่รองรับ code fence หลายบรรทัด"],
+    "sourceRefs": ["mdn-js-regex-guide", "mdn-js-regex-reference"]
+  },
+  {
+    "id": "key-value-generic",
+    "schemaVersion": 1,
+    "revision": 4,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "Universal Key-Value Anchor",
+    "summary": "สูตรกลางจับบรรทัด ชื่อ: ค่า รองรับ : และ ： รับชื่อป้ายได้ถึง 500 ตัวโดยไม่ข้ามบรรทัด",
+    "category": "status",
+    "level": "beginner",
+    "pattern": "^([^:：\\r\\n]{1,500})[:：][ \\t]*([^\\r\\n]+)$",
+    "flags": "gm",
+    "replacement": "<div class=\"model-status-row\"><b>$1</b><span>$2</span></div>",
+    "applyTo": "character",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ชื่อป้าย/คีย์อิสระก่อนเครื่องหมายโคลอน สูงสุด 500 ตัวอักษร"
+      },
+      {
+        "index": 2,
+        "meaning": "ค่าหลังโคลอนจนจบบรรทัด"
+      }
+    ],
+    "explanation": [
+      "^ และ $ ร่วมกับ m ยึดต้นและท้ายของแต่ละบรรทัด",
+      "([^:：\\r\\n]{1,500}) เก็บชื่อป้าย/คีย์อะไรก็ได้ สูงสุด 500 ตัวอักษรโดยไม่จำกัดชื่อล่วงหน้า",
+      "[:：] รับทั้งโคลอนปกติและโคลอนเต็มความกว้าง",
+      "[ \\t]* รองรับช่องว่างหรือ Tab หลังโคลอนโดยไม่ข้ามบรรทัด; $1 เป็นชื่อช่อง และ $2 เป็นค่า",
+      "flags gm ค้นหาต่อจนครบทุกบรรทัดที่ตรงกัน"
+    ],
+    "instructions": [
+      "ใช้เมื่อข้อความมีรูปแบบหนึ่งป้ายต่อหนึ่งบรรทัด เช่น Location: Station 4 หรือ สถานะ：พร้อมออกเดินทาง",
+      "ใช้นิพจน์แบบเต็ม /^([^:：\\r\\n]{1,500})[:：][ \\t]*([^\\r\\n]+)$/gm ใน Rubii ได้ทันที",
+      "ใช้ $1 เป็นชื่อช่อง และ $2 เป็นค่าใน HTML Replacement"
+    ],
+    "examples": [
+      {
+        "input": "Location: Station 4\nTime: 19:42\nอารมณ์：สงบ\nบรรทัดนี้ไม่มีตัวคั่น",
+        "expectedMatches": [
+          "Location: Station 4",
+          "Time: 19:42",
+          "อารมณ์：สงบ"
+        ],
+        "expectedCaptures": [
+          ["Location", "Station 4"],
+          ["Time", "19:42"],
+          ["อารมณ์", "สงบ"]
+        ],
+        "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>Station 4</span></div>\n<div class=\"model-status-row\"><b>Time</b><span>19:42</span></div>\n<div class=\"model-status-row\"><b>อารมณ์</b><span>สงบ</span></div>\nบรรทัดนี้ไม่มีตัวคั่น"
+      },
+      {
+        "input": "Location: สถานีรถไฟลอยฟ้า\nMood: ร่าเริงสดใส\nAffection: 98\nสถานะ：พร้อมออกเดินทาง",
+        "expectedMatches": [
+          "Location: สถานีรถไฟลอยฟ้า",
+          "Mood: ร่าเริงสดใส",
+          "Affection: 98",
+          "สถานะ：พร้อมออกเดินทาง"
+        ],
+        "expectedCaptures": [
+          ["Location", "สถานีรถไฟลอยฟ้า"],
+          ["Mood", "ร่าเริงสดใส"],
+          ["Affection", "98"],
+          ["สถานะ", "พร้อมออกเดินทาง"]
+        ],
+        "expectedOutput": "<div class=\"model-status-row\"><b>Location</b><span>สถานีรถไฟลอยฟ้า</span></div>\n<div class=\"model-status-row\"><b>Mood</b><span>ร่าเริงสดใส</span></div>\n<div class=\"model-status-row\"><b>Affection</b><span>98</span></div>\n<div class=\"model-status-row\"><b>สถานะ</b><span>พร้อมออกเดินทาง</span></div>"
+      }
+    ],
+    "limitations": [
+      "สูตรนี้จับชื่อป้ายได้กว้างถึง 500 ตัว จึงอาจจับประโยคบรรยายที่มีโคลอนด้วย เช่น Note: ...",
+      "ค่าต้องอยู่บรรทัดเดียวกับชื่อป้าย; บรรทัดที่ไม่มีค่าหลังโคลอนจะไม่ match และไม่กินบรรทัดถัดไป"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "rubii-styles-regex"
+    ]
+  },
+  {
+    "id": "markdown-blockquote",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับ Markdown Blockquote",
+    "summary": "จับบรรทัดที่ขึ้นต้นด้วย > แล้วแปลงเป็นกล่องอ้างอิง",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "^[ \\t]*>[ \\t]?(.*)$",
+    "flags": "gm",
+    "replacement": "<blockquote class=\"markdown-blockquote\">$1</blockquote>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความในบรรทัด Blockquote"
+      }
+    ],
+    "explanation": [
+      "^ และ m เริ่มจับที่ต้นบรรทัด",
+      ">[ \\t]? รับเครื่องหมาย > และช่องว่างหลังเครื่องหมายแบบเลือกได้",
+      "(.*) เก็บข้อความเฉพาะบรรทัดนั้น"
+    ],
+    "instructions": [
+      "ใช้กับบรรทัดอ้างอิงที่เริ่มด้วย >",
+      "แต่ละบรรทัดจะกลายเป็น Blockquote แยกกัน; ไม่รวมย่อหน้าหลายบรรทัดให้เป็นกล่องเดียว"
+    ],
+    "examples": [
+      {
+        "input": "> รถเที่ยวสุดท้ายกำลังมา\n> รอข้างในได้เลย",
+        "expectedMatches": [
+          "> รถเที่ยวสุดท้ายกำลังมา",
+          "> รอข้างในได้เลย"
+        ],
+        "expectedCaptures": [
+          [
+            "รถเที่ยวสุดท้ายกำลังมา"
+          ],
+          [
+            "รอข้างในได้เลย"
+          ]
+        ],
+        "expectedOutput": "<blockquote class=\"markdown-blockquote\">รถเที่ยวสุดท้ายกำลังมา</blockquote>\n<blockquote class=\"markdown-blockquote\">รอข้างในได้เลย</blockquote>"
+      }
+    ],
+    "limitations": [
+      "รองรับทีละบรรทัด ไม่รวมย่อหน้าต่อเนื่องหรือ blockquote ซ้อน",
+      "ไม่ข้าม fenced code block; จัดลำดับกฎและทดสอบข้อความจริง"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-horizontal-rule",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับเส้นคั่น Markdown",
+    "summary": "จับ --- หรือ *** หรือ ___ ที่อยู่เดี่ยวทั้งบรรทัด",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "^[ \\t]*(?:-{3,}|_{3,}|\\*{3,})[ \\t]*$",
+    "flags": "gm",
+    "replacement": "<hr class=\"markdown-hr\">",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [],
+    "explanation": [
+      "^ และ $ บังคับให้เป็นทั้งบรรทัด",
+      "(?:...) รับขีด, underscore หรือดอกจันอย่างน้อยสามตัว",
+      "[ \\t]* อนุญาตช่องว่างก่อนหรือหลัง"
+    ],
+    "instructions": [
+      "ใช้เป็นเส้นแบ่งหัวข้อ",
+      "แถวคั่นของตารางที่มี | จะไม่ตรงกับสูตรนี้"
+    ],
+    "examples": [
+      {
+        "input": "ก่อนหน้า\n---\nถัดไป",
+        "expectedMatches": [
+          "---"
+        ],
+        "expectedCaptures": [],
+        "expectedOutput": "ก่อนหน้า\n<hr class=\"markdown-hr\">\nถัดไป"
+      }
+    ],
+    "limitations": [
+      "Regex อาจตีความบรรทัด --- เป็นเส้นคั่น แม้บริบท Markdown จะทำให้เป็น Setext heading ได้"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-fenced-code",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับโค้ด Markdown แบบ Fenced",
+    "summary": "จับโค้ดหลายบรรทัดระหว่าง triple backticks แล้วแสดงเป็น code block",
+    "category": "cleanup",
+    "level": "intermediate",
+    "pattern": "^```[^`\\r\\n]*\\r?\\n([\\s\\S]*?)^```[ \\t]*$",
+    "flags": "gm",
+    "replacement": "<pre class=\"markdown-code-block\"><code>$1</code></pre>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "เนื้อหาโค้ดระหว่างบรรทัดเปิดและปิด"
+      }
+    ],
+    "explanation": [
+      "^ และ m มองหา fence ที่ต้นบรรทัด",
+      "``` จับ fence เปิดและปิดสาม backticks",
+      "[^`\\r\\n]* รับชื่อภาษา เช่น js บนบรรทัดเปิด",
+      "([\\s\\S]*?) เก็บเนื้อหาหลายบรรทัดแบบสั้นที่สุดจนถึง fence ปิด"
+    ],
+    "instructions": [
+      "เขียน fence เปิดและปิดบรรทัดละชุดด้วย ```",
+      "วางกฎนี้ก่อนกฎ Markdown ที่อาจจับข้อความด้านใน และอย่าใช้กับ fence ซ้อน"
+    ],
+    "examples": [
+      {
+        "input": "```js\nconst ready = true;\n```",
+        "expectedMatches": [
+          "```js\nconst ready = true;\n```"
+        ],
+        "expectedCaptures": [
+          [
+            "const ready = true;\n"
+          ]
+        ],
+        "expectedOutput": "<pre class=\"markdown-code-block\"><code>const ready = true;\n</code></pre>"
+      }
+    ],
+    "limitations": [
+      "รองรับ fence แบบ backtick สามตัวและไม่รองรับ fence ซ้อนหรือยาวสี่ตัวขึ้นไป",
+      "Regex ไม่สามารถป้องกันกฎอื่นทั้งหมดจากการจับ syntax ภายใน code block; ใช้ Markdown parser เมื่อมี nesting หรือโค้ดซับซ้อน"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-table-header",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "เริ่มตาราง Markdown 2 คอลัมน์",
+    "summary": "จับแถวหัวตารางที่ตามด้วยแถวขีดคั่น แล้วเปิดโครง HTML table",
+    "category": "cleanup",
+    "level": "intermediate",
+    "pattern": "^[ \\t]*\\|?[ \\t]*([^|\\r\\n]+?)[ \\t]*\\|[ \\t]*([^|\\r\\n]+?)[ \\t]*\\|?[ \\t]*(?=\\r?\\n[ \\t]*\\|?[ \\t]*:?-{3,}:?[ \\t]*\\|[ \\t]*:?-{3,}:?[ \\t]*\\|?[ \\t]*(?:\\r?\\n|$))",
+    "flags": "gm",
+    "replacement": "<table class=\"markdown-table\"><thead><tr><th>$1</th><th>$2</th></tr></thead><tbody>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "หัวคอลัมน์ที่หนึ่ง"
+      },
+      {
+        "index": 2,
+        "meaning": "หัวคอลัมน์ที่สอง"
+      }
+    ],
+    "explanation": [
+      "สองกลุ่มจับแยกข้อความซ้ายและขวาของ |",
+      "(?=...) ตรวจแถวขีดคั่นถัดไปโดยไม่กินแถวนั้น",
+      "Replacement เปิด table, thead และ tbody"
+    ],
+    "instructions": [
+      "ใส่แถวหัวข้อสองช่อง ตามด้วยแถวคั่น เช่น | สถานี | สถานะ | และ | --- | --- |",
+      "ใช้คู่กับสูตรลบ separator, แปลงแถวข้อมูล และปิด table ตามลำดับ"
+    ],
+    "examples": [
+      {
+        "input": "| สถานี | สถานะ |\n| --- | --- |",
+        "expectedMatches": [
+          "| สถานี | สถานะ |"
+        ],
+        "expectedCaptures": [
+          [
+            "สถานี",
+            "สถานะ"
+          ]
+        ],
+        "expectedOutput": "<table class=\"markdown-table\"><thead><tr><th>สถานี</th><th>สถานะ</th></tr></thead><tbody>\n| --- | --- |"
+      }
+    ],
+    "limitations": [
+      "รองรับตารางง่าย ๆ สองคอลัมน์เท่านั้น",
+      "ไม่รองรับ pipe ที่ escape, cell หลายบรรทัด หรือ table ที่ซ้อนกัน"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-table-separator",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "ซ่อนแถวคั่นตาราง Markdown",
+    "summary": "ลบแถว --- ที่แบ่งหัวตารางออกจากข้อมูล และรับ colon สำหรับชิดซ้ายหรือขวา",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "^[ \\t]*\\|?[ \\t]*:?-{3,}:?[ \\t]*\\|[ \\t]*:?-{3,}:?[ \\t]*\\|?[ \\t]*$",
+    "flags": "gm",
+    "replacement": "",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [],
+    "explanation": [
+      "^ และ $ จับเฉพาะแถวคั่นทั้งบรรทัด",
+      ":? รองรับเครื่องหมายกำหนดแนวชิดซ้ายหรือขวา",
+      "{3,} ต้องมีขีดอย่างน้อยสามตัวในแต่ละช่อง"
+    ],
+    "instructions": [
+      "วางหลังสูตรเริ่ม table header",
+      "ตัวอย่างนี้รองรับสองคอลัมน์เพื่อจับคู่กับ Markdown Table Cookbook"
+    ],
+    "examples": [
+      {
+        "input": "|:---|---:|",
+        "expectedMatches": [
+          "|:---|---:|"
+        ],
+        "expectedCaptures": [],
+        "expectedOutput": ""
+      }
+    ],
+    "limitations": [
+      "สูตรนี้รับแถวคั่นสองคอลัมน์ ไม่ครอบคลุมตารางจำนวนคอลัมน์อื่น"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-table-row",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "แปลงแถวข้อมูลตาราง Markdown",
+    "summary": "แยกข้อมูลสองช่องจากแถวที่คั่นด้วย | แล้วสร้าง tr/td",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "^[ \\t]*\\|?[ \\t]*([^|\\r\\n]+?)[ \\t]*\\|[ \\t]*([^|\\r\\n]+?)[ \\t]*\\|?[ \\t]*$",
+    "flags": "gm",
+    "replacement": "<tr><td>$1</td><td>$2</td></tr>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ค่าในคอลัมน์แรก"
+      },
+      {
+        "index": 2,
+        "meaning": "ค่าในคอลัมน์ที่สอง"
+      }
+    ],
+    "explanation": [
+      "สองกลุ่มจับค่าที่คั่นด้วย |",
+      "วงเล็บเหลี่ยมยอมรับ pipe รอบนอกแบบเลือกได้",
+      "Replacement นำสองกลุ่มไปใส่ใน td"
+    ],
+    "instructions": [
+      "ใช้หลังสูตรหัวตารางและลบแถวคั่น",
+      "ใส่แถวข้อมูลหนึ่งรายการต่อหนึ่งบรรทัด"
+    ],
+    "examples": [
+      {
+        "input": "| ชานชาลา 04 | เปิด |",
+        "expectedMatches": [
+          "| ชานชาลา 04 | เปิด |"
+        ],
+        "expectedCaptures": [
+          [
+            "ชานชาลา 04",
+            "เปิด"
+          ]
+        ],
+        "expectedOutput": "<tr><td>ชานชาลา 04</td><td>เปิด</td></tr>"
+      }
+    ],
+    "limitations": [
+      "แปลงเฉพาะสองคอลัมน์และไม่รองรับ pipe ที่ escape"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-table-close",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "ปิดตาราง Markdown หลังแถวสุดท้าย",
+    "summary": "เติม </tbody></table> เมื่อแถวสุดท้ายไม่ตามด้วยแถวตารางอีก",
+    "category": "cleanup",
+    "level": "intermediate",
+    "pattern": "</td></tr>(?=\\r?\\n(?!<tr>))|</td></tr>$",
+    "flags": "g",
+    "replacement": "</td></tr></tbody></table>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [],
+    "explanation": [
+      "</td></tr> จับท้ายแถวข้อมูล",
+      "(?=\\r?\\n(?!<tr>)) จับแถวสุดท้ายก่อนบรรทัดที่ไม่ใช่ tr",
+      "|</td></tr>$ รองรับแถวสุดท้ายเมื่อจบ input"
+    ],
+    "instructions": [
+      "วางเป็นกฎหลังแปลงทุกแถวข้อมูล",
+      "ตรวจให้แน่ใจว่าแถวถัดไปที่ยังเป็นข้อมูลเริ่มด้วย <tr>"
+    ],
+    "examples": [
+      {
+        "input": "<tr><td>04</td><td>เปิด</td></tr>\n## หมายเหตุ",
+        "expectedMatches": [
+          "</td></tr>"
+        ],
+        "expectedCaptures": [],
+        "expectedOutput": "<tr><td>04</td><td>เปิด</td></tr></tbody></table>\n## หมายเหตุ"
+      }
+    ],
+    "limitations": [
+      "ออกแบบให้ใช้หลัง markdown-table-row และใช้กับ table สองคอลัมน์ในตัวอย่างนี้"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-details-summary",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "แต่ง HTML Details / Summary",
+    "summary": "เพิ่ม class ให้ส่วนพับได้ที่เขียนด้วย <details><summary>",
+    "category": "cleanup",
+    "level": "intermediate",
+    "pattern": "<details\\b[^>]*>\\s*<summary\\b[^>]*>([^<\\r\\n]{1,120})</summary>",
+    "flags": "gi",
+    "replacement": "<details class=\"markdown-details\"><summary class=\"markdown-summary\">$1</summary>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความหัวข้อ Summary"
+      }
+    ],
+    "explanation": [
+      "<details> และ <summary> จับแท็ก HTML ที่พิมพ์ไว้",
+      "\\s* ยอมรับช่องว่างหรือบรรทัดใหม่ก่อน summary",
+      "กลุ่มจับเก็บหัวข้อแบบข้อความธรรมดาไม่เกิน 120 ตัวอักษร"
+    ],
+    "instructions": [
+      "เขียนเนื้อหาที่พับได้ด้วย <details><summary>หัวข้อ</summary>เนื้อหา</details>",
+      "ใส่ CSS ให้ .markdown-details และ .markdown-summary ในช่อง CSS ส่วนกลาง"
+    ],
+    "examples": [
+      {
+        "input": "<details><summary>บันทึกฉาก</summary>รายละเอียดซ่อนอยู่</details>",
+        "expectedMatches": [
+          "<details><summary>บันทึกฉาก</summary>"
+        ],
+        "expectedCaptures": [
+          [
+            "บันทึกฉาก"
+          ]
+        ],
+        "expectedOutput": "<details class=\"markdown-details\"><summary class=\"markdown-summary\">บันทึกฉาก</summary>รายละเอียดซ่อนอยู่</details>"
+      }
+    ],
+    "limitations": [
+      "รองรับ summary เป็นข้อความธรรมดา ไม่รองรับแท็กซ้อนในหัวข้อ",
+      "HTML ในข้อความต้องผ่านการ sanitize ก่อนแสดงผล"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-ordered-list",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับรายการ Markdown แบบลำดับเลข",
+    "summary": "จับรายการที่เริ่มด้วย 1. หรือ 1) ทีละบรรทัด",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "^[ \\t]*\\d+[.)][ \\t]+([^\\r\\n]+)$",
+    "flags": "gm",
+    "replacement": "<listitem>$1</listitem>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความของรายการ"
+      }
+    ],
+    "explanation": [
+      "\\d+ รับเลขลำดับตั้งแต่หนึ่งหลัก",
+      "[.)] รับจุดหรือวงเล็บปิดหลังเลข",
+      "$1 เก็บข้อความรายการไปใช้กับ listitem tag"
+    ],
+    "instructions": [
+      "ใช้กับรายการแบบ 1. ข้อความ หรือ 1) ข้อความ",
+      "สร้าง Style tag listitem เพื่อจัด HTML และ CSS กลาง"
+    ],
+    "examples": [
+      {
+        "input": "1. ตรวจป้ายสถานี\n2) เช็กเวลา",
+        "expectedMatches": [
+          "1. ตรวจป้ายสถานี",
+          "2) เช็กเวลา"
+        ],
+        "expectedCaptures": [
+          [
+            "ตรวจป้ายสถานี"
+          ],
+          [
+            "เช็กเวลา"
+          ]
+        ],
+        "expectedOutput": "<listitem>ตรวจป้ายสถานี</listitem>\n<listitem>เช็กเวลา</listitem>"
+      }
+    ],
+    "limitations": [
+      "ไม่จัดการเลขลำดับซ้อนหรือเริ่มเลขต่อจากรายการก่อนหน้า"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
+  },
+  {
+    "id": "markdown-strikethrough",
+    "schemaVersion": 1,
+    "revision": 1,
+    "locale": "th-TH",
+    "status": "published",
+    "title": "จับ Markdown ขีดฆ่า",
+    "summary": "จับข้อความที่ครอบด้วย ~~ สองข้างแล้วแสดงเป็น del",
+    "category": "cleanup",
+    "level": "beginner",
+    "pattern": "~~([^~\\r\\n]{1,160})~~",
+    "flags": "g",
+    "replacement": "<del class=\"markdown-del\">$1</del>",
+    "applyTo": "all",
+    "matchStage": "raw",
+    "captureGroups": [
+      {
+        "index": 1,
+        "meaning": "ข้อความที่ขีดฆ่า"
+      }
+    ],
+    "explanation": [
+      "~~ จับตัวหนอนสองตัวตามตัวอักษร",
+      "กลุ่มจับรับเนื้อหาบรรทัดเดียวไม่เกิน 160 ตัวอักษร",
+      "$1 นำเนื้อหาไปใส่ใน del tag"
+    ],
+    "instructions": [
+      "ใช้กับข้อความที่ครอบด้วย ~~ เช่น ~~ยกเลิก~~",
+      "เพิ่ม CSS text-decoration เพื่อกำหนดหน้าตา"
+    ],
+    "examples": [
+      {
+        "input": "เวลาเดิม ~~18:00~~ เปลี่ยนเป็น 19:00",
+        "expectedMatches": [
+          "~~18:00~~"
+        ],
+        "expectedCaptures": [
+          [
+            "18:00"
+          ]
+        ],
+        "expectedOutput": "เวลาเดิม <del class=\"markdown-del\">18:00</del> เปลี่ยนเป็น 19:00"
+      }
+    ],
+    "limitations": [
+      "ไม่รองรับ strike ซ้อนหรือขึ้นบรรทัดใหม่"
+    ],
+    "sourceRefs": [
+      "mdn-js-regex-guide",
+      "mdn-js-regex-reference"
+    ]
   }
 ]

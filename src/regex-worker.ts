@@ -92,10 +92,16 @@ try {
 export function runRegexTest(payload: RegexTestInput, timeoutMs = 250): Promise<RegexTestResult> {
   return new Promise((resolve, reject) => {
     const worker = new Worker(workerSource, { eval: true, workerData: payload, execArgv: [] });
-    const timer = setTimeout(() => {
+    const terminateOnTimeout = () => {
       void worker.terminate();
       reject(Object.assign(new Error("Regex execution timed out"), { code: "REGEX_TIMEOUT" }));
-    }, timeoutMs);
+    };
+    // Allow bounded startup time without charging it to regex execution.
+    let timer = setTimeout(terminateOnTimeout, 5000);
+    worker.once("online", () => {
+      clearTimeout(timer);
+      timer = setTimeout(terminateOnTimeout, timeoutMs);
+    });
 
     worker.once("message", (message: { ok: boolean; result?: RegexTestResult; error?: string; errorType?: string }) => {
       clearTimeout(timer);

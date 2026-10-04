@@ -1,5 +1,18 @@
 # ตำรา Regex: อ่าน เขียน ทดสอบ และนำไปใช้
 
+## ห้องทดลอง Cookbook: จากข้อความเป็นหน้าตาจริง
+
+ในแท็บคลัง กดสูตรครบชุดเพื่อเปิดหน้าต่างทดลองแบบ Pop-up ภายในแก้ HTML template, CSS กลาง และ Regex ได้โดยไม่ออกจากคลัง ช่อง Regex ใช้รูปแบบเดียวกับ Rubii คือ `/pattern/flags` ในช่องเดียว กด **ดูผลครบขั้น** เพื่อดูภาพ พร้อมเปิดส่วนผลหลัง Raw Regex / หลังขยาย Style tags เพื่อไล่ปัญหา ลำดับประมวลผลคือ Raw Regex → แทน Style tag → แสดงผล CSS ตัวเลือกเป้าหมาย Preview สลับ wrapper ระหว่าง `.rubii-message-character` กับ `.rubii-message-user`; สูตรที่รองรับทั้งสองฝั่งต้องระบุ selector ให้ครบ
+
+สูตร **Premium Scene Profile** เป็นตัวอย่างครบชุดที่รวม Universal Key–Value Anchor, บทพูดในอัญประกาศ, การกระทำในวงเล็บ, OOC และ Markdown พื้นฐาน อีกสูตร **Markdown Cookbook · บล็อกและข้อความ** สาธิต blockquote `>`, เส้นคั่น `---`, fenced code, inline code, ตาราง, `<details><summary>`, รายการ และขีดฆ่า โดยรวม CSS ไว้ในช่องส่วนกลางเดียว
+
+- ถ้า marker ยังอยู่: ตรวจ Pattern, flags และรูปแบบข้อความตั้งต้น
+- ถ้า Tag ยังอยู่: ตรวจชื่อเปิด–ปิดให้ตรง Style tag
+- ถ้า HTML ถูกแต่สีไม่เปลี่ยน: ตรวจชื่อ class ใน template/replacement กับ selector ใน Global CSS
+- `$1` ใน Regex Replacement คือกลุ่มจับแรก ส่วน `$1` ใน Style template คือเนื้อหาภายใน Tag
+
+สูตรใหม่เป็นตัวอย่างที่เขียนขึ้นเองตามโครงสร้างของ [Rubii Cookbook](https://rubii.ai/blog/styles-cookbook) ไม่ได้คัดลอกทั้งคลัง ห้องทดลองจำลองเฉพาะ Raw Regex → Style tags → CSS ของข้อความ Character และแยก Preview ใน iframe โดยกรอง HTML; Regex ชุด Markdown ครอบคลุมรูปแบบพื้นฐานและตารางสองคอลัมน์ ไม่ใช่ Markdown parser จึงไม่รองรับ syntax ซ้อน, ตารางซับซ้อน หรือ code fence ซ้อน ต้องตรวจ Preview ปลายทางก่อนติดตั้งจริง
+
 ตำรานี้เป็นเนื้อหาอ้างอิงสำหรับคนที่อยากเข้าใจ Regex เพิ่ม ผู้ใช้ Client ที่ต้องการสร้างหน้าตา Rubii เริ่มจาก [Prompt Converter](../SkillPrompt.MD) ได้เลย ซึ่งพาเดินทีละขั้นโดยไม่บังคับให้เรียน Regex ก่อน ส่วนนักพัฒนาสามารถใช้บทเรียนเดียวกันผ่าน API ได้ เนื้อหาและตัวอย่าง Rubii สรุปใหม่จากเอกสารที่อ้างท้ายบท ไม่ใช่ข้อกำหนด API อย่างเป็นทางการของ Rubii
 
 ถ้าต้องการให้ AI ช่วยคิด Regex ตามโจทย์ ให้คัดลอก [SkillPrompt.MD](../SkillPrompt.MD) ไปวางใน GPT, Gemini หรือ Claude แล้วกรอกตัวอย่างของคุณ
@@ -100,6 +113,20 @@ API รุ่นนี้เป็นบริการทดลองในเ�
 ## แหล่งอ้างอิง
 
 - [Rubii: Styles & regex](https://rubii.ai/blog/styles-and-regex) — stage การทำงาน, Style tags, flags และ replacement ตามเอกสาร Rubii
-- [Rubii: Styles cookbook](https://rubii.ai/blog/styles-cookbook) — แนวทางอ่านสูตรและติดตั้ง; เนื้อหาสูตรเฉพาะจะพัฒนาในระยะถัดไป
+- [Rubii: Styles cookbook](https://rubii.ai/blog/styles-cookbook) — แนวทางอ่านสูตรและติดตั้ง
 - [MDN: Regular expressions guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) — พื้นฐาน JavaScript RegExp
 - [MDN: Regular expressions reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions) — รายละเอียด syntax ของ JavaScript
+
+## เส้นทาง Regex 101 แบบลงมือทำ
+
+เปิดแท็บบทเรียนแล้วเริ่ม 8 บท 101 ตามลำดับ: เริ่มจากศูนย์ → escape → ขอบเขต → ภาษาไทย → หลายบรรทัด → ทางเลือก → debug → ข้อจำกัด แต่ละบทมีปุ่มนำตัวอย่างเข้า Sandbox พร้อมผลที่คาดและกรณีไม่ควรจับ
+
+คลังหลักจัดเป็น 5 กลุ่ม: Key–Value, บทพูด, การกระทำ, OOC และ Markdown; สูตร Markdown ย่อยและกรณีเฉพาะพับเก็บไว้ด้านในหรือส่วนสูตรเพิ่มเติม เลือกสูตรจากกลุ่มหลักเพื่อเติม Sandbox โดยอัตโนมัติ
+
+ข้อแก้ความเข้าใจ: `\d` รับ 0–9; `\s` รวมบรรทัดใหม่ได้; `\w` ไม่ครอบคลุมตัวอักษรไทยทั้งหมด; `{1,3}` จำกัดจำนวนที่จับแต่ไม่ได้ป้องกันการจับบางส่วนของเลขยาว ต้องเพิ่มขอบเขตตามโจทย์
+
+## รูปแบบกลางสำหรับหลายโมเดล
+
+Universal Key-Value Anchor เป็นตัวเลือกแรกใน Sandbox สำหรับบรรทัด `ชื่อ: ค่า`: `/^([^:：\r\n]{1,500})[:：][ \t]*([^\r\n]+)$/gm` กลุ่ม `$1` คือชื่อป้าย กลุ่ม `$2` คือค่า และ `[ \t]*` รับช่องว่าง/Tab หลังโคลอนโดยไม่ข้ามบรรทัด ใช้นิพจน์เต็มในช่องเดียวตามรูปแบบ Rubii สูตรนี้กว้างและอาจจับประโยคบรรยายที่มีโคลอนด้วย เช่น `Random thought: ...`; กำหนดรูปแบบ key เดียวใน Moment เมื่ออยากลดการจับเกิน
+
+ถ้าต้องการผลที่เข้มงวดกว่า ให้กำหนดสัญญาข้อความเดียวใน Moment setting เช่น key เดิม หนึ่ง field ต่อบรรทัด และตัวอย่างชัดเจน แล้วใช้ Regex เดียวกับทุกรุ่น สูตร `model-neutral-status-fields` ยอมรับ alias ไทย/อังกฤษ, bullet, ตัวหนา Markdown และ `:`/`：` ที่ระบุไว้ แต่จะไม่เดาประโยคบรรยาย เพิ่ม alias เฉพาะเมื่อมีตัวอย่างจริง และทดสอบบรรทัดคล้ายกันที่ไม่ควรถูกจับด้วย
