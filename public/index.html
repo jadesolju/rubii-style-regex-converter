@@ -233,24 +233,15 @@
     <!-- Main Navigation Tabs -->
     <div class="flex items-center justify-between gap-3 mb-6 overflow-x-auto pb-1">
       <div class="flex items-center gap-2 bg-slate-900/40 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
-        <button id="tab-recipes" onclick="switchTab('recipes')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20">
-          <!-- SVG Icon: Wand / Sparkle -->
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-          </svg>
-          <span>คลังสูตรสำเร็จรูป</span>
-          <span id="badge-recipes-count" class="px-2 py-0.5 rounded-full text-[11px] bg-white/20 text-white font-mono">0</span>
-        </button>
-
-        <button id="tab-lessons" onclick="switchTab('lessons')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
+        <button id="tab-lessons" onclick="switchTab('lessons')" class="px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20">
           <!-- SVG Icon: Book -->
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
             <path d="M6 6h10"/>
             <path d="M6 10h10"/>
           </svg>
-          <span>ตำราคู่มือเรียนรู้</span>
-          <span id="badge-lessons-count" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-800 text-slate-300 font-mono">0</span>
+          <span>ตำราคู่มือเรียนรู้ (Handbook)</span>
+          <span id="badge-lessons-count" class="px-2 py-0.5 rounded-full text-[11px] bg-white/20 text-white font-mono">17</span>
         </button>
 
         <button id="tab-sandbox" onclick="switchTab('sandbox')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
@@ -260,7 +251,16 @@
             <path d="M8.5 2h7"/>
             <path d="M7 16h10"/>
           </svg>
-          <span>ห้องทดลองสด</span>
+          <span>ห้องทดลองสด (Sandbox)</span>
+        </button>
+
+        <button id="tab-recipes" onclick="switchTab('recipes')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
+          <!-- SVG Icon: Wand / Sparkle -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+          <span>คลังสูตรสำเร็จรูป</span>
+          <span id="badge-recipes-count" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-800 text-slate-300 font-mono">0</span>
         </button>
       </div>
 
@@ -272,12 +272,136 @@
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
         </div>
-        <input type="text" id="global-search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาสูตร หรือบทเรียน..." class="glass-input w-full pl-9 pr-4 py-2 rounded-2xl text-xs text-slate-100 placeholder-slate-500 outline-none">
+        <input type="text" id="global-search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาบทเรียน หรือสูตรสำเร็จรูป..." class="glass-input w-full pl-9 pr-4 py-2 rounded-2xl text-xs text-slate-100 placeholder-slate-500 outline-none">
       </div>
     </div>
 
-    <!-- TAB 1: RECIPES & PATTERNS VIEW -->
-    <main id="view-recipes" class="space-y-6">
+    <!-- TAB 1: LESSONS & HANDBOOK VIEW (PRIMARY LANDING VIEW) -->
+    <main id="view-lessons" class="space-y-6">
+      
+      <!-- 1. COURSE OVERVIEW HUB (หน้ารวมสารบัญการ์ดบทเรียนทั้งหมด) -->
+      <div id="lessons-overview-view" class="space-y-6">
+        <!-- Hero Header Card -->
+        <section class="glass-card rounded-3xl p-6 sm:p-8 space-y-4 border-cyan-500/30 bg-gradient-to-br from-slate-950/80 via-slate-900/60 to-indigo-950/40 shadow-xl shadow-cyan-950/20">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2.5">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-cyan-500/25 to-indigo-500/25 text-cyan-300 border border-cyan-400/40 shadow-sm">
+                  หลักสูตรแม่บท · 17 บทเรียนฉบับสมบูรณ์
+                </span>
+                <span class="px-3 py-1 rounded-full text-xs bg-white/5 text-slate-300 border border-white/10">
+                  เรียนรู้ตั้งแต่ 0 สู่การตกแต่งแชต AI จริง
+                </span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-100 to-fuchsia-300 leading-tight">
+                ตำราคู่มือเรียนรู้ Regex (Regex Handbook)
+              </h2>
+              <p class="text-sm sm:text-base text-slate-300 font-light max-w-3xl leading-relaxed">
+                เลือกบทเรียนด้านล่างเพื่อเริ่มเรียนรู้ทีละสเต็ป พร้อมสรุปใจความสำคัญ TL;DR, กรอบวิเคราะห์ 5W1H (ใคร ทำอะไร ที่ไหน เมื่อไหร่ ทำไม อย่างไร), ตัวอย่างจริง, และปุ่มเปิดทดลองใน Sandbox
+              </p>
+            </div>
+
+            <!-- Mascot Companion Mini Card -->
+            <div class="glass-card p-4 rounded-2xl border-cyan-400/30 bg-slate-950/60 flex items-center gap-3.5 shrink-0 max-w-xs">
+              <div class="w-12 h-12 rounded-xl overflow-hidden ring-1 ring-cyan-400/40 shrink-0">
+                <img src="/mascot.jpg" alt="Mascot" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <div class="text-xs font-bold text-cyan-300">Jelly Companion</div>
+                <div class="text-xs text-slate-300 font-light mt-0.5">"เลือกบทที่ 1 เพื่อเริ่มปูพื้นฐาน Regex จากศูนย์ได้เลยนะ!"</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage Filter Ribbon -->
+          <div class="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2" id="lessons-stage-filter-container">
+              <span class="text-xs text-slate-400 font-medium mr-1 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                ขั้นการเรียนรู้:
+              </span>
+              <button onclick="filterLessonStage('all')" data-stage="all" class="lesson-stage-pill active px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                ทั้งหมด (17 บท)
+              </button>
+              <button onclick="filterLessonStage('เริ่มจากศูนย์')" data-stage="เริ่มจากศูนย์" class="lesson-stage-pill px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200">
+                1. เริ่มจากศูนย์ (4 บท)
+              </button>
+              <button onclick="filterLessonStage('รู้จักชิ้นส่วน')" data-stage="รู้จักชิ้นส่วน" class="lesson-stage-pill px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200">
+                2. รู้จักชิ้นส่วน (7 บท)
+              </button>
+              <button onclick="filterLessonStage('ลองใช้และแก้ปัญหา')" data-stage="ลองใช้และแก้ปัญหา" class="lesson-stage-pill px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200">
+                3. ลองใช้และแก้ปัญหา (3 บท)
+              </button>
+              <button onclick="filterLessonStage('นำไปใช้กับแชต')" data-stage="นำไปใช้กับแชต" class="lesson-stage-pill px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-slate-200">
+                4. นำไปใช้กับแชต (3 บท)
+              </button>
+            </div>
+            <span id="lessons-overview-count" class="text-xs text-slate-400 font-mono">17 บทเรียน</span>
+          </div>
+        </section>
+
+        <!-- Chapter Cards Grid -->
+        <div id="lessons-cards-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- Injected dynamically by renderLessonsOverview() -->
+          <div class="col-span-full py-12 text-center text-slate-400">กำลังโหลดบทเรียนทั้งหมด...</div>
+        </div>
+      </div>
+
+      <!-- 2. DEDICATED FULL-PAGE LESSON READER VIEW (หน้าอ่านเนื้อหาบทเรียนเดี่ยวแบบเจาะลึก) -->
+      <div id="lessons-reader-view" class="hidden space-y-6">
+        <!-- Top Reader Control Bar -->
+        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 border-cyan-500/30">
+          <div class="flex items-center gap-3">
+            <button onclick="backToLessonsOverview()" class="px-4 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all border border-cyan-400/30 active:scale-95 shadow-sm">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+              <span>← กลับไปหน้ารวมสารบัญ</span>
+            </button>
+            <div id="reader-breadcrumbs" class="text-xs text-slate-300 hidden md:flex items-center gap-2">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Quick Switcher Dropdown & Nav Buttons -->
+          <div class="flex items-center gap-2">
+            <button onclick="navigateLesson(-1)" id="btn-prev-lesson-top" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10" title="บทก่อนหน้า">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <select id="reader-chapter-select" onchange="showLessonDetail(this.value)" class="glass-input px-3 py-2 rounded-xl text-xs text-slate-200 outline-none max-w-[200px] sm:max-w-[260px] truncate">
+              <!-- Injected dynamically -->
+            </select>
+            <button onclick="navigateLesson(1)" id="btn-next-lesson-top" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10" title="บทถัดไป">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <section id="lesson-content-card" class="glass-card rounded-3xl p-6 sm:p-10 space-y-7 border-white/10 shadow-2xl shadow-black/40">
+          <!-- Injected dynamically by showLessonDetail() -->
+        </section>
+
+        <!-- Bottom Reader Footer Bar -->
+        <div class="glass-card rounded-2xl p-4 flex items-center justify-between gap-3">
+          <button onclick="navigateLesson(-1)" id="btn-prev-lesson-bottom" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-2 transition-all border border-white/10">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>บทก่อนหน้า</span>
+          </button>
+          <button onclick="backToLessonsOverview()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
+            สารบัญทั้งหมด (17 บท)
+          </button>
+          <button onclick="navigateLesson(1)" id="btn-next-lesson-bottom" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-md shadow-cyan-500/20">
+            <span>บทถัดไป</span>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 2: RECIPES & PATTERNS VIEW -->
+    <main id="view-recipes" class="hidden space-y-6">
       
       <!-- CORE CATEGORIES HUB (แกนหลักหมวดหมู่เริ่มต้นหน้าแรก) -->
       <section id="category-hub" class="glass-card rounded-3xl p-6 sm:p-7 space-y-5 border-cyan-500/20">
@@ -364,154 +488,6 @@
       <div id="recipes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <!-- Dynamic Cards Injected Here -->
         <div class="col-span-full py-12 text-center text-slate-400">กำลังโหลดสูตรสำเร็จรูป...</div>
-      </div>
-    </main>
-
-    <!-- TAB 2: LESSONS & HANDBOOK VIEW -->
-    <main id="view-lessons" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Left: Chapter Directory -->
-        <aside class="lg:col-span-4 space-y-3">
-          <div class="glass-card rounded-2xl p-4">
-            <h2 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
-              <!-- SVG Icon: Layers -->
-              <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-                <polyline points="2 17 12 22 22 17"/>
-                <polyline points="2 12 12 17 22 12"/>
-              </svg>
-              สารบัญบทเรียน
-            </h2>
-            <p class="text-[11px] text-slate-500 -mt-1 mb-3">เรียงจากพื้นฐาน → อ่าน Pattern → ทดลองและนำไปใช้</p>
-            <div id="lessons-nav-list" class="space-y-2">
-              <!-- Injected dynamically -->
-            </div>
-          </div>
-
-          <!-- Cute Anime Mascot Companion Card -->
-          <div class="glass-card rounded-2xl p-4 border-cyan-500/20 bg-slate-950/40 relative overflow-hidden group">
-            <div class="flex items-center gap-3">
-              <div class="relative w-14 h-14 rounded-2xl overflow-hidden shrink-0 ring-2 ring-cyan-400/40 shadow-md shadow-cyan-500/20 bg-slate-900">
-                <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full group-hover:scale-105 transition-transform duration-300">
-                  <defs>
-                    <radialGradient id="sdJellyGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
-                      <stop offset="60%" stop-color="#6366f1" stop-opacity="0.2"/>
-                      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9"/>
-                    </radialGradient>
-                    <linearGradient id="sdHoodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#a5f3fc" stop-opacity="0.9"/>
-                      <stop offset="40%" stop-color="#38bdf8" stop-opacity="0.75"/>
-                      <stop offset="85%" stop-color="#818cf8" stop-opacity="0.85"/>
-                      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.7"/>
-                    </linearGradient>
-                    <linearGradient id="sdHairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#7dd3fc"/>
-                      <stop offset="50%" stop-color="#38bdf8"/>
-                      <stop offset="100%" stop-color="#2563eb"/>
-                    </linearGradient>
-                    <linearGradient id="sdFaceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#fff8f0"/>
-                      <stop offset="100%" stop-color="#ffe4d6"/>
-                    </linearGradient>
-                    <linearGradient id="sdEyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#0369a1"/>
-                      <stop offset="45%" stop-color="#0284c7"/>
-                      <stop offset="100%" stop-color="#38bdf8"/>
-                    </linearGradient>
-                    <radialGradient id="sdBlushGrad" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#fb7185" stop-opacity="0.6"/>
-                      <stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
-                    </radialGradient>
-                    <linearGradient id="sdTentacleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
-                      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.6"/>
-                      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.1"/>
-                    </linearGradient>
-                    <filter id="sdGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="2" result="blur"/>
-                      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                    </filter>
-                  </defs>
-                  <rect width="120" height="120" rx="26" fill="url(#sdJellyGlow)"/>
-                  <circle cx="20" cy="28" r="4" fill="#a5f3fc" opacity="0.4"/>
-                  <circle cx="23" cy="26" r="1.5" fill="#ffffff" opacity="0.8"/>
-                  <circle cx="102" cy="34" r="5" fill="#818cf8" opacity="0.4"/>
-                  <circle cx="100" cy="32" r="2" fill="#ffffff" opacity="0.7"/>
-                  <circle cx="18" cy="88" r="3" fill="#38bdf8" opacity="0.4"/>
-                  <circle cx="104" cy="85" r="3.5" fill="#c084fc" opacity="0.4"/>
-                  <path d="M 38 88 Q 30 102 36 116 Q 42 108 40 92" fill="url(#sdTentacleGrad)"/>
-                  <path d="M 48 90 Q 42 105 49 118 Q 55 106 52 92" fill="url(#sdTentacleGrad)"/>
-                  <path d="M 60 92 Q 60 108 62 120 Q 66 108 64 92" fill="url(#sdTentacleGrad)"/>
-                  <path d="M 72 90 Q 78 105 71 118 Q 65 106 68 92" fill="url(#sdTentacleGrad)"/>
-                  <path d="M 82 88 Q 90 102 84 116 Q 78 108 80 92" fill="url(#sdTentacleGrad)"/>
-                  <path d="M 24 54 C 24 24 40 12 60 12 C 80 12 96 24 96 54 C 96 66 88 72 80 70 C 72 68 66 73 60 73 C 54 73 48 68 40 70 C 32 72 24 66 24 54 Z" fill="url(#sdHoodGrad)" opacity="0.65"/>
-                  <circle cx="38" cy="30" r="2" fill="#ffffff" opacity="0.8"/>
-                  <circle cx="60" cy="22" r="2.5" fill="#ffffff" opacity="0.9"/>
-                  <circle cx="82" cy="30" r="2" fill="#ffffff" opacity="0.8"/>
-                  <circle cx="48" cy="20" r="1.5" fill="#a5f3fc" opacity="0.7"/>
-                  <circle cx="72" cy="20" r="1.5" fill="#a5f3fc" opacity="0.7"/>
-                  <path d="M 32 50 C 30 75 34 88 42 90 C 46 91 50 86 50 86 C 50 86 54 91 60 91 C 66 91 70 86 70 86 C 70 86 74 91 78 90 C 86 88 90 75 88 50 Z" fill="url(#sdHairGrad)"/>
-                  <path d="M 44 84 L 76 84 L 80 104 L 40 104 Z" fill="#0f172a"/>
-                  <path d="M 44 84 L 60 96 L 76 84" fill="#38bdf8"/>
-                  <path d="M 52 86 L 60 94 L 68 86" fill="#ffffff"/>
-                  <polygon points="60,89 61.5,93 65.5,93 62.5,95.5 63.5,99.5 60,97 56.5,99.5 57.5,95.5 54.5,93 58.5,93" fill="#facc15"/>
-                  <path d="M 34 46 C 34 32 45 28 60 28 C 75 28 86 32 86 46 C 86 64 78 78 60 78 C 42 78 34 64 34 46 Z" fill="url(#sdFaceGrad)"/>
-                  <circle cx="41" cy="58" r="7" fill="url(#sdBlushGrad)"/>
-                  <circle cx="79" cy="58" r="7" fill="url(#sdBlushGrad)"/>
-                  <path d="M 38 58 L 44 56" stroke="#fb7185" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
-                  <path d="M 76 56 L 82 58" stroke="#fb7185" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
-                  <ellipse cx="46" cy="51" rx="6.5" ry="8.5" fill="#0f172a"/>
-                  <ellipse cx="46" cy="52" rx="5.5" ry="7.5" fill="url(#sdEyeGrad)"/>
-                  <circle cx="44" cy="47.5" r="3" fill="#ffffff"/>
-                  <circle cx="48" cy="55.5" r="1.5" fill="#ffffff"/>
-                  <polygon points="46,51 46.8,53 49,53 47.2,54.2 47.8,56.2 46,55 44.2,56.2 44.8,54.2 43,53 45.2,53" fill="#ffffff" opacity="0.75"/>
-                  <ellipse cx="74" cy="51" rx="6.5" ry="8.5" fill="#0f172a"/>
-                  <ellipse cx="74" cy="52" rx="5.5" ry="7.5" fill="url(#sdEyeGrad)"/>
-                  <circle cx="72" cy="47.5" r="3" fill="#ffffff"/>
-                  <circle cx="76" cy="55.5" r="1.5" fill="#ffffff"/>
-                  <polygon points="74,51 74.8,53 77,53 75.2,54.2 75.8,56.2 74,55 72.2,56.2 72.8,54.2 71,53 73.2,53" fill="#ffffff" opacity="0.75"/>
-                  <path d="M 38 43 Q 46 39 53 43" stroke="#0369a1" stroke-width="2" stroke-linecap="round" fill="none"/>
-                  <path d="M 39 42 L 36 39" stroke="#0369a1" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M 67 43 Q 74 39 82 43" stroke="#0369a1" stroke-width="2" stroke-linecap="round" fill="none"/>
-                  <path d="M 81 42 L 84 39" stroke="#0369a1" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M 40 37 Q 46 34 51 37" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-                  <path d="M 69 37 Q 74 34 80 37" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-                  <circle cx="60" cy="57" r="0.8" fill="#fda4af"/>
-                  <path d="M 55 62 Q 60 67 65 62" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round" fill="#fda4af"/>
-                  <path d="M 32 44 C 33 26 44 20 60 20 C 76 20 87 26 88 44 C 83 38 78 40 73 45 C 69 36 63 36 60 46 C 57 36 51 36 47 45 C 42 40 37 38 32 44 Z" fill="url(#sdHairGrad)"/>
-                  <path d="M 40 27 Q 60 22 80 27" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" opacity="0.65" fill="none"/>
-                  <path d="M 60 20 Q 64 6 54 8 Q 58 14 60 20" fill="#38bdf8"/>
-                  <g filter="url(#sdGlow)">
-                    <polygon points="98,42 100,47 105,47 101,50 102.5,55 98,52 93.5,55 95,50 91,47 96,47" fill="#38bdf8"/>
-                    <polygon points="98,44 99.2,47 102,47 99.8,49 100.6,52 98,50 95.4,52 96.2,49 94,47 96.8,47" fill="#ffffff"/>
-                  </g>
-                  <g filter="url(#sdGlow)">
-                    <polygon points="18,52 19,55 22,55 19.5,57 20.5,60 18,58 15.5,60 16.5,57 14,55 17,55" fill="#a855f7"/>
-                    <polygon points="18,53 18.5,55 20.5,55 19,56.5 19.5,58.5 18,57 16.5,58.5 17,56.5 15.5,55 17.5,55" fill="#ffffff"/>
-                  </g>
-                </svg>
-              </div>
-              <div class="space-y-1">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-xs font-bold text-cyan-300">Jelly Guide</span>
-                  <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-cyan-500/20 text-cyan-200 border border-cyan-500/30">AI Companion</span>
-                </div>
-                <p id="jelly-companion-speech" class="text-[11px] text-slate-300 font-light leading-relaxed">
-                  "ฝึกจับ Pattern ไปทีละขั้นนะ! หากติดขัดสามารถกดปุ่มทดลองใน Sandbox ได้ทันที"
-                </p>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Right: Lesson Content Reader -->
-        <section class="lg:col-span-8">
-          <div id="lesson-content-card" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
-            <div class="text-center py-12 text-slate-400">เลือกบทเรียนจากสารบัญด้านซ้ายเพื่อเริ่มอ่าน</div>
-          </div>
-        </section>
       </div>
     </main>
 
@@ -953,7 +929,7 @@
 
     const state = {
       audience: 'app_user', // 'app_user' | 'developer'
-      currentTab: 'recipes',
+      currentTab: 'lessons',
       patterns: [],
       recipes: [],
       lessons: [],
@@ -1052,14 +1028,15 @@
         renderRegexCheatsheet();
         renderCategoryFilters();
         renderRecipesGrid();
+        renderLessonsOverview();
         renderLessonsNav();
         checkApiHealth();
 
         // Initialize Sandbox with primary Universal Key-Value pattern (/^([^:：\n]{1,100})[:：]\s*(.+)$/gm)
         if (state.patterns.some(p => p.id === 'key-value-generic')) {
           loadPractice('key-value-generic', 1);
-          switchTab('recipes');
         }
+        switchTab('lessons');
       } catch (err) {
         console.error('Initialization error:', err);
         document.getElementById('api-status-text').textContent = 'ทำงานในโหมด Standalone';
@@ -1110,11 +1087,12 @@
     function switchTab(tabId) {
       if (tabId !== 'sandbox') toggleRegexCheatsheet(false, false);
       state.currentTab = tabId;
-      ['recipes', 'lessons', 'sandbox'].forEach(t => {
+      ['lessons', 'sandbox', 'recipes'].forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         const view = document.getElementById(`view-${t}`);
+        if (!btn || !view) return;
         if (t === tabId) {
-          btn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20";
+          btn.className = "px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20";
           view.classList.remove('hidden');
         } else {
           btn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5";
@@ -1136,6 +1114,7 @@
         userBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-200";
       }
       await fetchLessons();
+      renderLessonsOverview();
       renderLessonsNav();
       if (state.activeLessonId) {
         showLessonDetail(state.activeLessonId);
@@ -1272,6 +1251,7 @@
     async function handleSearch(query) {
       state.searchQuery = (query || '').trim().toLowerCase();
       renderRecipesGrid();
+      renderLessonsOverview();
       renderLessonsNav();
       if (state.searchQuery) {
         clearTimeout(state.searchDebounceTimer);
@@ -1282,6 +1262,7 @@
               const json = await res.json();
               if (json.data) {
                 renderRecipesGrid();
+                renderLessonsOverview();
                 renderLessonsNav();
               }
             }
@@ -1516,9 +1497,260 @@
       setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
-    // Render Lessons Navigation
+    // Lesson Course Overview Hub & Reader Logic
+    let selectedLessonStage = 'all';
+
+    function filterLessonStage(stage) {
+      selectedLessonStage = stage;
+      document.querySelectorAll('#lessons-stage-filter-container button').forEach(btn => {
+        if (btn.getAttribute('data-stage') === stage) {
+          btn.className = "lesson-stage-pill active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm";
+        } else {
+          btn.className = "lesson-stage-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-white/5";
+        }
+      });
+      renderLessonsOverview();
+    }
+
+    function renderLessonsOverview() {
+      const container = document.getElementById('lessons-cards-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let list = [...state.lessons].sort((a, b) => (a.courseOrder ?? Number.MAX_SAFE_INTEGER) - (b.courseOrder ?? Number.MAX_SAFE_INTEGER));
+
+      if (selectedLessonStage !== 'all') {
+        list = list.filter(l => l.courseStage === selectedLessonStage);
+      }
+
+      if (state.searchQuery) {
+        list = list.filter(l => 
+          l.title.toLowerCase().includes(state.searchQuery) ||
+          l.summary.toLowerCase().includes(state.searchQuery) ||
+          (l.tldr && l.tldr.toLowerCase().includes(state.searchQuery))
+        );
+      }
+
+      const countEl = document.getElementById('lessons-overview-count');
+      if (countEl) {
+        countEl.textContent = `${list.length} บทเรียน`;
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-400 glass-card rounded-3xl p-8">
+            <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <p class="text-base sm:text-lg font-medium text-slate-300">ไม่พบบทเรียนที่ตรงกับเงื่อนไขค้นหา</p>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">ลองเลือกขั้นการเรียนรู้อื่น หรือล้างคำค้นหาดูนะ</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Stage styles
+      const stageStyles = {
+        'เริ่มจากศูนย์': { bg: 'from-cyan-500/15 via-blue-500/10 to-indigo-500/10', border: 'border-cyan-400/30', badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
+        'รู้จักชิ้นส่วน': { bg: 'from-indigo-500/15 via-purple-500/10 to-pink-500/10', border: 'border-indigo-400/30', badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' },
+        'ลองใช้และแก้ปัญหา': { bg: 'from-amber-500/15 via-orange-500/10 to-rose-500/10', border: 'border-amber-400/30', badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+        'นำไปใช้กับแชต': { bg: 'from-emerald-500/15 via-teal-500/10 to-cyan-500/10', border: 'border-emerald-400/30', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+      };
+
+      list.forEach((lesson) => {
+        const style = stageStyles[lesson.courseStage] || { bg: 'from-slate-800/40 to-slate-900/40', border: 'border-white/10', badge: 'bg-white/10 text-slate-300 border-white/10' };
+        const card = document.createElement('div');
+        card.className = `glass-card glass-card-hover rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-4 border ${style.border} bg-gradient-to-br ${style.bg} transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-950/40 cursor-pointer group`;
+        
+        card.onclick = (e) => {
+          if (e.target.closest('button')) return;
+          openLesson(lesson.id);
+        };
+
+        const who = lesson.context?.who ? escapeHtml(lesson.context.who) : '';
+        const what = lesson.context?.what ? escapeHtml(lesson.context.what) : '';
+
+        card.innerHTML = `
+          <div class="space-y-4">
+            <!-- Header Badges -->
+            <div class="flex items-center justify-between gap-2 pb-1 border-b border-white/5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-bold bg-white/10 text-cyan-200 border border-white/10 shadow-sm">
+                  บทที่ ${lesson.courseOrder ?? 1}
+                </span>
+                ${lesson.courseStage ? `
+                  <span class="px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${style.badge} border">
+                    ${escapeHtml(lesson.courseStage)}
+                  </span>
+                ` : ''}
+              </div>
+              <span class="text-xs sm:text-sm text-slate-400 flex items-center gap-1 group-hover:text-cyan-300 transition-colors font-medium">
+                <span>อ่านบทนี้</span>
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </span>
+            </div>
+
+            <!-- Chapter Title -->
+            <h3 class="text-lg sm:text-xl font-bold text-slate-100 group-hover:text-cyan-200 transition-colors leading-snug">
+              ${escapeHtml(lesson.title)}
+            </h3>
+
+            <!-- Summary -->
+            <p class="text-sm sm:text-base text-slate-300 font-light leading-relaxed line-clamp-3">
+              ${escapeHtml(lesson.summary)}
+            </p>
+
+            <!-- TL;DR Mini Snippet Box -->
+            ${lesson.tldr ? `
+              <div class="p-3.5 rounded-2xl bg-slate-950/70 border border-cyan-500/20 space-y-1.5">
+                <div class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-cyan-300">
+                  <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <span>TL;DR สรุปใจความ:</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal line-clamp-2 pl-5">
+                  ${escapeHtml(lesson.tldr)}
+                </p>
+              </div>
+            ` : ''}
+
+            <!-- 5W1H Mini Badges -->
+            ${who || what ? `
+              <div class="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+                ${who ? `
+                  <div class="p-2.5 rounded-xl bg-slate-950/50 border border-white/5 space-y-0.5">
+                    <span class="text-cyan-400 font-semibold text-xs block">ใคร (Who):</span>
+                    <span class="text-slate-300 text-xs sm:text-sm truncate block">${who}</span>
+                  </div>
+                ` : ''}
+                ${what ? `
+                  <div class="p-2.5 rounded-xl bg-slate-950/50 border border-white/5 space-y-0.5">
+                    <span class="text-indigo-400 font-semibold text-xs block">ทำอะไร (What):</span>
+                    <span class="text-slate-300 text-xs sm:text-sm truncate block">${what}</span>
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2.5">
+            <button onclick="openLesson('${lesson.id}')" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-cyan-200 hover:text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all border border-cyan-400/30 shadow-sm active:scale-95">
+              <span>เริ่มอ่านเนื้อหาบทเรียน</span>
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+
+            ${lesson.practicePatternId ? `
+              <button onclick="loadPractice('${escapeJs(lesson.practicePatternId)}'); switchTab('sandbox');" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95 shrink-0" title="เปิดทดลองสูตรของบทนี้ใน Sandbox">
+                <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
+                </svg>
+              </button>
+            ` : ''}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function openLesson(lessonId) {
+      state.activeLessonId = lessonId;
+      const lesson = state.lessons.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      // Switch views
+      const overviewView = document.getElementById('lessons-overview-view');
+      const readerView = document.getElementById('lessons-reader-view');
+      if (overviewView && readerView) {
+        overviewView.classList.add('hidden');
+        readerView.classList.remove('hidden');
+      }
+
+      // Update Breadcrumbs
+      const breadcrumbs = document.getElementById('reader-breadcrumbs');
+      if (breadcrumbs) {
+        breadcrumbs.innerHTML = `
+          <span class="text-slate-500">/</span>
+          <span class="text-cyan-300 font-semibold">${escapeHtml(lesson.courseStage || 'บทเรียน')}</span>
+          <span class="text-slate-500">/</span>
+          <span class="text-slate-200 truncate max-w-xs font-medium">บทที่ ${lesson.courseOrder ?? 1}: ${escapeHtml(lesson.title)}</span>
+        `;
+      }
+
+      // Populate Chapter Select dropdown
+      const select = document.getElementById('reader-chapter-select');
+      if (select) {
+        const sorted = [...state.lessons].sort((a, b) => (a.courseOrder ?? Number.MAX_SAFE_INTEGER) - (b.courseOrder ?? Number.MAX_SAFE_INTEGER));
+        select.innerHTML = sorted.map(l => `
+          <option value="${l.id}" ${l.id === lessonId ? 'selected' : ''}>
+            ${l.courseOrder ?? 1}. ${escapeHtml(l.title)}
+          </option>
+        `).join('');
+      }
+
+      // Update Prev/Next button states
+      const sorted = [...state.lessons].sort((a, b) => (a.courseOrder ?? Number.MAX_SAFE_INTEGER) - (b.courseOrder ?? Number.MAX_SAFE_INTEGER));
+      const currentIndex = sorted.findIndex(l => l.id === lessonId);
+
+      const hasPrev = currentIndex > 0;
+      const hasNext = currentIndex >= 0 && currentIndex < sorted.length - 1;
+
+      ['btn-prev-lesson-top', 'btn-prev-lesson-bottom'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.disabled = !hasPrev;
+          btn.classList.toggle('opacity-30', !hasPrev);
+          btn.classList.toggle('cursor-not-allowed', !hasPrev);
+        }
+      });
+
+      ['btn-next-lesson-top', 'btn-next-lesson-bottom'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.disabled = !hasNext;
+          btn.classList.toggle('opacity-30', !hasNext);
+          btn.classList.toggle('cursor-not-allowed', !hasNext);
+        }
+      });
+
+      // Render the rich lesson details
+      showLessonDetail(lessonId);
+
+      // Scroll reader to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function backToLessonsOverview() {
+      const overviewView = document.getElementById('lessons-overview-view');
+      const readerView = document.getElementById('lessons-reader-view');
+      if (overviewView && readerView) {
+        readerView.classList.add('hidden');
+        overviewView.classList.remove('hidden');
+      }
+      renderLessonsOverview();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigateLesson(direction) {
+      const sorted = [...state.lessons].sort((a, b) => (a.courseOrder ?? Number.MAX_SAFE_INTEGER) - (b.courseOrder ?? Number.MAX_SAFE_INTEGER));
+      const currentIndex = sorted.findIndex(l => l.id === state.activeLessonId);
+      const targetIndex = currentIndex + direction;
+      if (targetIndex >= 0 && targetIndex < sorted.length) {
+        openLesson(sorted[targetIndex].id);
+      }
+    }
+
+    // Render Lessons Navigation (for backward compatibility if needed)
     function renderLessonsNav() {
       const navList = document.getElementById('lessons-nav-list');
+      if (!navList) return;
       navList.innerHTML = '';
 
       let list = [...state.lessons].sort((a, b) => (a.courseOrder ?? Number.MAX_SAFE_INTEGER) - (b.courseOrder ?? Number.MAX_SAFE_INTEGER)).filter(item => {
@@ -1536,7 +1768,7 @@
       list.forEach((lesson, idx) => {
         if (lesson.courseStage && lesson.courseStage !== currentStage) {
           const stageHeading = document.createElement('div');
-          stageHeading.className = 'pt-3 pb-1 px-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-300/80';
+          stageHeading.className = 'pt-3 pb-1 px-1 text-[11px] font-semibold uppercase tracking-wider text-cyan-300/80';
           stageHeading.textContent = lesson.courseStage;
           navList.appendChild(stageHeading);
           currentStage = lesson.courseStage;
@@ -1545,7 +1777,7 @@
         const isActive = state.activeLessonId === lesson.id || (!state.activeLessonId && idx === 0);
         if (isActive && !state.activeLessonId) state.activeLessonId = lesson.id;
 
-        btn.className = `w-full text-left p-3 rounded-2xl text-xs transition-all flex items-center justify-between gap-2 ${
+        btn.className = `w-full text-left p-3.5 rounded-2xl text-xs sm:text-sm transition-all flex items-center justify-between gap-2 ${
           isActive 
             ? 'bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 shadow-sm' 
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
@@ -1554,20 +1786,16 @@
         btn.innerHTML = `
           <div class="space-y-0.5 truncate">
             <div class="font-medium truncate">${lesson.courseOrder ?? idx + 1}. ${escapeHtml(lesson.title)}</div>
-            <div class="text-[11px] text-slate-400 font-light truncate">${escapeHtml(lesson.summary)}</div>
+            <div class="text-xs text-slate-400 font-light truncate">${escapeHtml(lesson.summary)}</div>
           </div>
-          <svg class="w-3.5 h-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
         `;
 
-        btn.onclick = () => showLessonDetail(lesson.id);
+        btn.onclick = () => openLesson(lesson.id);
         navList.appendChild(btn);
       });
-
-      if (state.activeLessonId) {
-        showLessonDetail(state.activeLessonId);
-      }
     }
 
     function highlightRegexTokens(str) {
@@ -1575,51 +1803,51 @@
       let escaped = escapeHtml(str);
 
       // 1. Markdown bold, italic, code
-      escaped = escaped.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</code>');
+      escaped = escaped.replace(/`([^`]+)`/g, '<code class="px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</code>');
       escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-cyan-200">$1</strong>');
       escaped = escaped.replace(/(?<!\*)\*([^*\s][^*]*[^*\s])\*(?!\*)/g, '<em class="italic text-indigo-200">$1</em>');
 
       // 2. Arrows
-      escaped = escaped.replace(/(-&gt;|→|=&gt;)/g, '<span class="inline-flex items-center text-cyan-400 font-bold px-1">→</span>');
+      escaped = escaped.replace(/(-&gt;|→|=&gt;)/g, '<span class="inline-flex items-center text-cyan-400 font-bold px-1 text-sm sm:text-base">→</span>');
 
       // 3. Quotes: “...”, "...", '...', ‘...’
-      escaped = escaped.replace(/(“|”|&quot;)([^“”"&]+)(“|”|&quot;)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">“$2”</span>');
-      escaped = escaped.replace(/(‘|’|&#039;)([^‘’'&#]+)(‘|’|&#039;)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">‘$2’</span>');
+      escaped = escaped.replace(/(“|”|&quot;)([^“”"&]+)(“|”|&quot;)/g, '<span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs sm:text-sm font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">“$2”</span>');
+      escaped = escaped.replace(/(‘|’|&#039;)([^‘’'&#]+)(‘|’|&#039;)/g, '<span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs sm:text-sm font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">‘$2’</span>');
 
       // 4. Literal regexes with slashes: /pattern/flags or /^📅...$/gm
-      escaped = escaped.replace(/(^|\s)(\/[^\/\s]+\/[gimsu]*)(\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-lg code-font text-xs font-bold bg-indigo-500/25 text-indigo-200 border border-indigo-500/40">$2</span>$3');
+      escaped = escaped.replace(/(^|\s)(\/[^\/\s]+\/[gimsu]*)(\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2.5 py-0.5 rounded-lg code-font text-xs sm:text-sm font-bold bg-indigo-500/25 text-indigo-200 border border-indigo-500/40">$2</span>$3');
 
       // 5. Character Sets & Inverted Sets: [abc], [a-z], [^0-9], [0-9], [:：], [^()\n]{1,60}
-      escaped = escaped.replace(/(\[\^?[^\]]+\](?:\{[^}]+\})?)/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">$1</span>');
+      escaped = escaped.replace(/(\[\^?[^\]]+\](?:\{[^}]+\})?)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">$1</span>');
 
       // 6. Escaped sets and characters: \d, \w, \s, \D, \W, \S, \n, \b, \B, \D/\W/\S, \bcat\b, \(, \)
-      escaped = escaped.replace(/(\\bcat\\b|\\D\/\\W\/\\S|\\[dwsnDbWSbB]|\\[pP]\{[^}]+\}|\\\(|\\\))/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/35">$1</span>');
+      escaped = escaped.replace(/(\\bcat\\b|\\D\/\\W\/\\S|\\[dwsnDbWSbB]|\\[pP]\{[^}]+\}|\\\(|\\\))/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/35">$1</span>');
 
       // 7. Key-Value patterns: e.g. Location: ..., Time: ..., Mood: ..., Affection: 92
       escaped = escaped.replace(/\b(Location|Time|Mood|Affection|Key|field|pattern|Format)[:：]\s*(\.{3}|[A-Za-z0-9_ -]+)?/gi, (match, k, v) => {
-        return `<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30">${k}: ${v || ''}</span>`;
+        return `<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30">${k}: ${v || ''}</span>`;
       });
 
       // 8. Capturing groups & backreferences: (\d{2}), (\d{1,3}), (?:...), $1, $2, $1/$2, $2/$1
-      escaped = escaped.replace(/(\((?:\?:)?[^)]+\)|\$[1-9&](?:\/\$[1-9&])?)/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/35">$1</span>');
+      escaped = escaped.replace(/(\((?:\?:)?[^)]+\)|\$[1-9&](?:\/\$[1-9&])?)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/35">$1</span>');
 
       // 9. Quantifiers & Repetitions: {4}, {3,8}, {1,60}, {1,3}, {n}, {min,max}, standalone +, *, ?
-      escaped = escaped.replace(/(^|\s)(\{\d+(?:,\d*)?\}\??)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
-      escaped = escaped.replace(/(^|\s)([\+\*\?])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
+      escaped = escaped.replace(/(^|\s)(\{\d+(?:,\d*)?\}\??)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
+      escaped = escaped.replace(/(^|\s)([\+\*\?])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
 
       // 10. Anchors / Boundaries / Operators: ^, $, ^/$, |, cat|dog
-      escaped = escaped.replace(/(^|\s)(\^\/\$|cat\|dog)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
-      escaped = escaped.replace(/(^|\s)([\^$|])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
+      escaped = escaped.replace(/(^|\s)(\^\/\$|cat\|dog)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
+      escaped = escaped.replace(/(^|\s)([\^$|])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
 
       // 11. Flags when standing at item start: e.g. "g ค้นหรือ...", "i ไม่แยก...", "m เปลี่ยน...", "s ทำให้...", "u เปิด...", "y จับตรง...", "d เพิ่ม..."
-      escaped = escaped.replace(/(^|\s|\b)([gimsuycd])(?=\s+(?:ค้น|ไม่แยก|เปลี่ยน|ทำให้|เปิด|จับตรง|เพิ่ม|รองรับ))/g, '$1<span class="inline-flex items-center px-1.5 py-0.5 rounded-md code-font text-xs font-bold bg-violet-500/20 text-violet-300 border border-violet-500/35">flag $2</span>');
+      escaped = escaped.replace(/(^|\s|\b)([gimsuycd])(?=\s+(?:ค้น|ไม่แยก|เปลี่ยน|ทำให้|เปิด|จับตรง|เพิ่ม|รองรับ))/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-violet-500/20 text-violet-300 border border-violet-500/35">flag $2</span>');
 
       // 12. Keywords & Technical terms
-      escaped = escaped.replace(/\b(Regex)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</span>');
-      escaped = escaped.replace(/\b(pattern|Pattern)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-semibold text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">$1</span>');
-      escaped = escaped.replace(/\b(field|key)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-semibold text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30">$1</span>');
-      escaped = escaped.replace(/\b(Markdown|bullet)\b/g, '<span class="inline-flex items-center px-1.5 py-0.2 rounded-md font-semibold text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">$1</span>');
-      escaped = escaped.replace(/\b(Match|Output|Replacement|lastIndex|indices|Sandbox|Unicode)\b/g, '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-200 border border-slate-700/60">$1</span>');
+      escaped = escaped.replace(/\b(Regex)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-bold text-xs sm:text-sm bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</span>');
+      escaped = escaped.replace(/\b(pattern|Pattern)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs sm:text-sm bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">$1</span>');
+      escaped = escaped.replace(/\b(field|key)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs sm:text-sm bg-sky-500/20 text-sky-300 border border-sky-500/30">$1</span>');
+      escaped = escaped.replace(/\b(Markdown|bullet)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs sm:text-sm bg-purple-500/20 text-purple-300 border border-purple-500/30">$1</span>');
+      escaped = escaped.replace(/\b(Match|Output|Replacement|lastIndex|indices|Sandbox|Unicode)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs sm:text-sm font-semibold bg-slate-800 text-slate-200 border border-slate-700/60">$1</span>');
 
       return escaped;
     }
@@ -1627,23 +1855,23 @@
     function formatJournalText(text) {
       if (!text) return '';
       const items = text.split(/\n|;\s*(?=[\\a-zA-Z0-9\[\(\$\+\*\?^\/“"'])/);
-      return items.map((item, idx) => {
+      return items.map((item) => {
         item = item.trim();
         if (!item) return '';
         const highlighted = highlightRegexTokens(item);
         return `
-          <div class="flex items-start gap-3 py-2 px-3.5 rounded-2xl bg-slate-950/40 border border-white/5 hover:border-cyan-500/30 transition-all text-xs text-slate-200">
+          <div class="flex items-start gap-3.5 py-3 px-4 rounded-2xl bg-slate-950/50 border border-white/5 hover:border-cyan-500/30 transition-all text-sm sm:text-base text-slate-200">
             <!-- Cute BuJo Star SVG Bullet -->
-            <svg class="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-4 h-4 text-cyan-400 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
             </svg>
-            <div class="flex-1 leading-relaxed">${highlighted}</div>
+            <div class="flex-1 leading-relaxed font-normal">${highlighted}</div>
           </div>
         `;
       }).join('');
     }
 
-    // Show Lesson Detail Content
+    // Show Lesson Detail Content (Enlarged, Clear rem/em Typography)
     function showLessonDetail(lessonId) {
       state.activeLessonId = lessonId;
       const lesson = state.lessons.find(l => l.id === lessonId);
@@ -1654,16 +1882,16 @@
 
       // 1. TL;DR Quick Takeaway Card
       const tldrHtml = lesson.tldr ? `
-        <div class="glass-card rounded-3xl p-5 sm:p-6 border-cyan-400/30 bg-gradient-to-r from-cyan-950/40 via-sky-950/30 to-indigo-950/40 space-y-2 relative overflow-hidden shadow-lg shadow-cyan-950/30">
-          <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs tracking-wide uppercase">
-            <div class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="glass-card rounded-3xl p-6 sm:p-7 border-cyan-400/30 bg-gradient-to-r from-cyan-950/40 via-sky-950/30 to-indigo-950/40 space-y-3 relative overflow-hidden shadow-xl shadow-cyan-950/30">
+          <div class="flex items-center gap-2.5 text-cyan-300 font-bold text-sm sm:text-base tracking-wide uppercase">
+            <div class="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300 shadow-sm">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
               </svg>
             </div>
             <span>TL;DR · สรุปใจความสำคัญใน 10 วินาที</span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed pl-8">
+          <p class="text-base sm:text-lg text-slate-100 font-medium leading-relaxed pl-9">
             ${highlightRegexTokens(lesson.tldr)}
           </p>
         </div>
@@ -1671,10 +1899,10 @@
 
       // 2. Real-World Story / Motivation Intro
       const introHtml = lesson.intro ? `
-        <div class="glass-card rounded-3xl p-5 sm:p-6 border-indigo-500/25 bg-slate-950/50 space-y-2.5">
-          <div class="flex items-center gap-2 text-indigo-300 font-bold text-xs">
-            <div class="w-6 h-6 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="glass-card rounded-3xl p-6 sm:p-7 border-indigo-500/25 bg-slate-950/50 space-y-3">
+          <div class="flex items-center gap-2.5 text-indigo-300 font-bold text-sm sm:text-base">
+            <div class="w-7 h-7 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 shadow-sm">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                 <path d="M6 6h10"/>
                 <path d="M6 10h10"/>
@@ -1682,7 +1910,7 @@
             </div>
             <span>เกริ่นนำและที่มาของปัญหา (Context & Motivation)</span>
           </div>
-          <p class="text-xs text-slate-300 leading-relaxed font-light pl-8">
+          <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-light pl-9">
             ${highlightRegexTokens(lesson.intro)}
           </p>
         </div>
@@ -1693,19 +1921,19 @@
       if (lesson.context) {
         const ctx = lesson.context;
         const howStepsHtml = Array.isArray(ctx.how) ? ctx.how.map(step => `
-          <div class="flex items-start gap-2 text-xs text-slate-200">
-            <svg class="w-3.5 h-3.5 text-cyan-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="flex items-start gap-2.5 text-sm sm:text-base text-slate-200">
+            <svg class="w-4 h-4 text-cyan-400 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            <span class="leading-relaxed">${highlightRegexTokens(step)}</span>
+            <span class="leading-relaxed font-normal">${highlightRegexTokens(step)}</span>
           </div>
         `).join('') : '';
 
         contextGridHtml = `
-          <div class="space-y-3">
-            <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
-              <div class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="space-y-3.5">
+            <div class="flex items-center gap-2.5 text-sm sm:text-base font-bold text-slate-200">
+              <div class="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300 shadow-sm">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="12" y1="16" x2="12" y2="12"/>
                   <line x1="12" y1="8" x2="12.01" y2="8"/>
@@ -1714,23 +1942,23 @@
               <span>กรอบวิเคราะห์ 5W1H · ใคร ทำอะไร ที่ไหน เมื่อไหร่ ทำไม อย่างไร</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <!-- WHO (ใคร) -->
-              <div class="glass-card rounded-2xl p-4 space-y-1.5 border-white/5 bg-slate-950/40">
-                <div class="flex items-center gap-1.5 text-cyan-300 text-xs font-semibold">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-2 border-white/5 bg-slate-950/40">
+                <div class="flex items-center gap-2 text-cyan-300 text-xs sm:text-sm font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                   </svg>
                   <span>ใคร (Who)</span>
                 </div>
-                <p class="text-xs text-slate-300 font-light leading-relaxed">${highlightRegexTokens(ctx.who || '-')}</p>
+                <p class="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">${highlightRegexTokens(ctx.who || '-')}</p>
               </div>
 
               <!-- WHAT (ทำอะไร) -->
-              <div class="glass-card rounded-2xl p-4 space-y-1.5 border-white/5 bg-slate-950/40">
-                <div class="flex items-center gap-1.5 text-indigo-300 text-xs font-semibold">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-2 border-white/5 bg-slate-950/40">
+                <div class="flex items-center gap-2 text-indigo-300 text-xs sm:text-sm font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="22" y1="12" x2="18" y2="12"/>
                     <line x1="6" y1="12" x2="2" y2="12"/>
@@ -1739,49 +1967,49 @@
                   </svg>
                   <span>ทำอะไร (What)</span>
                 </div>
-                <p class="text-xs text-slate-300 font-light leading-relaxed">${highlightRegexTokens(ctx.what || '-')}</p>
+                <p class="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">${highlightRegexTokens(ctx.what || '-')}</p>
               </div>
 
               <!-- WHERE (ที่ไหน) -->
-              <div class="glass-card rounded-2xl p-4 space-y-1.5 border-white/5 bg-slate-950/40">
-                <div class="flex items-center gap-1.5 text-sky-300 text-xs font-semibold">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-2 border-white/5 bg-slate-950/40">
+                <div class="flex items-center gap-2 text-sky-300 text-xs sm:text-sm font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                     <circle cx="12" cy="10" r="3"/>
                   </svg>
                   <span>ที่ไหน (Where)</span>
                 </div>
-                <p class="text-xs text-slate-300 font-light leading-relaxed">${highlightRegexTokens(ctx.where || '-')}</p>
+                <p class="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">${highlightRegexTokens(ctx.where || '-')}</p>
               </div>
 
               <!-- WHEN (เมื่อไหร่) -->
-              <div class="glass-card rounded-2xl p-4 space-y-1.5 border-white/5 bg-slate-950/40">
-                <div class="flex items-center gap-1.5 text-amber-300 text-xs font-semibold">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-2 border-white/5 bg-slate-950/40">
+                <div class="flex items-center gap-2 text-amber-300 text-xs sm:text-sm font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="12 6 12 12 16 14"/>
                   </svg>
                   <span>เมื่อไหร่ (When)</span>
                 </div>
-                <p class="text-xs text-slate-300 font-light leading-relaxed">${highlightRegexTokens(ctx.when || '-')}</p>
+                <p class="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">${highlightRegexTokens(ctx.when || '-')}</p>
               </div>
 
               <!-- WHY (ทำไม) -->
-              <div class="glass-card rounded-2xl p-4 space-y-1.5 border-white/5 bg-slate-950/40">
-                <div class="flex items-center gap-1.5 text-fuchsia-300 text-xs font-semibold">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-2 border-white/5 bg-slate-950/40">
+                <div class="flex items-center gap-2 text-fuchsia-300 text-xs sm:text-sm font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                   </svg>
                   <span>ทำไม (Why)</span>
                 </div>
-                <p class="text-xs text-slate-300 font-light leading-relaxed">${highlightRegexTokens(ctx.why || '-')}</p>
+                <p class="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">${highlightRegexTokens(ctx.why || '-')}</p>
               </div>
 
               <!-- HOW (อย่างไร) -->
-              <div class="glass-card rounded-2xl p-4 space-y-2 border-white/5 bg-slate-950/40 md:col-span-2 lg:col-span-1">
-                <div class="flex items-center gap-1.5 text-emerald-300 text-xs font-semibold">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-2.5 border-white/5 bg-slate-950/40 md:col-span-2 lg:col-span-1">
+                <div class="flex items-center gap-2 text-emerald-300 text-xs sm:text-sm font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="8" y1="6" x2="21" y2="6"/>
                     <line x1="8" y1="12" x2="21" y2="12"/>
                     <line x1="8" y1="18" x2="21" y2="18"/>
@@ -1791,7 +2019,7 @@
                   </svg>
                   <span>อย่างไร (How)</span>
                 </div>
-                <div class="space-y-1.5">
+                <div class="space-y-2">
                   ${howStepsHtml}
                 </div>
               </div>
@@ -1804,10 +2032,10 @@
       let beforeAfterHtml = '';
       if (lesson.beforeAfter) {
         beforeAfterHtml = `
-          <div class="glass-card rounded-3xl p-5 sm:p-6 border-white/10 space-y-3 bg-slate-950/40">
-            <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
-              <div class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="glass-card rounded-3xl p-6 sm:p-7 border-white/10 space-y-4 bg-slate-950/40">
+            <div class="flex items-center gap-2.5 text-sm sm:text-base font-bold text-slate-200">
+              <div class="w-7 h-7 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 shadow-sm">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="m18 8 4 4-4 4"/>
                   <path d="M2 12h20"/>
                   <path d="m6 16-4-4 4-4"/>
@@ -1817,36 +2045,36 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/25 space-y-1.5">
-                <div class="flex items-center gap-1.5 text-xs font-semibold text-rose-300">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="p-4 sm:p-5 rounded-2xl bg-rose-950/20 border border-rose-500/25 space-y-2">
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-rose-300">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="15" y1="9" x2="9" y2="15"/>
                     <line x1="9" y1="9" x2="15" y2="15"/>
                   </svg>
                   <span>ก่อนใช้ (ข้อความเดิม / ข้อจำกัด)</span>
                 </div>
-                <p class="text-xs text-rose-200/90 font-light leading-relaxed">
+                <p class="text-sm sm:text-base text-rose-200/90 font-light leading-relaxed">
                   ${highlightRegexTokens(lesson.beforeAfter.before)}
                 </p>
               </div>
 
-              <div class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/25 space-y-1.5">
-                <div class="flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="p-4 sm:p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/25 space-y-2">
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-300">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="9 12 12 15 16 10"/>
                   </svg>
                   <span>หลังใช้ (ผลลัพธ์ที่ได้)</span>
                 </div>
-                <p class="text-xs text-emerald-200 font-light leading-relaxed">
+                <p class="text-sm sm:text-base text-emerald-200 font-light leading-relaxed">
                   ${highlightRegexTokens(lesson.beforeAfter.after)}
                 </p>
               </div>
             </div>
 
             ${lesson.beforeAfter.explanation ? `
-              <div class="pt-2 text-xs text-slate-400 font-light flex items-center gap-1.5">
+              <div class="pt-2 text-xs sm:text-sm text-slate-300 font-light flex items-center gap-2">
                 <span class="text-cyan-400 font-semibold">ข้อสังเกต:</span>
                 <span>${highlightRegexTokens(lesson.beforeAfter.explanation)}</span>
               </div>
@@ -1856,32 +2084,32 @@
       }
 
       const sectionsHtml = lesson.sections ? lesson.sections.map((s, idx) => `
-        <div class="glass-card rounded-3xl p-5 sm:p-6 space-y-3.5 border-white/10 hover:border-cyan-500/30 transition-all">
-          <div class="flex items-center gap-2.5">
-            <span class="w-7 h-7 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center text-xs font-mono font-bold shadow-sm">${idx + 1}</span>
-            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">${highlightRegexTokens(s.heading)}</h3>
+        <div class="glass-card rounded-3xl p-6 sm:p-7 space-y-4 border-white/10 hover:border-cyan-500/30 transition-all">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center text-sm font-mono font-bold shadow-sm">${idx + 1}</span>
+            <h3 class="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2">${highlightRegexTokens(s.heading)}</h3>
           </div>
-          <div class="space-y-2 pl-0.5">
+          <div class="space-y-2.5 pl-0.5">
             ${formatJournalText(s.body)}
           </div>
         </div>
       `).join('') : '';
 
       const exercisesHtml = lesson.exercises && lesson.exercises.length > 0 ? `
-        <div class="space-y-3 pt-4 border-t border-white/10">
-          <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-fuchsia-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="space-y-4 pt-4 border-t border-white/10">
+          <h3 class="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2.5">
+            <svg class="w-5 h-5 text-fuchsia-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             แบบฝึกหัดทบทวนความเข้าใจ:
           </h3>
           ${lesson.exercises.map((ex, i) => `
-            <div class="bg-slate-950/60 p-4 rounded-2xl border border-white/5 space-y-2">
-              <p class="text-xs text-slate-200 font-medium">${i + 1}. ${highlightRegexTokens(ex.prompt)}</p>
+            <div class="bg-slate-950/60 p-5 sm:p-6 rounded-2xl border border-white/5 space-y-2.5">
+              <p class="text-sm sm:text-base text-slate-100 font-medium leading-relaxed">${i + 1}. ${highlightRegexTokens(ex.prompt)}</p>
               <div class="pt-2">
-                <button onclick="toggleExerciseAnswer('ex-ans-${i}')" class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <button onclick="toggleExerciseAnswer('ex-ans-${i}')" class="text-xs sm:text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 font-semibold">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                   <span>คลิกเพื่อดูแนวคิดเฉลย</span>
                 </button>
-                <div id="ex-ans-${i}" class="hidden mt-2 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-xs text-cyan-200 leading-relaxed">
+                <div id="ex-ans-${i}" class="hidden mt-3 p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/25 text-sm sm:text-base text-cyan-200 leading-relaxed font-normal">
                   ${highlightRegexTokens(ex.answer)}
                 </div>
               </div>
@@ -1891,22 +2119,22 @@
       ` : '';
 
       card.innerHTML = `
-        <div class="space-y-2 pb-4 border-b border-white/10">
-          <div class="flex flex-wrap items-center gap-2">
+        <div class="space-y-3 pb-5 border-b border-white/10">
+          <div class="flex flex-wrap items-center gap-2.5">
             ${lesson.courseStage ? `
-              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-500/40">
+              <span class="px-3.5 py-1 rounded-full text-xs sm:text-sm font-semibold bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm">
                 ${escapeHtml(lesson.courseStage)}
               </span>
             ` : ''}
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-white/5 text-slate-300 border border-white/10">
+            <span class="px-3.5 py-1 rounded-full text-xs sm:text-sm font-mono font-bold bg-white/5 text-slate-200 border border-white/10">
               บทที่ ${lesson.courseOrder ?? 1}
             </span>
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] bg-white/5 text-slate-400">
+            <span class="px-3.5 py-1 rounded-full text-xs sm:text-sm bg-white/5 text-slate-300">
               ${state.audience === 'app_user' ? 'สำหรับผู้ใช้ทั่วไป' : 'สำหรับนักพัฒนา'}
             </span>
           </div>
-          <h2 class="text-xl font-bold text-slate-100">${escapeHtml(lesson.title)}</h2>
-          <p class="text-xs text-slate-400">${escapeHtml(lesson.summary)}</p>
+          <h2 class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-slate-100 to-indigo-200 leading-tight">${escapeHtml(lesson.title)}</h2>
+          <p class="text-base sm:text-lg text-slate-300 font-light leading-relaxed">${escapeHtml(lesson.summary)}</p>
         </div>
 
         ${tldrHtml}
@@ -1915,19 +2143,19 @@
         ${beforeAfterHtml}
 
         ${audienceNote ? `
-          <div class="bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-900/40 p-4 rounded-2xl border border-cyan-500/20 space-y-1">
-            <div class="text-[11px] font-semibold text-cyan-300 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div class="bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-900/40 p-5 rounded-2xl border border-cyan-500/20 space-y-1.5">
+            <div class="text-xs sm:text-sm font-semibold text-cyan-300 flex items-center gap-2">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
               คำแนะนำเฉพาะสำหรับ ${state.audience === 'app_user' ? 'ผู้ใช้ทั่วไป' : 'นักพัฒนา'}:
             </div>
-            <p class="text-xs text-slate-200 font-light leading-relaxed">${highlightRegexTokens(audienceNote)}</p>
+            <p class="text-sm sm:text-base text-slate-200 font-light leading-relaxed">${highlightRegexTokens(audienceNote)}</p>
           </div>
         ` : ''}
 
         <div class="space-y-4 pt-2">
-          <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
-            <div class="w-6 h-6 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="flex items-center gap-2.5 text-sm sm:text-base font-bold text-slate-200">
+            <div class="w-7 h-7 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 shadow-sm">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="8" y1="6" x2="21" y2="6"/>
                 <line x1="8" y1="12" x2="21" y2="12"/>
                 <line x1="8" y1="18" x2="21" y2="18"/>
@@ -1939,23 +2167,18 @@
             <span>เนื้อหาบทเรียนเจาะลึก</span>
           </div>
           ${sectionsHtml}
-          ${lesson.practicePatternId ? `<button class="px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs shadow-md shadow-cyan-500/20 flex items-center gap-2 transition-all active:scale-95" onclick="loadPractice('${escapeJs(lesson.practicePatternId)}')">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/></svg>
-            <span>ลองทำตามบทนี้ใน Sandbox</span>
-          </button>` : ''}
+          ${lesson.practicePatternId ? `
+            <div class="pt-2">
+              <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md shadow-cyan-500/20 flex items-center gap-2.5 transition-all active:scale-95" onclick="loadPractice('${escapeJs(lesson.practicePatternId)}'); switchTab('sandbox');">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/></svg>
+                <span>ลองทำตามบทนี้ใน Sandbox</span>
+              </button>
+            </div>
+          ` : ''}
         </div>
 
         ${exercisesHtml}
       `;
-
-      // Update active highlight in left menu
-      document.querySelectorAll('#lessons-nav-list button').forEach(b => {
-        if (b.textContent.includes(lesson.title)) {
-          b.className = "w-full text-left p-3 rounded-2xl text-xs transition-all flex items-center justify-between gap-2 bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 shadow-sm";
-        } else {
-          b.className = "w-full text-left p-3 rounded-2xl text-xs transition-all flex items-center justify-between gap-2 text-slate-400 hover:text-slate-200 hover:bg-white/5";
-        }
-      });
 
       // Update Jelly Companion speech
       const speechEl = document.getElementById('jelly-companion-speech');
