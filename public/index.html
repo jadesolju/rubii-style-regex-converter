@@ -658,7 +658,7 @@
               <div id="pattern-colors" class="code-font text-base break-all bg-slate-950/60 p-3 rounded-xl"></div>
               <div id="pattern-token-guide" class="space-y-1 text-xs" aria-live="polite"></div>
               <p class="text-xs text-slate-400">สีช่วยแยกส่วนของนิพจน์; อ่านชื่อประเภทควบคู่กัน กรณีไวยากรณ์ซับซ้อนให้ยึดผลตรวจของ engine</p>
-              <div id="flags-guide" class="text-xs text-slate-300 whitespace-pre-wrap"></div>
+              <div id="flags-guide" class="text-xs text-slate-300"></div>
             </section>
             <!-- Flags Selector -->
             <div class="space-y-1.5">
@@ -2323,16 +2323,10 @@
       ];
       const activeFlagsHtml = flagInfo.map(f => {
         const isActive = flags.includes(f.flag);
-        return `
-          <div class="flex items-center gap-2 p-2 rounded-xl text-xs ${isActive ? 'bg-cyan-500/15 text-cyan-200 border border-cyan-500/30' : 'bg-slate-950/40 text-slate-500 border border-white/5'}">
-            <span class="px-1.5 py-0.5 rounded-md font-mono font-bold text-[11px] ${isActive ? 'bg-cyan-500/25 text-cyan-300' : 'bg-slate-800 text-slate-400'}">${f.flag}</span>
-            <span class="font-medium">${f.name}:</span>
-            <span class="text-[11px] font-light truncate">${f.desc}</span>
-          </div>
-        `;
+        return `<div class="flex items-center gap-2 p-2 rounded-xl text-xs ${isActive ? 'bg-cyan-500/15 text-cyan-200 border border-cyan-500/30' : 'bg-slate-950/40 text-slate-500 border border-white/5'}"><span class="px-1.5 py-0.5 rounded-md font-mono font-bold text-[11px] ${isActive ? 'bg-cyan-500/25 text-cyan-300' : 'bg-slate-800 text-slate-400'}">${f.flag}</span><span class="font-medium">${f.name}:</span><span class="text-[11px] font-light truncate">${f.desc}</span></div>`;
       }).join('');
       document.getElementById('flags-guide').innerHTML = `
-        <div class="space-y-1.5 pt-2">
+        <div class="space-y-1.5 pt-1">
           <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
             สถานะและคำอธิบาย Flags:
@@ -2341,7 +2335,7 @@
             ${activeFlagsHtml}
           </div>
         </div>
-      `;
+      `.trim();
       renderRegexPatternHints(source, flags);
     }
 
