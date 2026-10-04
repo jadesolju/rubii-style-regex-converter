@@ -250,6 +250,43 @@
     <!-- TAB 1: RECIPES & PATTERNS VIEW -->
     <main id="view-recipes" class="space-y-6">
       
+      <!-- CORE CATEGORIES HUB (แกนหลักหมวดหมู่เริ่มต้นหน้าแรก) -->
+      <section id="category-hub" class="glass-card rounded-3xl p-6 sm:p-7 space-y-5 border-cyan-500/20">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-white/10">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-cyan-500/30 to-indigo-500/30 border border-cyan-400/40 flex items-center justify-center text-cyan-300 shadow-sm">
+                <!-- SVG Icon: Layout Grid -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+              </div>
+              <h2 class="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-300">
+                หมวดหมู่หลักเริ่มต้น (Core Categories Hub)
+              </h2>
+            </div>
+            <p class="text-xs text-slate-300 font-light mt-1 pl-9.5">เลือกหมวดหมู่เพื่อค้นหา เจาะลึกสูตรสำเร็จรูป และเริ่มต้นใช้งานตามวัตถุประสงค์</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs self-start sm:self-auto bg-slate-950/60 px-3 py-1.5 rounded-2xl border border-white/5">
+            <span class="text-slate-400">หมวดหมู่ปัจจุบัน:</span>
+            <span id="current-active-cat-label" class="px-2.5 py-0.5 rounded-xl font-medium bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+              ทั้งหมด
+            </span>
+          </div>
+        </div>
+
+        <!-- Dynamic Category Cards Grid -->
+        <div id="category-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Injected dynamically by renderCategoryHub() -->
+        </div>
+      </section>
+
+      <!-- Cookbook Library Container (Rendered by cookbook.js) -->
+      <section id="cookbook-library" class="glass-card rounded-3xl p-6 space-y-4"></section>
+
       <!-- Category & Level Filter Ribbon -->
       <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2" id="category-filter-container">
@@ -258,7 +295,7 @@
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
             </svg>
-            หมวดหมู่:
+            ตัวกรองหมวด:
           </span>
           <button onclick="filterCategory('all')" data-cat="all" class="cat-pill active px-3 py-1 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
             ทั้งหมด
@@ -278,6 +315,20 @@
             ปานกลาง
           </button>
         </div>
+      </div>
+
+      <!-- Recipes & Patterns Grid Heading -->
+      <div class="flex items-center justify-between px-2 pt-1">
+        <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2" id="recipes-section-heading">
+          <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>คลังสูตรและ Pattern สำเร็จรูป</span>
+        </h3>
+        <span id="recipes-results-count" class="text-xs text-slate-400 font-mono">กำลังโหลด...</span>
       </div>
 
       <!-- Recipes & Patterns Grid -->
@@ -859,13 +910,64 @@
     };
     const builderPieces = [];
 
-    // Category translations for cute labels
+    // Category translations and rich details for the Core Hub
     const categoryLabels = {
+      'all': 'ทั้งหมด',
       'status': 'ค่าสถานะตัวละคร',
-      'cleanup': 'ทำความสะอาดข้อความ',
       'dialogue': 'บทสนทนาและการกระทำ',
-      'regex-foundations': 'พื้นฐานและการทำงาน',
-      'all': 'ทั้งหมด'
+      'cleanup': 'ทำความสะอาดข้อความ',
+      'regex-foundations': 'พื้นฐานและการทำงาน'
+    };
+
+    const categoryDetails = {
+      'all': {
+        title: 'คลังสูตรและ Pattern ทั้งหมด',
+        short: 'ทั้งหมด (All Patterns)',
+        desc: 'รวมสูตรและ Pattern ทุกประเภทในระบบ สามารถค้นหาและกรองอิสระได้ทันที',
+        icon: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+        gradient: 'from-cyan-500/25 via-blue-600/20 to-indigo-600/20',
+        border: 'border-cyan-400/50',
+        activeRing: 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/25',
+        textColor: 'text-cyan-300',
+        badgeColor: 'bg-cyan-500/20 text-cyan-200 border-cyan-500/30',
+        highlightBadge: 'ครอบคลุมทุกการใช้งาน'
+      },
+      'status': {
+        title: 'ค่าสถานะตัวละคร & ข้อมูลโมเดล',
+        short: 'ค่าสถานะตัวละคร (Status)',
+        desc: 'จับตัวแปร ค่าความสัมพันธ์ วันที่-เวลา และ Universal Key-Value สำหรับกรอบแสดงผลสถานะ',
+        icon: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+        gradient: 'from-sky-500/25 via-cyan-500/20 to-teal-600/20',
+        border: 'border-sky-400/50',
+        activeRing: 'ring-2 ring-sky-400 shadow-xl shadow-sky-500/25',
+        textColor: 'text-sky-300',
+        badgeColor: 'bg-sky-500/20 text-sky-200 border-sky-500/30',
+        highlightBadge: 'Universal Key-Value Anchor'
+      },
+      'dialogue': {
+        title: 'บทสนทนา การกระทำ & ฉาก',
+        short: 'บทสนทนา & การกระทำ (Dialogue)',
+        desc: 'จับคำพูดในเครื่องหมายคำพูด ท่าทางในวงเล็บ ข้อความนอกบท OOC และจัดสไตล์ฟองคำพูด',
+        icon: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+        gradient: 'from-indigo-500/25 via-purple-600/20 to-fuchsia-600/20',
+        border: 'border-indigo-400/50',
+        activeRing: 'ring-2 ring-indigo-400 shadow-xl shadow-indigo-500/25',
+        textColor: 'text-indigo-300',
+        badgeColor: 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30',
+        highlightBadge: 'คำพูด & ท่าทางตัวละคร'
+      },
+      'cleanup': {
+        title: 'จัดระเบียบ & ทำความสะอาดข้อความ',
+        short: 'ทำความสะอาดข้อความ (Cleanup)',
+        desc: 'กำจัดแท็กข้อความความคิดโมเดล <think>...</think>, ซ่อนตัวคั่นฉาก และปรับแต่งข้อความส่วนเกิน',
+        icon: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m15 5 4 4"/><path d="M14 7 3.5 17.5a2.121 2.121 0 0 0 3 3L17 10"/><path d="m9 15 3 3"/></svg>`,
+        gradient: 'from-amber-500/25 via-rose-500/20 to-orange-600/20',
+        border: 'border-amber-400/50',
+        activeRing: 'ring-2 ring-amber-400 shadow-xl shadow-amber-500/25',
+        textColor: 'text-amber-300',
+        badgeColor: 'bg-amber-500/20 text-amber-200 border-amber-500/30',
+        highlightBadge: 'ล้างแท็ก & ตัดข้อความขยะ'
+      }
     };
 
     // Level badges formatting
@@ -883,6 +985,7 @@
           fetchRecipes(),
           fetchLessons()
         ]);
+        renderCategoryHub();
         renderPracticePicker();
         renderPatternStarterPicker();
         renderBuilderPieces();
@@ -980,6 +1083,87 @@
       showToast(aud === 'app_user' ? 'สลับเป็นมุมมอง: ผู้ใช้ทั่วไป' : 'สลับเป็นมุมมอง: นักพัฒนา');
     }
 
+    // Core Categories Hub Renderer
+    function renderCategoryHub() {
+      const container = document.getElementById('category-cards-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const catCounts = { 'all': state.patterns.length };
+      state.patterns.forEach(p => {
+        catCounts[p.category] = (catCounts[p.category] || 0) + 1;
+      });
+
+      const categoriesList = ['all', ...Array.from(state.categories)];
+
+      categoriesList.forEach(cat => {
+        const info = categoryDetails[cat] || {
+          title: categoryLabels[cat] || cat,
+          short: categoryLabels[cat] || cat,
+          desc: `สูตรและ Pattern ในหมวดหมู่ ${categoryLabels[cat] || cat}`,
+          icon: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`,
+          gradient: 'from-slate-800/40 to-slate-900/40',
+          border: 'border-white/10',
+          activeRing: 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/25',
+          textColor: 'text-cyan-300',
+          badgeColor: 'bg-slate-800 text-slate-300 border-white/10',
+          highlightBadge: 'หมวดหมู่ทั่วไป'
+        };
+
+        const count = catCounts[cat] || 0;
+        const isSelected = state.selectedCategory === cat;
+
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `group relative text-left rounded-3xl p-5 transition-all duration-300 border flex flex-col justify-between overflow-hidden cursor-pointer ${
+          isSelected 
+            ? `bg-gradient-to-br ${info.gradient} ${info.border} ${info.activeRing} scale-[1.02]` 
+            : `bg-slate-950/60 hover:bg-slate-900/70 border-white/10 hover:border-cyan-400/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-950/30`
+        }`;
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="w-12 h-12 rounded-2xl bg-slate-900/80 border border-white/10 flex items-center justify-center ${info.textColor} shadow-inner group-hover:scale-110 transition-transform duration-300">
+                ${info.icon}
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold ${
+                isSelected ? 'bg-white/20 text-white border border-white/30 shadow-sm' : 'bg-slate-800/80 text-slate-300 border border-white/5'
+              }">
+                ${count} สูตร
+              </span>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold ${isSelected ? 'text-white' : 'text-slate-100'} group-hover:text-white transition-colors flex items-center gap-1.5">
+                ${escapeHtml(info.short)}
+                ${isSelected ? `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>` : ''}
+              </h3>
+              <p class="text-[11px] text-slate-400 font-light mt-1 line-clamp-2 leading-relaxed">
+                ${escapeHtml(info.desc)}
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-3 mt-3 border-t border-white/5 flex items-center justify-between text-[11px] ${info.textColor} font-medium">
+            <span class="truncate text-[10px] text-slate-400 font-light">${info.highlightBadge}</span>
+            <span class="flex items-center gap-1 shrink-0 font-semibold">
+              ${isSelected ? 'กำลังเลือก' : 'เลือกหมวด'}
+              <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          filterCategory(cat);
+        };
+
+        container.appendChild(card);
+      });
+    }
+
     // Category & Level Filters
     function renderCategoryFilters() {
       const container = document.getElementById('category-filter-container');
@@ -998,6 +1182,11 @@
 
     function filterCategory(cat) {
       state.selectedCategory = cat;
+      const labelEl = document.getElementById('current-active-cat-label');
+      if (labelEl) {
+        labelEl.textContent = categoryLabels[cat] || cat;
+      }
+      renderCategoryHub();
       document.querySelectorAll('.cat-pill').forEach(btn => {
         if (btn.getAttribute('data-cat') === cat) {
           btn.className = "cat-pill px-3 py-1 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40";
@@ -1059,6 +1248,24 @@
           (item.pattern && item.pattern.toLowerCase().includes(state.searchQuery));
         return matchCategory && matchLevel && matchQuery;
       });
+
+      const countEl = document.getElementById('recipes-results-count');
+      if (countEl) {
+        countEl.textContent = `พบ ${list.length} สูตร`;
+      }
+      const headingEl = document.getElementById('recipes-section-heading');
+      if (headingEl) {
+        const catName = categoryLabels[state.selectedCategory] || state.selectedCategory;
+        headingEl.innerHTML = `
+          <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>คลังสูตรและ Pattern สำเร็จรูป: <b class="text-cyan-300 font-bold">${escapeHtml(catName)}</b></span>
+        `;
+      }
 
       if (list.length === 0) {
         container.innerHTML = `
