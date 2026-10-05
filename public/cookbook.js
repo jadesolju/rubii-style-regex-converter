@@ -594,102 +594,6 @@ function renderCookbookLibrary() {
       <p class="text-xs text-slate-400 mt-0.5">รวมกล่องหัวข้อ, ศูนย์แจ้งเตือน, สลิปโอนเงิน, แถบสถานะตัวละคร และ Footer พร้อมคัดลอกหรือเปิดทดลองใน Sandbox</p>
     </div>
   `;
-  bpSection.append(bpHdr);
-
-  // Blueprint Category Filter Bar
-  const bpCategories = [
-    { id: 'all', label: 'ทั้งหมด' },
-    { id: 'notification', label: '📱 การแจ้งเตือน & ควบคุม' },
-    { id: 'financial', label: '💸 สลิปโอนเงิน' },
-    { id: 'character', label: '✨ สถานะตัวละคร' },
-    { id: 'headings', label: '🏷️ กล่องหัวข้อ (Headings)' },
-    { id: 'status', label: '📊 Footer Status' }
-  ];
-
-  const bpFilterWrap = document.createElement('div');
-  bpFilterWrap.className = 'flex flex-wrap items-center gap-2 pt-1';
-  bpCategories.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    const isActive = activeBlueprintCategory === cat.id;
-    btn.className = `px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-      isActive
-        ? 'bg-gradient-to-r from-pink-500/25 to-cyan-500/25 text-pink-200 border border-pink-500/40 shadow-sm'
-        : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-200 border border-white/5'
-    }`;
-    btn.textContent = cat.label;
-    btn.onclick = () => {
-      activeBlueprintCategory = cat.id;
-      renderCookbookLibrary();
-    };
-    bpFilterWrap.append(btn);
-  });
-  bpSection.append(bpFilterWrap);
-
-  // Blueprints Cards Grid
-  const bpGrid = document.createElement('div');
-  bpGrid.className = 'grid grid-cols-1 xl:grid-cols-2 gap-4';
-
-  const filteredBps = COOKBOOK_BLUEPRINTS.filter(bp => activeBlueprintCategory === 'all' || bp.category === activeBlueprintCategory);
-
-  filteredBps.forEach(bp => {
-    const card = document.createElement('div');
-    card.className = 'glass-card rounded-2xl border border-white/10 bg-slate-950/60 p-4 space-y-3 flex flex-col justify-between hover:border-cyan-400/30 transition-all';
-    
-    // Card Top Info
-    const top = document.createElement('div');
-    top.className = 'space-y-1.5';
-    top.innerHTML = `
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-xs font-bold text-cyan-200">${escapeHtml(bp.title)}</span>
-        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10">${escapeHtml(bp.categoryLabel)}</span>
-      </div>
-      <p class="text-[11.5px] text-slate-400 font-light leading-relaxed">${escapeHtml(bp.summary)}</p>
-    `;
-
-    // Interactive Preview Container
-    const previewContainer = document.createElement('div');
-    previewContainer.className = 'rounded-xl p-3 bg-slate-950/80 border border-white/5 overflow-hidden my-2 shadow-inner';
-    previewContainer.innerHTML = bp.html;
-
-    // Action Toolbar
-    const actions = document.createElement('div');
-    actions.className = 'flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5';
-    
-    const copyBtn = document.createElement('button');
-    copyBtn.type = 'button';
-    copyBtn.className = 'px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-medium border border-white/10 flex items-center gap-1.5 transition-all active:scale-95';
-    copyBtn.innerHTML = '<svg class="w-3.5 h-3.5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>คัดลอก HTML</span>';
-    copyBtn.onclick = () => {
-      copyToClipboard(bp.html, 'คัดลอก HTML บลูพรินต์แล้ว!');
-    };
-
-    const rightGroup = document.createElement('div');
-    rightGroup.className = 'flex items-center gap-2';
-
-    const sandboxBtn = document.createElement('button');
-    sandboxBtn.type = 'button';
-    sandboxBtn.className = 'px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-medium border border-cyan-500/30 flex items-center gap-1.5 transition-all active:scale-95';
-    sandboxBtn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>ทดลองใน Sandbox</span>';
-    sandboxBtn.onclick = () => sendBlueprintToSandbox(bp);
-
-    const recipeBtn = document.createElement('button');
-    recipeBtn.type = 'button';
-    recipeBtn.className = 'px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-500/20 to-pink-500/20 hover:from-violet-500/30 hover:to-pink-500/30 text-violet-200 text-xs font-medium border border-violet-400/30 flex items-center gap-1.5 transition-all active:scale-95';
-    recipeBtn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>สร้างสูตรใหม่</span>';
-    recipeBtn.onclick = () => createRecipeFromBlueprint(bp);
-
-    rightGroup.append(sandboxBtn, recipeBtn);
-    actions.append(copyBtn, rightGroup);
-
-    card.append(top, previewContainer, actions);
-    bpGrid.append(card);
-  });
-
-  bpSection.append(bpGrid);
-  panel.append(bpSection);
-}
-
 async function createCustomCookbookRecipe() {
   const button = document.getElementById('cookbook-create-button');
   if (button) { button.disabled = true; button.textContent = 'กำลังสร้างสูตร…'; }
@@ -717,7 +621,7 @@ async function createCustomCookbookRecipe() {
     await openCookbook(bundle.recipe.id);
   } catch (error) {
     if (button) { button.disabled = false; button.textContent = '＋ เพิ่มสูตร'; }
-    showToast(error.message || 'สร้างสูตรไม่สำเร็จ');
+    if (typeof showToast === 'function') showToast(error.message || 'สร้างสูตรไม่สำเร็จ');
   }
 }
 
@@ -808,6 +712,37 @@ async function openCookbook(id) {
     `;
     panel.append(instructionsCard);
 
+    // Ready-to-copy Rubii Prompt / Opening Format Card (exactly as user requested)
+    const promptSnippetCard = document.createElement('div');
+    promptSnippetCard.className = 'glass-card rounded-2xl p-4 bg-slate-950/80 border border-cyan-500/30 shadow-lg space-y-2';
+    promptSnippetCard.innerHTML = `
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+          ข้อความนำไปวางจริงใน Rubii (Prompt / Example Output):
+        </span>
+        <span class="text-[10px] text-slate-400">คัดลอกไปใช้ใน Moment / Prompt ได้ทันที</span>
+      </div>
+      <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-900/90 border border-white/10">
+        <code id="cookbook-prompt-snippet" class="code-font text-xs sm:text-[13px] text-cyan-200 whitespace-pre-wrap break-all select-all flex-1 leading-relaxed">${escapeHtml(bundle.recipe.openingExample || '')}</code>
+        <button type="button" id="cookbook-copy-snippet-btn" class="shrink-0 px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 font-semibold text-xs border border-cyan-400/30 active:scale-95 transition-all flex items-center gap-1.5 shadow-sm">
+          <svg class="w-3.5 h-3.5 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>คัดลอก</span>
+        </button>
+      </div>
+    `;
+    const copySnippetBtn = promptSnippetCard.querySelector('#cookbook-copy-snippet-btn');
+    const promptSnippetCode = promptSnippetCard.querySelector('#cookbook-prompt-snippet');
+    copySnippetBtn.onclick = () => {
+      const textToCopy = cookbookBundle.inputField ? cookbookBundle.inputField.value : bundle.recipe.openingExample;
+      copyToClipboard(textToCopy, 'คัดลอกข้อความสำหรับ Rubii แล้ว!');
+      copySnippetBtn.innerHTML = '<span class="text-emerald-300 font-bold">✓ คัดลอกแล้ว!</span>';
+      setTimeout(() => {
+        copySnippetBtn.innerHTML = '<svg class="w-3.5 h-3.5 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>คัดลอก</span>';
+      }, 2000);
+    };
+    panel.append(promptSnippetCard);
+
     const note = document.createElement('div');
     note.className = 'p-3 rounded-xl bg-amber-950/20 border border-amber-500/20 text-xs text-amber-200/90 flex items-center gap-2';
     note.innerHTML = `
@@ -818,6 +753,9 @@ async function openCookbook(id) {
 
     cookbookBundle.inputField = cookbookField(panel, 'ข้อความ Character สำหรับทดลอง (ไม่ใช่แท็บตั้งค่า)', bundle.recipe.openingExample);
     cookbookBundle.inputField.rows = id === 'premium-scene-profile' ? 12 : 3;
+    cookbookBundle.inputField.addEventListener('input', () => {
+      promptSnippetCode.textContent = cookbookBundle.inputField.value;
+    });
     cookbookBundle.targetField = cookbookSelect(panel, 'จำลองข้อความของ', bundle.patterns[0]?.applyTo === 'user' ? 'user' : 'character', [['character', 'ตัวละคร'], ['user', 'ผู้ใช้']]);
 
     const nav = document.createElement('nav');
@@ -911,7 +849,7 @@ async function openCookbook(id) {
     buttons.append(reset);
 
     const copy = document.createElement('button');
-    copy.innerHTML = '<span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>คัดลอกชุดตั้งค่า</span></span>';
+    copy.innerHTML = '<span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>คัดลอกชุดตั้งค่า</span></span>';
     copy.className = reset.className;
     copy.onclick = () => {
       try {
@@ -946,19 +884,6 @@ async function openCookbook(id) {
     status.setAttribute('aria-live', 'polite');
     panel.append(status);
 
-    for (const [id, label] of [['cookbook-raw', 'หลัง Raw Regex'], ['cookbook-expanded', 'หลังขยาย Style tags']]) {
-      const details = document.createElement('details');
-      details.className = 'bg-slate-950/40 p-3 rounded-xl border border-white/5';
-      const title = document.createElement('summary');
-      title.className = 'text-xs font-semibold text-slate-300 cursor-pointer';
-      title.textContent = label;
-      const pre = document.createElement('pre');
-      pre.id = id;
-      pre.className = 'text-xs whitespace-pre-wrap break-all p-3 bg-slate-950/60 rounded-lg mt-2 text-cyan-200 code-font';
-      details.append(title, pre);
-      panel.append(details);
-    }
-
     const frame = document.createElement('iframe');
     frame.id = 'cookbook-frame';
     frame.title = 'ภาพตัวอย่างหลังใส่ Global CSS';
@@ -968,11 +893,30 @@ async function openCookbook(id) {
     frame.style.height = '420px';
     panel.append(frame);
 
+    const debugDetails = document.createElement('details');
+    debugDetails.className = 'bg-slate-950/30 p-3 rounded-xl border border-white/5 text-slate-400 mt-1';
+    const debugSummary = document.createElement('summary');
+    debugSummary.className = 'text-xs font-semibold text-slate-400 cursor-pointer hover:text-slate-200 select-none';
+    debugSummary.textContent = '🔍 ข้อมูลขั้นตอนการแปลงภายใน (Pipeline Debug Inspection)';
+    debugDetails.append(debugSummary);
+
+    for (const [id, label] of [['cookbook-raw', 'หลัง Raw Regex'], ['cookbook-expanded', 'หลังขยาย Style tags']]) {
+      const subWrap = document.createElement('div');
+      subWrap.className = 'mt-3 space-y-1';
+      const subTitle = document.createElement('div');
+      subTitle.className = 'text-[11px] font-semibold text-slate-300';
+      subTitle.textContent = label;
+      const pre = document.createElement('pre');
+      pre.id = id;
+      pre.className = 'text-xs whitespace-pre-wrap break-all p-3 bg-slate-950/70 rounded-lg text-cyan-200 code-font border border-white/5';
+      subWrap.append(subTitle, pre);
+      debugDetails.append(subWrap);
+    }
+    panel.append(debugDetails);
+
     await runCookbook();
-  } catch (e) {
-    if (revision === cookbookRevision) panel.textContent = e.message;
-  }
 }
+
 
 function saveCurrentCustomCookbook(bundle) {
   try {
