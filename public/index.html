@@ -1711,6 +1711,18 @@
 
     let visibleRecipesLimit = 6;
     const RECIPES_PAGE_SIZE = 6;
+    let recipesObserver = null;
+
+    function attachRecipesInfiniteObserver(sentinel) {
+      if (recipesObserver) recipesObserver.disconnect();
+      if (!sentinel || !('IntersectionObserver' in window)) return;
+      recipesObserver = new IntersectionObserver((entries) => {
+        if (entries[0]?.isIntersecting) {
+          loadMoreRecipes();
+        }
+      }, { rootMargin: '300px' });
+      recipesObserver.observe(sentinel);
+    }
 
     function loadMoreRecipes() {
       visibleRecipesLimit += RECIPES_PAGE_SIZE;
@@ -1891,31 +1903,38 @@
         container.appendChild(card);
       });
 
-      // Lazy Chunk Loader Bar for Recipes
+      // Auto-load Infinite Scroll Sentinel for Recipes
       if (list.length > visibleRecipesLimit) {
         const nextBatchCount = Math.min(RECIPES_PAGE_SIZE, list.length - visibleList.length);
-        const loadMoreDiv = document.createElement('div');
-        loadMoreDiv.className = 'col-span-full mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl glass-card border border-cyan-500/20 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-blue-950/40 shadow-xl';
-        loadMoreDiv.innerHTML = `
+        const sentinelDiv = document.createElement('div');
+        sentinelDiv.id = 'recipes-infinite-sentinel';
+        sentinelDiv.className = 'col-span-full mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl glass-card border border-cyan-500/20 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-blue-950/40 shadow-xl';
+        sentinelDiv.innerHTML = `
           <div class="flex items-center gap-3">
             <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
             <div>
               <p class="text-xs sm:text-sm font-medium text-slate-200">
-                กำลังแสดง <span class="font-bold text-cyan-300">${visibleList.length}</span> จาก <span class="font-bold text-white">${list.length}</span> สูตร
+                กำลังแสดง <span class="font-bold text-cyan-300">${visibleList.length}</span> จาก <span class="font-bold text-white">${list.length}</span> สูตร (เลื่อนลงเพื่อโหลดต่ออัตโนมัติ)
               </p>
-              <p class="text-[11px] text-slate-400">ระบบโหลดสูตรทีละส่วนเพื่อความเร็วและเบาเครื่อง</p>
+              <p class="text-[11px] text-slate-400">ระบบจะโหลดเพิ่มอีก ${nextBatchCount} สูตรทันทีที่คุณเลื่อนลงมา</p>
             </div>
           </div>
           <div class="flex items-center gap-2.5 w-full sm:w-auto">
-            <button onclick="loadMoreRecipes()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 active:scale-95">
-              <span>🍳 โหลดเพิ่มอีก ${nextBatchCount} สูตร</span>
+            <button onclick="loadMoreRecipes()" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/30 to-blue-600/30 hover:from-cyan-500/50 hover:to-blue-600/50 text-xs text-cyan-200 hover:text-white border border-cyan-400/30 transition-all flex items-center justify-center gap-2 active:scale-95">
+              <span>🍳 โหลดทันที (+${nextBatchCount})</span>
             </button>
-            <button onclick="showAllRecipes()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs sm:text-sm font-medium text-slate-300 hover:text-white border border-white/10 transition-all active:scale-95">
+            <button onclick="showAllRecipes()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-300 hover:text-white border border-white/10 transition-all active:scale-95">
               แสดงทั้งหมด (${list.length})
             </button>
           </div>
         `;
-        container.appendChild(loadMoreDiv);
+        container.appendChild(sentinelDiv);
+        attachRecipesInfiniteObserver(sentinelDiv);
+      } else if (list.length > 6) {
+        const completedDiv = document.createElement('div');
+        completedDiv.className = 'col-span-full py-4 text-center text-xs text-slate-500 font-light';
+        completedDiv.textContent = `✓ แสดงครบทั้งหมด ${list.length} สูตรแล้ว`;
+        container.appendChild(completedDiv);
       }
     }
 
@@ -2026,6 +2045,18 @@
     let selectedLessonStage = 'all';
     let visibleLessonsLimit = 4;
     const LESSONS_PAGE_SIZE = 4;
+    let lessonsObserver = null;
+
+    function attachLessonsInfiniteObserver(sentinel) {
+      if (lessonsObserver) lessonsObserver.disconnect();
+      if (!sentinel || !('IntersectionObserver' in window)) return;
+      lessonsObserver = new IntersectionObserver((entries) => {
+        if (entries[0]?.isIntersecting) {
+          loadMoreLessons();
+        }
+      }, { rootMargin: '300px' });
+      lessonsObserver.observe(sentinel);
+    }
 
     function loadMoreLessons() {
       visibleLessonsLimit += LESSONS_PAGE_SIZE;
@@ -2213,31 +2244,38 @@
         container.appendChild(card);
       });
 
-      // Lazy Chunk Loader Bar for Handbook
+      // Auto-load Infinite Scroll Sentinel for Handbook
       if (list.length > visibleLessonsLimit) {
         const nextBatchCount = Math.min(LESSONS_PAGE_SIZE, list.length - visibleList.length);
-        const loadMoreDiv = document.createElement('div');
-        loadMoreDiv.className = 'col-span-full mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl glass-card border border-cyan-500/20 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-blue-950/40 shadow-xl';
-        loadMoreDiv.innerHTML = `
+        const sentinelDiv = document.createElement('div');
+        sentinelDiv.id = 'lessons-infinite-sentinel';
+        sentinelDiv.className = 'col-span-full mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl glass-card border border-cyan-500/20 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-blue-950/40 shadow-xl';
+        sentinelDiv.innerHTML = `
           <div class="flex items-center gap-3">
             <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
             <div>
               <p class="text-xs sm:text-sm font-medium text-slate-200">
-                กำลังแสดง <span class="font-bold text-cyan-300">${visibleList.length}</span> จาก <span class="font-bold text-white">${list.length}</span> บทเรียน
+                กำลังแสดง <span class="font-bold text-cyan-300">${visibleList.length}</span> จาก <span class="font-bold text-white">${list.length}</span> บทเรียน (เลื่อนลงเพื่อโหลดต่ออัตโนมัติ)
               </p>
-              <p class="text-[11px] text-slate-400">ระบบโหลดทีละส่วนเพื่อความเร็วลื่นไหลสูงสุด</p>
+              <p class="text-[11px] text-slate-400">ระบบจะโหลดเพิ่มอีก ${nextBatchCount} บททันทีที่คุณเลื่อนลงมา</p>
             </div>
           </div>
           <div class="flex items-center gap-2.5 w-full sm:w-auto">
-            <button onclick="loadMoreLessons()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 active:scale-95">
-              <span>📖 โหลดเพิ่มอีก ${nextBatchCount} บท</span>
+            <button onclick="loadMoreLessons()" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/30 to-blue-600/30 hover:from-cyan-500/50 hover:to-blue-600/50 text-xs text-cyan-200 hover:text-white border border-cyan-400/30 transition-all flex items-center justify-center gap-2 active:scale-95">
+              <span>📖 โหลดทันที (+${nextBatchCount})</span>
             </button>
-            <button onclick="showAllLessons()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs sm:text-sm font-medium text-slate-300 hover:text-white border border-white/10 transition-all active:scale-95">
+            <button onclick="showAllLessons()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-300 hover:text-white border border-white/10 transition-all active:scale-95">
               แสดงทั้งหมด (${list.length})
             </button>
           </div>
         `;
-        container.appendChild(loadMoreDiv);
+        container.appendChild(sentinelDiv);
+        attachLessonsInfiniteObserver(sentinelDiv);
+      } else if (list.length > 4) {
+        const completedDiv = document.createElement('div');
+        completedDiv.className = 'col-span-full py-4 text-center text-xs text-slate-500 font-light';
+        completedDiv.textContent = `✓ แสดงครบทั้งหมด ${list.length} บทเรียนแล้ว`;
+        container.appendChild(completedDiv);
       }
     }
 
