@@ -3682,7 +3682,7 @@
 
     function sanitizeSandboxHTML(html) {
       const documentFragment=new DOMParser().parseFromString(html,'text/html');
-      const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','MAIN','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','BR','HR','PRE','CODE','BLOCKQUOTE','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','STYLE']);
+      const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','MAIN','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','BR','HR','PRE','CODE','BLOCKQUOTE','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','STYLE','DETAILS','SUMMARY']);
       const blocked=new Set(['SCRIPT','IFRAME','FRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','META','LINK','BASE']);
       const clean=(node)=>{
         if(node.nodeType===Node.TEXT_NODE) return document.createTextNode(node.textContent||'');
@@ -3690,7 +3690,7 @@
         if(blocked.has(node.tagName)) return document.createDocumentFragment();
         if(!allowed.has(node.tagName)) return document.createTextNode(node.textContent||node.getAttribute('alt')||'');
         const result=document.createElement(node.tagName.toLowerCase());
-        for(const attr of ['class','style','title','colspan','rowspan']) if(node.hasAttribute(attr)) result.setAttribute(attr,node.getAttribute(attr));
+        for(const attr of ['class','style','title','colspan','rowspan','open','data-state']) if(node.hasAttribute(attr)) result.setAttribute(attr,node.getAttribute(attr));
         if(node.tagName==='CODE') { result.textContent=node.innerHTML; return result; }
         for(const child of node.childNodes) result.append(clean(child));
         return result;
@@ -4028,6 +4028,52 @@
           border-radius: 10px; color: #ccfbf1; font-size: 12px;
         }
         .premium-ooc-label { display: block; font-size: 9px; font-weight: 700; color: #2dd4bf; letter-spacing: 0.1em; margin-bottom: 2px; }
+
+        /* --- HUD Drawers & UI Blueprint Kits --- */
+        .hud-notification-wrap, .hud-character-wrap, .hud-slip-wrap { margin-bottom: 12px; }
+        .hud-details-cyan {
+          background: rgba(4, 13, 33, 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+          border: 2px solid #00c8ff; border-radius: 24px; padding: 14px 18px; color: #f0f9ff;
+          box-shadow: 0 8px 32px rgba(0, 200, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        .hud-details-magenta {
+          background: rgba(28, 4, 22, 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+          border: 2px solid #ff007f; border-radius: 24px; padding: 14px 18px; color: #fff;
+          box-shadow: 0 8px 32px rgba(255, 0, 127, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* --- Versatile Headings --- */
+        .heading-cyber-hud {
+          margin: 14px 0 8px; padding: 12px 18px;
+          background: linear-gradient(90deg, rgba(0,187,249,0.18), rgba(168,85,247,0.08) 70%, transparent);
+          border-left: 5px solid #00f0ff; border-top: 1px solid rgba(0,240,255,0.25); border-bottom: 1px solid rgba(0,240,255,0.1);
+          border-radius: 0 16px 16px 0; box-shadow: 0 4px 20px rgba(0,240,255,0.15);
+        }
+        .heading-fantasy-gold {
+          margin: 14px 0 8px; padding: 12px 18px;
+          background: linear-gradient(135deg, rgba(217,119,6,0.2), rgba(120,53,15,0.15) 50%, rgba(15,23,42,0.8));
+          border: 1.5px solid #f59e0b; border-radius: 16px;
+          box-shadow: 0 4px 24px rgba(245,158,11,0.2), inset 0 1px 0 rgba(254,243,199,0.3);
+        }
+        .heading-luxury-glass {
+          margin: 14px 0 8px; padding: 12px 18px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+          backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255,255,255,0.2); border-radius: 18px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+        .heading-terminal-matrix {
+          margin: 14px 0 8px; padding: 10px 16px;
+          background: rgba(2,6,23,0.92); border: 1px solid #22c55e; border-left: 5px solid #22c55e;
+          border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(34,197,94,0.15);
+          font-family: ui-monospace, monospace;
+        }
+        .hud-footer-bar {
+          margin-top: 14px; padding: 10px 16px;
+          background: rgba(15,23,42,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+          border: 1px solid rgba(56,189,248,0.25); border-radius: 16px;
+          box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+        }
       `;
       const css=document.getElementById('sandbox-global-css')?.value||'';
       const safeCSS=css.replace(new RegExp('</style','gi'),'<\\\\/style');

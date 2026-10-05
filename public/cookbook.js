@@ -89,19 +89,429 @@ function closeCookbookModal() {
   cookbookRevision++;
 }
 
+let activeBlueprintCategory = 'all';
+
+const COOKBOOK_BLUEPRINTS = [
+  {
+    id: 'bp-noti-drawer',
+    category: 'notification',
+    categoryLabel: '📱 การแจ้งเตือน',
+    title: '📱 ศูนย์การแจ้งเตือน & แผงควบคุมระบบ (Mission HUD Drawer)',
+    summary: 'กล่อง <details> นีออนไซแอน (#00c8ff) เรืองแสง พร้อมระบบแจ้งเตือนภารกิจ, ยอดเงินคงเหลือในกระเป๋า และแชตกลุ่มสมาชิกทีม',
+    tags: ['Notification', 'Wallet', 'Group Chat', 'Details'],
+    tag: 'hud-noti',
+    template: '<div class="hud-notification-wrap">$1</div>',
+    css: `.hud-notification-wrap { margin-bottom: 12px; }
+.hud-details-cyan {
+  background: rgba(4, 13, 33, 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 2px solid #00c8ff; border-radius: 24px; padding: 14px 18px; color: #f0f9ff;
+  box-shadow: 0 8px 32px rgba(0, 200, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}`,
+    html: `<div class="hud-notification-wrap" style="margin-bottom:12px;">
+  <details class="hud-details-cyan" style="background:rgba(4,13,33,0.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:2px solid #00c8ff;border-radius:24px;padding:14px 18px;color:#f0f9ff;box-shadow:0 8px 32px rgba(0,200,255,0.22),inset 0 1px 0 rgba(255,255,255,0.15);transition:all 0.3s ease;">
+    <summary style="cursor:pointer;outline:none;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#38bdf8;user-select:none;">
+      <h3 style="margin:0;font-size:15px;font-weight:700;letter-spacing:0.02em;display:flex;align-items:center;gap:8px;color:#38bdf8;">
+        <span style="font-size:18px;">📱</span> ศูนย์การแจ้งเตือน & เครือข่ายระบบ
+      </h3>
+      <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(0,200,255,0.15);border:1px solid rgba(0,200,255,0.4);color:#a5f3fc;text-transform:uppercase;letter-spacing:0.08em;">● LIVE FEED</span>
+    </summary>
+    
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,200,255,0.2);display:flex;flex-direction:column;gap:12px;">
+      
+      <!-- System Alert Banner -->
+      <div style="background:linear-gradient(135deg,rgba(0,187,249,0.12),rgba(14,165,233,0.06));border:1px solid rgba(56,189,248,0.3);border-radius:14px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:16px;line-height:1.2;">🔔</span>
+        <div style="font-size:12.5px;line-height:1.5;color:#e0f2fe;">
+          <strong style="color:#38bdf8;">[การแจ้งเตือนระบบ]:</strong> ปลดล็อกความคืบหน้าระดับ S เรียบร้อย! ข้อมูลบทสนทนาและชุดค่าพลังพิเศษพร้อมใช้งานในเซสชันนี้
+        </div>
+      </div>
+
+      <!-- Financial / Wallet Section -->
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(0,200,255,0.2);border-radius:16px;padding:12px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#38bdf8;background:rgba(0,200,255,0.12);padding:3px 10px;border-radius:8px;border:1px solid rgba(0,200,255,0.25);">
+            💳 สถานะการเงิน & เครดิต
+          </span>
+          <span style="font-size:11px;color:#94a3b8;">กระเป๋าหลัก (VIP)</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;padding:6px 0;">
+          <span style="font-size:12px;color:#94a3b8;">💰 ยอดเงินคงเหลือ:</span>
+          <span style="font-size:18px;font-weight:800;color:#38bdf8;font-family:ui-monospace,monospace;letter-spacing:0.02em;">฿ 54,200.00 <span style="font-size:11px;font-weight:500;color:#7dd3fc;">THB</span></span>
+        </div>
+        <div style="margin-top:6px;padding:8px 10px;background:rgba(2,6,23,0.5);border-radius:10px;border:1px solid rgba(255,255,255,0.05);font-size:11.5px;color:#cbd5e1;display:flex;justify-content:space-between;">
+          <span>📑 ธุรกรรมล่าสุด: ชำระค่าบริการ Server -450 บาท</span>
+          <span style="color:#34d399;font-weight:600;">สำเร็จ</span>
+        </div>
+      </div>
+
+      <!-- Multi-Character Squad LINE Group Chat -->
+      <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(0,200,255,0.2);border-radius:16px;padding:12px 14px;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#38bdf8;margin-bottom:10px;background:rgba(0,200,255,0.12);padding:3px 10px;border-radius:8px;border:1px solid rgba(0,200,255,0.25);width:fit-content;">
+          💬 LINE GROUP: ทีมปฏิบัติการพิเศษ 🚀
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;">
+          <div style="display:flex;align-items:flex-start;gap:8px;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:10px;border-left:3px solid #ff4d6d;">
+            <span style="color:#ff4d6d;font-weight:700;white-space:nowrap;min-width:75px;">🥛 มิลค์:</span>
+            <span style="color:#f1f5f9;">"โมดูลใหม่ดีพลอยขึ้นระบบเรียบร้อย คืนนี้เทสต์กันได้เลยนะทุกคน! 🎉"</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:10px;border-left:3px solid #fbbf24;">
+            <span style="color:#fbbf24;font-weight:700;white-space:nowrap;min-width:75px;">🐹 แก้ม:</span>
+            <span style="color:#f1f5f9;">"ส่งสไตล์ Glassmorphism ให้ในแชนเนลแล้วนะ สวยฉ่ำมาก ✨"</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:10px;border-left:3px solid #34d399;">
+            <span style="color:#34d399;font-weight:700;white-space:nowrap;min-width:75px;">🐍 บีม:</span>
+            <span style="color:#f1f5f9;">"ตรวจเช็ก Token & Security เรียบร้อย ปลอดภัย 100% 🛡️"</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:10px;border-left:3px solid #a855f7;">
+            <span style="color:#a855f7;font-weight:700;white-space:nowrap;min-width:75px;">👑 พลอย:</span>
+            <span style="color:#f1f5f9;">"เยี่ยมมาก เดี๋ยวเริ่มรันพรีวิวเต็มจอรอบนี้ได้เลย 🌟"</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </details>
+</div>`
+  },
+  {
+    id: 'bp-transfer-slip',
+    category: 'financial',
+    categoryLabel: '💸 สลิปโอนเงิน',
+    title: '💸 สลิปโอนเงินดิจิทัล & ธุรกรรมธนาคาร (E-Receipt Slip)',
+    summary: 'สลิปการทำรายการโอนเงินดิจิทัลสไตล์ E-Banking สีเขียวนีออน (#10b981) พร้อมยอดเงิน, รหัสอ้างอิง, ผู้รับ-ผู้โอน และตราประทับรับรอง',
+    tags: ['Financial', 'Transfer Slip', 'Bank Receipt', 'Payment'],
+    tag: 'hud-slip',
+    template: '<div class="hud-slip-wrap">$1</div>',
+    css: `.hud-slip-wrap { margin-bottom: 12px; }`,
+    html: `<div class="hud-slip-wrap" style="margin-bottom:12px;">
+  <div style="max-width:440px;margin:0 auto;background:radial-gradient(circle at top right,rgba(16,185,129,0.15),rgba(4,13,33,0.95) 70%);border:2px solid #10b981;border-radius:24px;padding:18px 20px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 12px 36px rgba(0,0,0,0.5),0 0 24px rgba(16,185,129,0.25);color:#f8fafc;font-family:system-ui,-apple-system,sans-serif;">
+    
+    <!-- Slip Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px dashed rgba(16,185,129,0.35);padding-bottom:12px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(16,185,129,0.2);border:1.5px solid #10b981;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:18px;font-weight:bold;">
+          ✓
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#34d399;letter-spacing:0.02em;">โอนเงินสำเร็จ</div>
+          <div style="font-size:10.5px;color:#94a3b8;">Transfer Successful · E-Receipt</div>
+        </div>
+      </div>
+      <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#6ee7b7;">AUTO-VERIFIED</span>
+    </div>
+
+    <!-- Amount Display -->
+    <div style="text-align:center;padding:10px 0 16px;">
+      <div style="font-size:11.5px;color:#94a3b8;margin-bottom:4px;">จำนวนเงินที่โอน</div>
+      <div style="font-size:28px;font-weight:900;color:#ffffff;text-shadow:0 0 18px rgba(16,185,129,0.6);letter-spacing:0.02em;font-family:ui-monospace,monospace;">
+        ฿ 8,500.00
+      </div>
+      <div style="font-size:11px;color:#6ee7b7;font-weight:500;margin-top:2px;">(แปดพันห้าร้อยบาทถ้วน)</div>
+    </div>
+
+    <!-- Transfer Detail Rows -->
+    <div style="background:rgba(15,23,42,0.7);border-radius:14px;border:1px solid rgba(255,255,255,0.08);padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#94a3b8;">👤 จาก:</span>
+        <span style="color:#f1f5f9;font-weight:600;">บัญชีหลัก (Rubii Wallet #8892)</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#94a3b8;">🎯 ไปยัง:</span>
+        <span style="color:#38bdf8;font-weight:600;">น.ส. อลิสา (Prompt Master · xxx-x-12345-x)</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#94a3b8;">🔖 รหัสอ้างอิง:</span>
+        <span style="color:#e2e8f0;font-family:ui-monospace,monospace;font-size:11px;">TXN-2026-9988776644</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#94a3b8;">⏱️ วันเวลา:</span>
+        <span style="color:#cbd5e1;">05 ต.ค. 2026 • 18:00:00 น.</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#94a3b8;">⚡ ค่าธรรมเนียม:</span>
+        <span style="color:#34d399;font-weight:600;">0.00 บาท (ฟรี)</span>
+      </div>
+    </div>
+
+    <!-- Memo Footer -->
+    <div style="margin-top:12px;padding:8px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;font-size:11.5px;color:#a7f3d0;display:flex;align-items:center;gap:6px;">
+      <span>💬</span>
+      <span><strong>บันทึกช่วยจำ:</strong> ค่าสนับสนุนภารกิจ & พัฒนาโมดูล Regex Studio 🚀</span>
+    </div>
+
+  </div>
+</div>`
+  },
+  {
+    id: 'bp-char-status',
+    category: 'character',
+    categoryLabel: '✨ สถานะตัวละคร',
+    title: '✨ แถบสถานะตัวละคร & ค่าความสัมพันธ์ (Character Status HUD)',
+    summary: 'กล่อง <details> สไตล์มาเจนต้าเรืองแสง (#ff007f) แสดงเกจความรัก ❤️, ความเชื่อใจ 🤝, ความเสน่หา 🔥 และอารมณ์ปัจจุบัน 🎭',
+    tags: ['Character Status', 'Affinity HUD', 'Love Meter', 'Details'],
+    tag: 'hud-character',
+    template: '<div class="hud-character-wrap">$1</div>',
+    css: `.hud-character-wrap { margin-bottom: 12px; }
+.hud-details-magenta {
+  background: rgba(28, 4, 22, 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 2px solid #ff007f; border-radius: 24px; padding: 14px 18px; color: #fff;
+  box-shadow: 0 8px 32px rgba(255, 0, 127, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}`,
+    html: `<div class="hud-character-wrap" style="margin-bottom:12px;">
+  <details class="hud-details-magenta" style="background:rgba(28,4,22,0.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:2px solid #ff007f;border-radius:24px;padding:14px 18px;color:#fff;box-shadow:0 8px 32px rgba(255,0,127,0.25),inset 0 1px 0 rgba(255,255,255,0.15);transition:all 0.3s ease;">
+    <summary style="cursor:pointer;outline:none;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ff3399;user-select:none;">
+      <h3 style="margin:0;font-size:15px;font-weight:700;letter-spacing:0.02em;display:flex;align-items:center;gap:8px;color:#ff3399;">
+        <span style="font-size:18px;">✨</span> สถานะตัวละคร & ระดับความสัมพันธ์ (Affinity HUD)
+      </h3>
+      <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(255,0,127,0.18);border:1px solid rgba(255,0,127,0.4);color:#fbcfe8;text-transform:uppercase;letter-spacing:0.08em;">HEART SYNC</span>
+    </summary>
+    
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,0,127,0.25);display:flex;flex-direction:column;gap:12px;">
+      
+      <!-- Meter Gauges Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;">
+        <!-- Love Meter -->
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,0,127,0.3);border-radius:14px;padding:10px 12px;text-align:center;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;color:#ff4d8d;">
+            <span>❤️</span> ความรัก
+          </div>
+          <div style="font-size:18px;font-weight:800;color:#ff66aa;margin:4px 0;font-family:ui-monospace,monospace;">85%</div>
+          <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:85%;background:linear-gradient(90deg,#ff007f,#ff66aa);border-radius:99px;"></div>
+          </div>
+        </div>
+
+        <!-- Trust Meter -->
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(56,189,248,0.3);border-radius:14px;padding:10px 12px;text-align:center;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;color:#38bdf8;">
+            <span>🤝</span> ความเชื่อใจ
+          </div>
+          <div style="font-size:18px;font-weight:800;color:#7dd3fc;margin:4px 0;font-family:ui-monospace,monospace;">92%</div>
+          <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:92%;background:linear-gradient(90deg,#0284c7,#38bdf8);border-radius:99px;"></div>
+          </div>
+        </div>
+
+        <!-- Drive / Passion Meter -->
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(245,158,11,0.3);border-radius:14px;padding:10px 12px;text-align:center;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;color:#f59e0b;">
+            <span>🔥</span> ความเสน่หา
+          </div>
+          <div style="font-size:18px;font-weight:800;color:#fbbf24;margin:4px 0;font-family:ui-monospace,monospace;">70%</div>
+          <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:70%;background:linear-gradient(90deg,#ea580c,#fbbf24);border-radius:99px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Mood Banner -->
+      <div style="background:linear-gradient(135deg,rgba(255,0,127,0.15),rgba(147,51,234,0.1));border:1px solid rgba(255,0,127,0.3);border-radius:14px;padding:10px 14px;font-size:12.5px;color:#fce7f3;line-height:1.5;">
+        <span style="color:#ff3399;font-weight:700;">🎭 อารมณ์ปัจจุบัน:</span> [เขินอายปนปลื้มใจอย่างยิ่ง แก้มแดงระเรื่อเมื่อได้คุยกับคุณ (๑˃ᴗ˂)✨]
+      </div>
+
+    </div>
+  </details>
+</div>`
+  },
+  {
+    id: 'bp-heading-cyber',
+    category: 'headings',
+    categoryLabel: '🏷️ กล่องหัวข้อ',
+    title: '⚡ กล่องหัวข้อไซเบอร์พังก์นีออน (Cyberpunk Neon HUD Heading)',
+    summary: 'หัวข้อสไตล์ไซเบอร์นีออนสีฟ้าไซแอน (#00f0ff) เรืองแสง พร้อมสัญลักษณ์บีคอนและแท็กโค้ดเนมระบบ',
+    tags: ['Heading', 'Cyberpunk', 'Neon', 'HUD'],
+    tag: 'heading-cyber',
+    template: '<div class="heading-cyber-hud">$1</div>',
+    css: `.heading-cyber-hud {
+  margin: 14px 0 8px; padding: 12px 18px;
+  background: linear-gradient(90deg, rgba(0,187,249,0.18), rgba(168,85,247,0.08) 70%, transparent);
+  border-left: 5px solid #00f0ff; border-top: 1px solid rgba(0,240,255,0.25); border-bottom: 1px solid rgba(0,240,255,0.1);
+  border-radius: 0 16px 16px 0; box-shadow: 0 4px 20px rgba(0,240,255,0.15);
+}`,
+    html: `<div class="heading-cyber-hud" style="margin:14px 0 8px;padding:12px 18px;background:linear-gradient(90deg,rgba(0,187,249,0.18),rgba(168,85,247,0.08) 70%,transparent);border-left:5px solid #00f0ff;border-top:1px solid rgba(0,240,255,0.25);border-bottom:1px solid rgba(0,240,255,0.1);border-radius:0 16px 16px 0;box-shadow:0 4px 20px rgba(0,240,255,0.15);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="width:10px;height:10px;background:#00f0ff;border-radius:50%;box-shadow:0 0 10px #00f0ff;display:inline-block;"></span>
+    <h3 style="margin:0;font-size:16px;font-weight:800;letter-spacing:0.04em;color:#e0f2fe;text-transform:uppercase;">
+      ⚡ CYBERPUNK HUD SECTION
+    </h3>
+  </div>
+  <span style="font-size:10px;font-family:ui-monospace,monospace;color:#38bdf8;background:rgba(0,240,255,0.1);padding:2px 8px;border-radius:6px;border:1px solid rgba(0,240,255,0.3);">SYS.NODE-01</span>
+</div>`
+  },
+  {
+    id: 'bp-heading-fantasy',
+    category: 'headings',
+    categoryLabel: '🏷️ กล่องหัวข้อ',
+    title: '⚔️ กล่องหัวข้อเควสต์ทองคำแฟนตาซี (Fantasy Quest & Guild Ribbon)',
+    summary: 'ป้ายริบบิ้นเควสต์ขอบทองคำไล่เฉด (#f59e0b) สไตล์ RPG กิลด์ พร้อมตราสัญลักษณ์และแท็กสถานะเควสต์',
+    tags: ['Heading', 'Fantasy RPG', 'Gold Ribbon', 'Quest'],
+    tag: 'heading-fantasy',
+    template: '<div class="heading-fantasy-gold">$1</div>',
+    css: `.heading-fantasy-gold {
+  margin: 14px 0 8px; padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(217,119,6,0.2), rgba(120,53,15,0.15) 50%, rgba(15,23,42,0.8));
+  border: 1.5px solid #f59e0b; border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(245,158,11,0.2), inset 0 1px 0 rgba(254,243,199,0.3);
+}`,
+    html: `<div class="heading-fantasy-gold" style="margin:14px 0 8px;padding:12px 18px;background:linear-gradient(135deg,rgba(217,119,6,0.2),rgba(120,53,15,0.15) 50%,rgba(15,23,42,0.8));border:1.5px solid #f59e0b;border-radius:16px;box-shadow:0 4px 24px rgba(245,158,11,0.2),inset 0 1px 0 rgba(254,243,199,0.3);display:flex;align-items:center;justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:18px;">⚔️</span>
+    <h3 style="margin:0;font-size:15.5px;font-weight:700;color:#fef3c7;letter-spacing:0.02em;text-shadow:0 2px 8px rgba(0,0,0,0.6);">
+      📜 ภารกิจหลัก: การทดสอบแห่งมนตรา
+    </h3>
+  </div>
+  <span style="font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;background:linear-gradient(90deg,#d97706,#f59e0b);color:#1c1917;box-shadow:0 2px 8px rgba(245,158,11,0.4);">QUEST ACTIVE</span>
+</div>`
+  },
+  {
+    id: 'bp-heading-glass',
+    category: 'headings',
+    categoryLabel: '🏷️ กล่องหัวข้อ',
+    title: '💎 กล่องหัวข้อกระจกแก้วออโรร่า (Aurora Frosted Glass)',
+    summary: 'กระจกฝ้าโปร่งแสงพรีเมียม ขอบกระจก 1px พร้อมไอคอนไล่สีม่วง-ครามและคำโปรยรอง',
+    tags: ['Heading', 'Glassmorphism', 'Aurora', 'Luxury'],
+    tag: 'heading-glass',
+    template: '<div class="heading-luxury-glass">$1</div>',
+    css: `.heading-luxury-glass {
+  margin: 14px 0 8px; padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+}`,
+    html: `<div class="heading-luxury-glass" style="margin:14px 0 8px;padding:12px 18px;background:linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.2);border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 1px rgba(255,255,255,0.3);display:flex;align-items:center;gap:12px;">
+  <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#c084fc,#818cf8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;box-shadow:0 4px 12px rgba(192,132,252,0.4);">
+    💎
+  </div>
+  <div>
+    <h3 style="margin:0;font-size:15px;font-weight:700;color:#faf5ff;">Aurora Glass Minimalist</h3>
+    <p style="margin:0;font-size:11px;color:#cbd5e1;">เรียบหรู คมชัด สไตล์มินิมอลโมเดิร์น</p>
+  </div>
+</div>`
+  },
+  {
+    id: 'bp-heading-terminal',
+    category: 'headings',
+    categoryLabel: '🏷️ กล่องหัวข้อ',
+    title: '💻 กล่องหัวข้อคอนโซลเทอร์มินัล (System Matrix Terminal Log)',
+    summary: 'กล่องหัวข้อสไตล์ Hacker Terminal สีเขียวเมทริกซ์ (#22c55e) อักษร Monospace และแท็กบอกสถานะ HTTP 200',
+    tags: ['Heading', 'Terminal', 'Matrix', 'Developer'],
+    tag: 'heading-terminal',
+    template: '<div class="heading-terminal-matrix">$1</div>',
+    css: `.heading-terminal-matrix {
+  margin: 14px 0 8px; padding: 10px 16px;
+  background: rgba(2,6,23,0.92); border: 1px solid #22c55e; border-left: 5px solid #22c55e;
+  border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(34,197,94,0.15);
+  font-family: ui-monospace, monospace;
+}`,
+    html: `<div class="heading-terminal-matrix" style="margin:14px 0 8px;padding:10px 16px;background:rgba(2,6,23,0.92);border:1px solid #22c55e;border-left:5px solid #22c55e;border-radius:0 12px 12px 0;box-shadow:0 4px 20px rgba(34,197,94,0.15);font-family:ui-monospace,monospace;display:flex;align-items:center;justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="color:#22c55e;font-weight:bold;">root@rubii-core:~#</span>
+    <span style="color:#86efac;font-size:13.5px;font-weight:600;">EXECUTE --diagnostic</span>
+  </div>
+  <span style="font-size:10.5px;color:#22c55e;background:rgba(34,197,94,0.12);padding:2px 8px;border-radius:4px;border:1px solid rgba(34,197,94,0.3);">STATUS: 200 OK</span>
+</div>`
+  },
+  {
+    id: 'bp-footer-status',
+    category: 'status',
+    categoryLabel: '📊 แถบสถานะ Footer',
+    title: '📊 แถบสถานะส่วนล่างแบบย่อ & ค่าพลัง (HUD Footer Status Ribbon)',
+    summary: 'Footer Status Bar แสดงหลอด HP, MP, Stamina และยอดเงินคงเหลือพร้อมสถานะออนไลน์',
+    tags: ['Footer', 'Status Bar', 'Gauges', 'HUD'],
+    tag: 'hud-footer',
+    template: '<div class="hud-footer-bar">$1</div>',
+    css: `.hud-footer-bar {
+  margin-top: 14px; padding: 10px 16px;
+  background: rgba(15,23,42,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(56,189,248,0.25); border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+}`,
+    html: `<div class="hud-footer-bar" style="margin-top:14px;padding:10px 16px;background:rgba(15,23,42,0.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(56,189,248,0.25);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,0.35);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#e2e8f0;">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:2px 8px;border-radius:8px;font-weight:600;">
+      ❤️ HP: 100/100
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#93c5fd;padding:2px 8px;border-radius:8px;font-weight:600;">
+      🔮 MP: 250/250
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(234,179,8,0.15);border:1px solid rgba(234,179,8,0.3);color:#fde047;padding:2px 8px;border-radius:8px;font-weight:600;">
+      ⚡ Stamina: 95%
+    </span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-size:11px;color:#94a3b8;">เครดิต:</span>
+    <span style="font-weight:700;color:#38bdf8;font-family:ui-monospace,monospace;">54,200 THB</span>
+    <span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;display:inline-block;" title="Online"></span>
+  </div>
+</div>`
+  }
+];
+
+function sendBlueprintToSandbox(bp) {
+  if (typeof sendToSandbox === 'function') {
+    sendToSandbox(
+      encodeURIComponent(''),
+      encodeURIComponent(''),
+      encodeURIComponent(''),
+      encodeURIComponent(bp.html)
+    );
+    if (typeof showToast === 'function') showToast('ส่ง Blueprint ไปยัง Regex Sandbox แล้ว!');
+  }
+}
+
+async function createRecipeFromBlueprint(bp) {
+  try {
+    const response = await fetch('/v1/recipes/premium-scene-profile/export');
+    if (!response.ok) throw new Error('โหลดชุดตัวอย่างสำหรับสร้างสูตรไม่สำเร็จ');
+    const { data } = await response.json();
+    const bundle = JSON.parse(JSON.stringify(data));
+    const suffix = globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    bundle.custom = true;
+    bundle.globalCSS = bp.css || '';
+    bundle.recipe = {
+      ...bundle.recipe,
+      id: `custom-bp-${suffix}`,
+      title: bp.title.replace(/^[^\wก-๙]+/, '').trim(),
+      summary: bp.summary,
+      category: 'dialogue',
+      openingExample: bp.html,
+      settingInstructions: [`ครอบส่วนที่ต้องการตกแต่งด้วย <${bp.tag}> และ </${bp.tag}>`, `ใช้ CSS และโครงสร้าง HTML สำเร็จรูปสำหรับแสดงผล`],
+      sourceRefs: []
+    };
+    bundle.styles = [{
+      id: `style-${suffix}`,
+      tagName: bp.tag,
+      title: bp.title,
+      applyTo: 'all',
+      template: bp.template,
+      css: bp.css
+    }];
+    bundle.recipe.ruleOrder = [{ kind: 'style', id: `style-${suffix}` }];
+    const bundles = getCustomCookbookBundles();
+    bundles.unshift(bundle);
+    saveCustomCookbookBundles(bundles);
+    renderCookbookLibrary();
+    await openCookbook(bundle.recipe.id);
+    if (typeof showToast === 'function') showToast('สร้างสูตรใหม่จาก Blueprint สำเร็จแล้ว!');
+  } catch (error) {
+    if (typeof showToast === 'function') showToast(error.message || 'สร้างสูตรไม่สำเร็จ');
+  }
+}
+
 function renderCookbookLibrary() {
   const main = document.getElementById('view-recipes');
   let panel = document.getElementById('cookbook-library');
   if (!panel) {
     panel = document.createElement('section'); panel.id = 'cookbook-library';
-    panel.className = 'glass-card rounded-3xl p-6 space-y-4';
+    panel.className = 'glass-card rounded-3xl p-6 space-y-6';
     main.prepend(panel);
   }
   panel.replaceChildren();
   const header = document.createElement('div');
   header.className = 'flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between';
   const intro = document.createElement('div');
-  intro.innerHTML = '<h2 class="text-xl font-bold text-cyan-300">Cookbook · สูตรครบชุด</h2><p class="mt-1 text-sm text-slate-300">สูตรเป็นแกนหลักของเวิร์กโฟลว์: เปิด แก้ Pattern, Tag, CSS และทดลอง Preview ครบชุดได้ที่นี่</p>';
+  intro.innerHTML = '<h2 class="text-xl font-bold text-cyan-300">Cookbook · สูตรครบชุด & คลัง UI Blueprints</h2><p class="mt-1 text-sm text-slate-300">สูตรและกล่องตกแต่งสำเร็จรูป: เปิด แก้ Pattern, Tag, CSS และทดลอง Preview ได้ทันที</p>';
   const create = document.createElement('button');
   create.id = 'cookbook-create-button';
   create.type = 'button';
@@ -120,6 +530,17 @@ function renderCookbookLibrary() {
     panel.append(localNote);
   }
 
+  // --- Recipes Grid Section ---
+  const recipesSection = document.createElement('div');
+  recipesSection.className = 'space-y-3';
+  recipesSection.innerHTML = `
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+        <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        สูตรสำเร็จรูปที่พร้อมใช้งาน (Presets & Custom Recipes)
+      </h3>
+    </div>
+  `;
   const list = document.createElement('div'); list.className = 'grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3';
   const orderedRecipes = [
     ...customBundles.map(bundle => ({ ...bundle.recipe, custom: true })),
@@ -152,7 +573,121 @@ function renderCookbookLibrary() {
     empty.textContent = 'ไม่มีสูตรตรงกับตัวกรองนี้ · กด “เพิ่มสูตร” เพื่อสร้างสูตรของคุณจากชุดตัวอย่าง';
     list.append(empty);
   }
-  panel.append(list);
+  recipesSection.append(list);
+  panel.append(recipesSection);
+
+  // --- UI Blueprints / Kits Showcase Section ---
+  const bpSection = document.createElement('section');
+  bpSection.className = 'pt-4 border-t border-white/10 space-y-4';
+  bpSection.id = 'cookbook-blueprints-section';
+
+  const bpHdr = document.createElement('div');
+  bpHdr.className = 'flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between';
+  bpHdr.innerHTML = `
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded-lg bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[10px] font-bold uppercase tracking-wider">UI Studio</span>
+        <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+          🎨 คลังกล่องสไตล์ & Blueprint สำเร็จรูป (Cookbook UI Blueprint Kits)
+        </h3>
+      </div>
+      <p class="text-xs text-slate-400 mt-0.5">รวมกล่องหัวข้อ, ศูนย์แจ้งเตือน, สลิปโอนเงิน, แถบสถานะตัวละคร และ Footer พร้อมคัดลอกหรือเปิดทดลองใน Sandbox</p>
+    </div>
+  `;
+  bpSection.append(bpHdr);
+
+  // Blueprint Category Filter Bar
+  const bpCategories = [
+    { id: 'all', label: 'ทั้งหมด' },
+    { id: 'notification', label: '📱 การแจ้งเตือน & ควบคุม' },
+    { id: 'financial', label: '💸 สลิปโอนเงิน' },
+    { id: 'character', label: '✨ สถานะตัวละคร' },
+    { id: 'headings', label: '🏷️ กล่องหัวข้อ (Headings)' },
+    { id: 'status', label: '📊 Footer Status' }
+  ];
+
+  const bpFilterWrap = document.createElement('div');
+  bpFilterWrap.className = 'flex flex-wrap items-center gap-2 pt-1';
+  bpCategories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    const isActive = activeBlueprintCategory === cat.id;
+    btn.className = `px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+      isActive
+        ? 'bg-gradient-to-r from-pink-500/25 to-cyan-500/25 text-pink-200 border border-pink-500/40 shadow-sm'
+        : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-200 border border-white/5'
+    }`;
+    btn.textContent = cat.label;
+    btn.onclick = () => {
+      activeBlueprintCategory = cat.id;
+      renderCookbookLibrary();
+    };
+    bpFilterWrap.append(btn);
+  });
+  bpSection.append(bpFilterWrap);
+
+  // Blueprints Cards Grid
+  const bpGrid = document.createElement('div');
+  bpGrid.className = 'grid grid-cols-1 xl:grid-cols-2 gap-4';
+
+  const filteredBps = COOKBOOK_BLUEPRINTS.filter(bp => activeBlueprintCategory === 'all' || bp.category === activeBlueprintCategory);
+
+  filteredBps.forEach(bp => {
+    const card = document.createElement('div');
+    card.className = 'glass-card rounded-2xl border border-white/10 bg-slate-950/60 p-4 space-y-3 flex flex-col justify-between hover:border-cyan-400/30 transition-all';
+    
+    // Card Top Info
+    const top = document.createElement('div');
+    top.className = 'space-y-1.5';
+    top.innerHTML = `
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-xs font-bold text-cyan-200">${escapeHtml(bp.title)}</span>
+        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10">${escapeHtml(bp.categoryLabel)}</span>
+      </div>
+      <p class="text-[11.5px] text-slate-400 font-light leading-relaxed">${escapeHtml(bp.summary)}</p>
+    `;
+
+    // Interactive Preview Container
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'rounded-xl p-3 bg-slate-950/80 border border-white/5 overflow-hidden my-2 shadow-inner';
+    previewContainer.innerHTML = bp.html;
+
+    // Action Toolbar
+    const actions = document.createElement('div');
+    actions.className = 'flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5';
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-medium border border-white/10 flex items-center gap-1.5 transition-all active:scale-95';
+    copyBtn.innerHTML = '<svg class="w-3.5 h-3.5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>คัดลอก HTML</span>';
+    copyBtn.onclick = () => {
+      copyToClipboard(bp.html, 'คัดลอก HTML บลูพรินต์แล้ว!');
+    };
+
+    const rightGroup = document.createElement('div');
+    rightGroup.className = 'flex items-center gap-2';
+
+    const sandboxBtn = document.createElement('button');
+    sandboxBtn.type = 'button';
+    sandboxBtn.className = 'px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-medium border border-cyan-500/30 flex items-center gap-1.5 transition-all active:scale-95';
+    sandboxBtn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>ทดลองใน Sandbox</span>';
+    sandboxBtn.onclick = () => sendBlueprintToSandbox(bp);
+
+    const recipeBtn = document.createElement('button');
+    recipeBtn.type = 'button';
+    recipeBtn.className = 'px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-500/20 to-pink-500/20 hover:from-violet-500/30 hover:to-pink-500/30 text-violet-200 text-xs font-medium border border-violet-400/30 flex items-center gap-1.5 transition-all active:scale-95';
+    recipeBtn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>สร้างสูตรใหม่</span>';
+    recipeBtn.onclick = () => createRecipeFromBlueprint(bp);
+
+    rightGroup.append(sandboxBtn, recipeBtn);
+    actions.append(copyBtn, rightGroup);
+
+    card.append(top, previewContainer, actions);
+    bpGrid.append(card);
+  });
+
+  bpSection.append(bpGrid);
+  panel.append(bpSection);
 }
 
 async function createCustomCookbookRecipe() {
@@ -579,13 +1114,13 @@ function moveCustomCookbookPattern(bundle, id, delta, rerender) {
 
 function sanitizeCookbookHTML(html) {
   const doc=new DOMParser().parseFromString(html,'text/html');
-  const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','CODE','PRE','BR','HR','BLOCKQUOTE','DETAILS','SUMMARY','UL','OL','LI','DEL','TABLE','THEAD','TBODY','TR','TH','TD']);
+  const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','MAIN','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','CODE','PRE','BR','HR','BLOCKQUOTE','DETAILS','SUMMARY','UL','OL','LI','DEL','TABLE','THEAD','TBODY','TR','TH','TD']);
   const clean=(node)=>{
     if(node.nodeType===Node.TEXT_NODE) return document.createTextNode(node.textContent);
     if(node.nodeType!==Node.ELEMENT_NODE) return document.createTextNode('');
     if(!allowed.has(node.tagName)) return document.createTextNode(node.textContent);
     const result=document.createElement(node.tagName.toLowerCase());
-    for(const a of ['class','data-state']) if(node.hasAttribute(a)) result.setAttribute(a,node.getAttribute(a));
+    for(const a of ['class','data-state','style','open','title']) if(node.hasAttribute(a)) result.setAttribute(a,node.getAttribute(a));
     if(node.tagName==='CODE') { result.textContent=node.innerHTML; return result; }
     for(const child of node.childNodes) result.append(clean(child));return result;
   };
@@ -758,6 +1293,52 @@ async function runCookbook() {
         border-radius: 10px; color: #ccfbf1; font-size: 12px;
       }
       .premium-ooc-label { display: block; font-size: 9px; font-weight: 700; color: #2dd4bf; letter-spacing: 0.1em; margin-bottom: 2px; }
+
+      /* --- HUD Drawers & UI Blueprint Kits --- */
+      .hud-notification-wrap, .hud-character-wrap, .hud-slip-wrap { margin-bottom: 12px; }
+      .hud-details-cyan {
+        background: rgba(4, 13, 33, 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        border: 2px solid #00c8ff; border-radius: 24px; padding: 14px 18px; color: #f0f9ff;
+        box-shadow: 0 8px 32px rgba(0, 200, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+      .hud-details-magenta {
+        background: rgba(28, 4, 22, 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        border: 2px solid #ff007f; border-radius: 24px; padding: 14px 18px; color: #fff;
+        box-shadow: 0 8px 32px rgba(255, 0, 127, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+
+      /* --- Versatile Headings --- */
+      .heading-cyber-hud {
+        margin: 14px 0 8px; padding: 12px 18px;
+        background: linear-gradient(90deg, rgba(0,187,249,0.18), rgba(168,85,247,0.08) 70%, transparent);
+        border-left: 5px solid #00f0ff; border-top: 1px solid rgba(0,240,255,0.25); border-bottom: 1px solid rgba(0,240,255,0.1);
+        border-radius: 0 16px 16px 0; box-shadow: 0 4px 20px rgba(0,240,255,0.15);
+      }
+      .heading-fantasy-gold {
+        margin: 14px 0 8px; padding: 12px 18px;
+        background: linear-gradient(135deg, rgba(217,119,6,0.2), rgba(120,53,15,0.15) 50%, rgba(15,23,42,0.8));
+        border: 1.5px solid #f59e0b; border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(245,158,11,0.2), inset 0 1px 0 rgba(254,243,199,0.3);
+      }
+      .heading-luxury-glass {
+        margin: 14px 0 8px; padding: 12px 18px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.2); border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+      }
+      .heading-terminal-matrix {
+        margin: 14px 0 8px; padding: 10px 16px;
+        background: rgba(2,6,23,0.92); border: 1px solid #22c55e; border-left: 5px solid #22c55e;
+        border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(34,197,94,0.15);
+        font-family: ui-monospace, monospace;
+      }
+      .hud-footer-bar {
+        margin-top: 14px; padding: 10px 16px;
+        background: rgba(15,23,42,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(56,189,248,0.25); border-radius: 16px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+      }
     `;
     document.getElementById('cookbook-frame').srcdoc='<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data:; font-src data:; media-src data:; connect-src \'none\'; form-action \'none\'; base-uri \'none\'"><style>'+baseThemeCss+'\n'+safeCSS+'</style></head><body><main class="'+messageClass+'">'+sanitizeCookbookHTML(text)+'</main></body></html>';
     status.textContent='Raw Regex → Style tag → CSS · '+(counts.join(' • ')||'สูตรนี้ใช้ Style tag โดยไม่ต้องมี Regex')+' · ถ้า marker ไม่ตรงรูปแบบจะยังเหลือข้อความเดิม';
