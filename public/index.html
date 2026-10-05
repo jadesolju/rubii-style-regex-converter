@@ -232,35 +232,45 @@
 
     <!-- Main Navigation Tabs -->
     <div class="flex items-center justify-between gap-3 mb-6 overflow-x-auto pb-1">
-      <div class="flex items-center gap-2 bg-slate-900/40 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
-        <button id="tab-lessons" onclick="switchTab('lessons')" class="px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20">
-          <!-- SVG Icon: Book -->
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div class="flex items-center gap-2.5 bg-slate-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-md shrink-0">
+        <!-- Tab 1: Handbook -->
+        <button id="tab-lessons" onclick="switchTab('lessons')" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl text-xs sm:text-sm font-semibold flex flex-col items-center justify-center gap-1.5 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-lg shadow-cyan-500/25 border border-cyan-400/40 shrink-0">
+          <!-- Large SVG Icon: Book -->
+          <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
             <path d="M6 6h10"/>
             <path d="M6 10h10"/>
           </svg>
-          <span>ตำราคู่มือเรียนรู้ (Handbook)</span>
-          <span id="badge-lessons-count" class="px-2 py-0.5 rounded-full text-[11px] bg-white/20 text-white font-mono">17</span>
+          <span class="leading-tight text-center">ตำราคู่มือเรียนรู้</span>
+          <span class="text-[11px] opacity-85 flex items-center justify-center gap-1.5 font-medium -mt-0.5">
+            (Handbook)
+            <span id="badge-lessons-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 text-white font-mono font-bold">17</span>
+          </span>
         </button>
 
-        <button id="tab-sandbox" onclick="switchTab('sandbox')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
-          <!-- SVG Icon: Beaker / Flask -->
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Tab 2: Sandbox -->
+        <button id="tab-sandbox" onclick="switchTab('sandbox')" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl text-xs sm:text-sm font-medium flex flex-col items-center justify-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5 border border-transparent hover:border-white/10 shrink-0">
+          <!-- Large SVG Icon: Beaker / Flask -->
+          <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
             <path d="M8.5 2h7"/>
             <path d="M7 16h10"/>
           </svg>
-          <span>ห้องทดลองสด (Sandbox)</span>
+          <span class="leading-tight text-center">ห้องทดลองสด</span>
+          <span class="text-[11px] opacity-85 font-medium -mt-0.5">(Sandbox)</span>
         </button>
 
-        <button id="tab-recipes" onclick="switchTab('recipes')" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5">
-          <!-- SVG Icon: Wand / Sparkle -->
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Tab 3: Recipes -->
+        <button id="tab-recipes" onclick="switchTab('recipes')" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl text-xs sm:text-sm font-medium flex flex-col items-center justify-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5 border border-transparent hover:border-white/10 shrink-0">
+          <!-- Large SVG Icon: Wand / Sparkle -->
+          <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
           </svg>
-          <span>คลังสูตรสำเร็จรูป</span>
-          <span id="badge-recipes-count" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-800 text-slate-300 font-mono">0</span>
+          <span class="leading-tight text-center">คลังสูตรสำเร็จรูป</span>
+          <span class="text-[11px] opacity-85 flex items-center justify-center gap-1.5 font-medium -mt-0.5">
+            (Recipes)
+            <span id="badge-recipes-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-800 text-slate-300 font-mono font-bold">0</span>
+          </span>
         </button>
       </div>
 
@@ -1092,10 +1102,10 @@
         const view = document.getElementById(`view-${t}`);
         if (!btn || !view) return;
         if (t === tabId) {
-          btn.className = "px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-md shadow-cyan-500/20";
+          btn.className = "px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl text-xs sm:text-sm font-semibold flex flex-col items-center justify-center gap-1.5 transition-all duration-200 bg-gradient-to-r from-cyan-500/90 to-blue-600/90 text-white shadow-lg shadow-cyan-500/25 border border-cyan-400/40 shrink-0";
           view.classList.remove('hidden');
         } else {
-          btn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5";
+          btn.className = "px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl text-xs sm:text-sm font-medium flex flex-col items-center justify-center gap-1.5 transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-white/5 border border-transparent hover:border-white/10 shrink-0";
           view.classList.add('hidden');
         }
       });
