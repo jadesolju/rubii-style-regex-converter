@@ -27,15 +27,6 @@ export default async function handler(req: any, res: any) {
     }
   }
 
-  if (typeof res.status === "function") {
-    res.status(response.statusCode);
-  } else {
-    res.statusCode = response.statusCode;
-  }
-
-  if (typeof res.send === "function") {
-    res.send(response.body);
-  } else {
-    res.end(response.body);
-  }
+  res.statusCode = response.statusCode;
+  res.end(response.rawPayload);
 }
