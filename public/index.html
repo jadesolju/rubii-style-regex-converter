@@ -119,10 +119,13 @@
       background: rgba(7, 16, 36, 0.9);
     }
     @media (min-width: 1150px) {
-      #sandbox-playground-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
-      #sandbox-playground-grid > :nth-child(1) { grid-column: span 5 / span 5; }
-      #sandbox-playground-grid > :nth-child(2) { grid-column: span 4 / span 4; }
-      #sandbox-playground-grid > :nth-child(3) { grid-column: span 3 / span 3; }
+      #sandbox-playground-grid:not(.full-preview-mode) { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+      #sandbox-playground-grid:not(.full-preview-mode) > :nth-child(1) { grid-column: span 5 / span 5; }
+      #sandbox-playground-grid:not(.full-preview-mode) > :nth-child(2) { grid-column: span 4 / span 4; }
+      #sandbox-playground-grid:not(.full-preview-mode) > :nth-child(3) { grid-column: span 3 / span 3; }
+      #sandbox-playground-grid.full-preview-mode #sandbox-preview-column { grid-column: span 12 / span 12 !important; width: 100% !important; }
+      #sandbox-playground-grid.full-preview-mode #sandbox-editor-column,
+      #sandbox-playground-grid.full-preview-mode #sandbox-cheatsheet-aside { display: none !important; }
       #sandbox-cheatsheet-aside { position: sticky; top: 1rem; }
       #sandbox-cheatsheet-shell { display: flex; flex-direction: column; max-height: calc(100vh - 2rem); }
       #regex-cheatsheet-body { flex: 1 1 auto; min-height: 0; }
@@ -3847,6 +3850,7 @@
 
     function setSandboxDesktopMode(mode) {
       sandboxDesktopMode = mode;
+      const grid = document.getElementById('sandbox-playground-grid');
       const editorCol = document.getElementById('sandbox-editor-column');
       const previewCol = document.getElementById('sandbox-preview-column');
       const cheatsheetAside = document.getElementById('sandbox-cheatsheet-aside');
@@ -3856,23 +3860,27 @@
       const expandLabel = document.getElementById('sandbox-preview-expand-label');
 
       if (mode === 'split') {
+        if (grid) grid.classList.remove('full-preview-mode');
         if (editorCol) {
           editorCol.classList.remove('hidden', 'lg:hidden');
+          editorCol.style.display = '';
           editorCol.className = 'col-span-12 lg:col-span-6 xl:col-span-5 space-y-4';
         }
         if (previewCol) {
           previewCol.classList.remove('hidden');
+          previewCol.style.display = '';
           previewCol.className = 'col-span-12 lg:col-span-6 xl:col-span-4 space-y-4';
         }
         if (cheatsheetAside) {
           cheatsheetAside.classList.remove('hidden');
+          cheatsheetAside.style.display = '';
           cheatsheetAside.className = 'col-span-12 lg:col-span-12 xl:col-span-3 xl:sticky xl:top-4 min-w-0';
         }
         if (frame) {
           frame.style.height = '260px';
         }
         if (btnSplit) {
-          btnSplit.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all';
+          btnSplit.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all shadow-sm';
         }
         if (btnFull) {
           btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10 flex items-center gap-1.5 transition-all';
@@ -3880,14 +3888,18 @@
         if (expandLabel) expandLabel.textContent = 'ขยายเต็มจอ';
       } else {
         // True 100% Fullscreen Preview across entire screen width
+        if (grid) grid.classList.add('full-preview-mode');
         if (editorCol) {
           editorCol.classList.add('hidden');
+          editorCol.style.display = 'none';
         }
         if (cheatsheetAside) {
           cheatsheetAside.classList.add('hidden');
+          cheatsheetAside.style.display = 'none';
         }
         if (previewCol) {
           previewCol.classList.remove('hidden');
+          previewCol.style.display = 'block';
           previewCol.className = 'col-span-12 lg:col-span-12 xl:col-span-12 space-y-4 w-full';
         }
         if (frame) {
@@ -3897,7 +3909,7 @@
           btnSplit.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10 flex items-center gap-1.5 transition-all';
         }
         if (btnFull) {
-          btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-200 border border-emerald-400/40 shadow-sm flex items-center gap-1.5 transition-all';
+          btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all shadow-sm';
         }
         if (expandLabel) expandLabel.textContent = '✕ ยุบกลับ (Split)';
         renderSandboxPreview();
