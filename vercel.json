@@ -1,3 +1,17 @@
 {
-  "version": 2
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/v1/(.*)",
+      "destination": "/api/index?path=/v1/$1"
+    },
+    {
+      "source": "/healthz",
+      "destination": "/api/index?path=/healthz"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "/api/index?path=/v1/openapi.json"
+    }
+  ]
 }
