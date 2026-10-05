@@ -184,8 +184,80 @@
       background: rgba(125, 211, 252, 0.2);
       border-radius: 9999px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(56, 189, 248, 0.5);
+    /* Scratch-style Block Assembly Aesthetics */
+    .scratch-palette-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.85rem;
+      border: 1px solid;
+      text-align: left;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .scratch-palette-btn:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .scratch-block {
+      position: relative;
+      border-radius: 1.1rem;
+      border: 1.5px solid;
+      padding: 0.85rem 1rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    .scratch-block::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 28px;
+      width: 16px;
+      height: 7px;
+      background: inherit;
+      border-bottom: 1.5px solid;
+      border-left: 1.5px solid;
+      border-right: 1.5px solid;
+      border-color: inherit;
+      border-radius: 0 0 5px 5px;
+      z-index: 10;
+    }
+    .scratch-block:last-child::after {
+      display: none;
+    }
+    .scratch-pill-input {
+      background: rgba(4, 9, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      padding: 0.3rem 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #fff;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    .scratch-pill-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+      background: rgba(4, 9, 24, 0.98);
+    }
+    .scratch-num-input {
+      background: rgba(4, 9, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      padding: 0.2rem 0.4rem;
+      width: 3.25rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #fff;
+      outline: none;
+    }
+    .scratch-num-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
     }
   </style>
 </head>
@@ -562,12 +634,49 @@
           </div>
         </div>
       </section>
+
+      <!-- Sandbox View Control Bar (Mobile Sub-tabs & Desktop Fullscreen / Scratch Trigger) -->
+      <div id="sandbox-view-control-bar" class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-slate-900/60 p-2.5 rounded-2xl border border-cyan-500/20 backdrop-blur-md">
+        <!-- Mobile sub-tabs (Visible on mobile & tablet) -->
+        <div class="flex items-center gap-2 w-full lg:w-auto">
+          <button id="tab-btn-editor" type="button" onclick="setSandboxViewMode('editor')" class="flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-200 border border-cyan-400/40 shadow-sm">
+            <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+            <span>⚙️ หน้าแก้ไข (Editor)</span>
+          </button>
+          <button id="tab-btn-preview" type="button" onclick="setSandboxViewMode('preview')" class="flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10">
+            <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>👁️ แสดงผลพรีวิว (Live Preview)</span>
+            <span id="sandbox-subtab-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400">0 match</span>
+          </button>
+        </div>
+
+        <!-- Desktop toggles (Visible on lg screens) -->
+        <div class="hidden lg:flex items-center gap-2">
+          <span class="text-xs text-slate-400 mr-1 font-medium">มุมมองจอ:</span>
+          <button id="desktop-btn-split" type="button" onclick="setSandboxDesktopMode('split')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+            <span>แบ่งสองฝั่ง (Split)</span>
+          </button>
+          <button id="desktop-btn-full-preview" type="button" onclick="setSandboxDesktopMode('full-preview')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10 flex items-center gap-1.5 transition-all">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <span>⛶ ขยายพรีวิวเต็มจอ</span>
+          </button>
+        </div>
+
+        <!-- Scratch Block Builder Pop-up Trigger -->
+        <button type="button" onclick="openScratchBuilderModal()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-cyan-500/20 hover:from-amber-500/30 hover:to-cyan-500/30 border border-cyan-400/40 text-xs font-semibold text-cyan-100 flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95">
+          <span class="text-sm">🧩</span>
+          <span>กล่องประกอบบล็อกแบบ Scratch</span>
+          <span class="px-1.5 py-0.5 rounded bg-cyan-400/20 text-[10px] text-cyan-300 font-bold uppercase tracking-wider">Visual</span>
+        </button>
+      </div>
+
       <div id="sandbox-playground-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- Left Column: Input Form & Flags -->
-        <div class="lg:col-span-6 xl:col-span-5 space-y-4">
+        <div id="sandbox-editor-column" class="lg:col-span-6 xl:col-span-5 space-y-4">
           <div class="glass-card rounded-3xl p-6 space-y-4">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between flex-wrap gap-2">
               <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
                 <!-- SVG Icon: Sliders -->
                 <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -583,13 +692,19 @@
                 </svg>
                 กำหนดนิพจน์ (Regex Expression)
               </h2>
-              <button onclick="resetSandbox()" class="text-xs text-slate-400 hover:text-cyan-300 flex items-center gap-1">
-                <!-- SVG Icon: Refresh -->
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                </svg>
-                ล้างข้อมูล
-              </button>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="openScratchBuilderModal()" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-cyan-500/15 hover:from-amber-500/25 hover:to-cyan-500/25 border border-cyan-400/30 text-[11px] font-medium text-cyan-200 flex items-center gap-1.5 transition-all">
+                  <span>🧩</span>
+                  <span>ต่อบล็อก Scratch</span>
+                </button>
+                <button onclick="resetSandbox()" class="text-xs text-slate-400 hover:text-cyan-300 flex items-center gap-1">
+                  <!-- SVG Icon: Refresh -->
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                  </svg>
+                  ล้างข้อมูล
+                </button>
+              </div>
             </div>
 
             <!-- Direct Full Literal Expression Input (/pattern/flags) -->
@@ -616,9 +731,14 @@
 
             <!-- Guided expression builder -->
             <section class="glass-card rounded-2xl p-4 space-y-4 border border-cyan-500/20">
-              <div>
-                <h3 class="text-sm font-semibold text-cyan-200">สร้างนิพจน์จากชุดสำเร็จรูป</h3>
-                <p class="text-xs text-slate-400 mt-1">เลือกสูตรพร้อมตัวอย่าง หรือประกอบจากชิ้นส่วนด้านล่าง ไม่ต้องเริ่มพิมพ์ Regex เอง</p>
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold text-cyan-200">สร้างนิพจน์จากชุดสำเร็จรูป</h3>
+                  <p class="text-xs text-slate-400 mt-1">เลือกสูตรพร้อมตัวอย่าง หรือเปิดกล่องประกอบบล็อกแบบ Scratch</p>
+                </div>
+                <button type="button" onclick="openScratchBuilderModal()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-cyan-500/20 hover:from-amber-500/30 hover:to-cyan-500/30 border border-cyan-400/30 text-xs font-semibold text-cyan-100 flex items-center gap-1 shrink-0">
+                  <span>🧩</span><span>กล่อง Scratch</span>
+                </button>
               </div>
               <label class="block space-y-1.5 text-xs text-slate-300">
                 <span>ชุดเริ่มต้น</span>
@@ -767,11 +887,11 @@
         </div>
 
         <!-- Right Column: Visual Result & Highlights -->
-        <div class="lg:col-span-6 xl:col-span-4 space-y-4">
+        <div id="sandbox-preview-column" class="lg:col-span-6 xl:col-span-4 space-y-4">
           
           <!-- Visual Match Preview Card -->
           <div class="glass-card rounded-3xl p-6 space-y-4">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between flex-wrap gap-2">
               <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
                 <!-- SVG Icon: Target -->
                 <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -781,8 +901,14 @@
                 </svg>
                 ผลลัพธ์การตรวจจับ (Visual Match)
               </h2>
-              <div id="sandbox-match-badge" class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400">
-                ยังไม่มีการทดสอบ
+              <div class="flex items-center gap-2">
+                <button id="sandbox-preview-expand-btn" type="button" onclick="toggleSandboxPreviewFullscreen()" class="hidden lg:flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-300 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 transition-all" title="ขยายพรีวิวเต็มจอ">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                  <span id="sandbox-preview-expand-label">ขยายเต็มจอ</span>
+                </button>
+                <div id="sandbox-match-badge" class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400">
+                  ยังไม่มีการทดสอบ
+                </div>
               </div>
             </div>
 
@@ -911,6 +1037,181 @@
 
         <div id="modal-content" class="space-y-5">
           <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRATCH-STYLE VISUAL REGEX BUILDER MODAL -->
+    <div id="scratch-builder-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md hidden opacity-0 transition-all duration-300" role="dialog" aria-modal="true" aria-label="Visual Regex Block Studio">
+      <div class="glass-card max-w-5xl w-full rounded-3xl flex flex-col max-h-[94vh] overflow-hidden border border-cyan-400/30 shadow-2xl shadow-cyan-950/60">
+        
+        <!-- Modal Header -->
+        <header class="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-cyan-950/50 via-slate-900/80 to-purple-950/50 flex items-center justify-between gap-4 shrink-0">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-cyan-400 p-[1px] shrink-0 shadow-md shadow-amber-500/20">
+              <div class="w-full h-full bg-slate-950 rounded-2xl flex items-center justify-center text-lg">
+                🧩
+              </div>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <h2 class="text-base sm:text-lg font-bold text-white truncate">กล่องประกอบบล็อกแบบ Scratch (Visual Regex Studio)</h2>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 hidden sm:inline-block">Lego Style</span>
+              </div>
+              <p class="text-xs text-slate-400 truncate">เลือกชิ้นส่วน ใส่ตัวเลข/คำ แล้วระบบจะต่อบล็อกเป็น Regex และคำนวณกลุ่มจับให้อัตโนมัติ</p>
+            </div>
+          </div>
+          <button type="button" onclick="closeScratchBuilderModal()" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 flex items-center justify-center transition-all shrink-0" aria-label="ปิดหน้าต่าง">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </header>
+
+        <!-- Live Formula Ribbon Bar -->
+        <div class="px-4 py-3 bg-slate-950/70 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Live Pattern:
+            </span>
+            <div id="scratch-formula-ribbon" class="code-font text-sm text-cyan-200 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 min-h-[34px] flex items-center overflow-x-auto whitespace-nowrap flex-1">
+              <span class="text-slate-500 italic">เพิ่มบล็อกด้านล่างเพื่อเริ่มสร้างนิพจน์...</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="copyScratchPattern()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>คัดลอก</span>
+            </button>
+            <button type="button" onclick="applyScratchPatternToSandbox()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-cyan-500/20 flex items-center gap-1.5 active:scale-95 transition-all">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>✨ นำไปใส่ Sandbox ทันที</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Body: Two Columns (Toolbox Palette & Workbench Canvas) -->
+        <div class="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 overflow-hidden">
+          
+          <!-- Left Column: Block Palette / Toolbox (Scratch Style) -->
+          <aside class="md:col-span-4 xl:col-span-4 p-4 border-b md:border-b-0 md:border-r border-white/10 overflow-y-auto space-y-4 bg-slate-950/40">
+            <div>
+              <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>🎨</span><span>กล่องหยิบชิ้นส่วน (Palette)</span>
+              </h3>
+              <p class="text-[11px] text-slate-400">กดเลือกบล็อกเพื่อต่อเพิ่มลงในกระดาน</p>
+            </div>
+
+            <!-- Category 1: Characters & Words -->
+            <div class="space-y-1.5">
+              <div class="text-[11px] font-semibold text-cyan-300 flex items-center gap-1">🐱 ตัวอักษร & คำ</div>
+              <div class="grid grid-cols-1 gap-1.5">
+                <button type="button" onclick="addScratchBlock('literal')" class="scratch-palette-btn bg-cyan-950/50 hover:bg-cyan-900/60 border-cyan-500/30 text-cyan-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">ข้อความตรงตัว (Literal)</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('digit')" class="scratch-palette-btn bg-amber-950/50 hover:bg-amber-900/60 border-amber-500/30 text-amber-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">ตัวเลข 0–9 (\d)</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('latin')" class="scratch-palette-btn bg-indigo-950/50 hover:bg-indigo-900/60 border-indigo-500/30 text-indigo-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">คำอังกฤษ/รหัส (\w)</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('space')" class="scratch-palette-btn bg-slate-800/60 hover:bg-slate-700/60 border-slate-500/30 text-slate-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">ช่องว่าง/Tab (\s)</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('any')" class="scratch-palette-btn bg-teal-950/50 hover:bg-teal-900/60 border-teal-500/30 text-teal-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-teal-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">อักขระใดก็ได้ (.)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Category 2: Sets & Choices -->
+            <div class="space-y-1.5">
+              <div class="text-[11px] font-semibold text-emerald-300 flex items-center gap-1">🗂️ ชุดตัวเลือก & ข้อยกเว้น</div>
+              <div class="grid grid-cols-1 gap-1.5">
+                <button type="button" onclick="addScratchBlock('set')" class="scratch-palette-btn bg-emerald-950/50 hover:bg-emerald-900/60 border-emerald-500/30 text-emerald-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">หนึ่งตัวในชุด [...]</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('not-set')" class="scratch-palette-btn bg-rose-950/50 hover:bg-rose-900/60 border-rose-500/30 text-rose-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">หนึ่งตัวที่ไม่อยู่ในชุด [^...]</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('alternative')" class="scratch-palette-btn bg-purple-950/50 hover:bg-purple-900/60 border-purple-500/30 text-purple-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-400 inline-block shrink-0"></span>
+                  <span class="font-medium text-xs">ตัวเลือกคำใดคำหนึ่ง (A|B)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Category 3: Position Anchors -->
+            <div class="space-y-1.5">
+              <div class="text-[11px] font-semibold text-sky-300 flex items-center gap-1">⚓ ตำแหน่งบรรทัด</div>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" onclick="addScratchBlock('line-start')" class="scratch-palette-btn bg-sky-950/50 hover:bg-sky-900/60 border-sky-500/30 text-sky-200">
+                  <span class="font-medium text-xs">⇤ เริ่มบรรทัด (^)</span>
+                </button>
+                <button type="button" onclick="addScratchBlock('line-end')" class="scratch-palette-btn bg-sky-950/50 hover:bg-sky-900/60 border-sky-500/30 text-sky-200">
+                  <span class="font-medium text-xs">ท้ายบรรทัด ($) ⇥</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Category 4: Quick Starter Combos -->
+            <div class="space-y-1.5 pt-2 border-t border-white/5">
+              <div class="text-[11px] font-semibold text-amber-300 flex items-center gap-1">⚡ สูตรสำเร็จรูป (Combos)</div>
+              <div class="grid grid-cols-1 gap-1.5">
+                <button type="button" onclick="loadScratchCombo('key-val')" class="scratch-palette-btn bg-slate-900 hover:bg-slate-800 border-white/10 text-slate-200">
+                  <span>🏷️</span><span class="text-xs">จับคีย์ : ข้อความ (Mood: ...)</span>
+                </button>
+                <button type="button" onclick="loadScratchCombo('date')" class="scratch-palette-btn bg-slate-900 hover:bg-slate-800 border-white/10 text-slate-200">
+                  <span>📅</span><span class="text-xs">จับวันที่ YYYY-MM-DD</span>
+                </button>
+                <button type="button" onclick="loadScratchCombo('price')" class="scratch-palette-btn bg-slate-900 hover:bg-slate-800 border-white/10 text-slate-200">
+                  <span>💰</span><span class="text-xs">จับราคาตัวเลข 1-6 หลัก</span>
+                </button>
+                <button type="button" onclick="loadScratchCombo('bracket')" class="scratch-palette-btn bg-slate-900 hover:bg-slate-800 border-white/10 text-slate-200">
+                  <span>💬</span><span class="text-xs">จับข้อความในวงเล็บ ( ... )</span>
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Right Column: Workbench Canvas (Stacked Scratch Blocks) -->
+          <main class="md:col-span-8 xl:col-span-8 p-4 sm:p-5 overflow-y-auto space-y-4 flex flex-col bg-slate-900/40">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                  <span>🧩</span><span>กระดานต่อบล็อก (Workbench)</span>
+                </h3>
+                <p class="text-xs text-slate-400">ชิ้นส่วนจะเรียงต่อกันจากบนลงล่าง ปรับค่าตัวเลขหรือข้อความในบล็อกได้ทันที</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="clearScratchBlocks()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-200 border border-white/10 text-xs transition-all">
+                  🗑️ ล้างทั้งหมด
+                </button>
+              </div>
+            </div>
+
+            <!-- Blocks Container -->
+            <div id="scratch-blocks-container" class="space-y-2.5 flex-1 min-h-[220px]">
+              <!-- Dynamically rendered Scratch blocks -->
+            </div>
+
+            <!-- Bottom Helper Note -->
+            <div class="p-3.5 rounded-2xl bg-slate-950/60 border border-white/5 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <div class="flex items-center gap-2">
+                <span class="text-cyan-400 text-sm">💡</span>
+                <span>ติ๊ก <b>“📦 เก็บกลุ่มจับ”</b> เพื่อนำไปใช้เป็น $1, $2 ในช่อง Replacement</span>
+              </div>
+              <button type="button" onclick="applyScratchPatternToSandbox()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-md shadow-cyan-500/20 transition-all active:scale-95">
+                นำสูตรไปใช้ใน Sandbox →
+              </button>
+            </div>
+          </main>
         </div>
       </div>
     </div>
@@ -2838,6 +3139,494 @@
 
     function clearBuilderPieces() { builderPieces.length=0;renderBuilderPieces(); }
 
+    /* ==========================================================================
+       Scratch-Style Visual Regex Block Builder
+       ========================================================================== */
+    let nextScratchBlockId = 1;
+    let scratchBlocks = [
+      { id: nextScratchBlockId++, kind: 'line-start', value: '', count: '', capture: false },
+      { id: nextScratchBlockId++, kind: 'literal', value: 'Location', count: '', capture: false },
+      { id: nextScratchBlockId++, kind: 'literal', value: ':', count: '', capture: false },
+      { id: nextScratchBlockId++, kind: 'space', value: '', count: '*', capture: false },
+      { id: nextScratchBlockId++, kind: 'not-set', value: '\\r\\n', count: '+', capture: true },
+      { id: nextScratchBlockId++, kind: 'line-end', value: '', count: '', capture: false }
+    ];
+
+    function openScratchBuilderModal() {
+      const modal = document.getElementById('scratch-builder-modal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+      document.body.style.overflow = 'hidden';
+      renderScratchBlocks();
+    }
+
+    function closeScratchBuilderModal() {
+      const modal = document.getElementById('scratch-builder-modal');
+      if (!modal) return;
+      modal.classList.add('opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 200);
+    }
+
+    function addScratchBlock(kind, customValue = '', customCount = '', capture = false) {
+      const isAnchor = ['line-start', 'line-end'].includes(kind);
+      let defaultValue = customValue;
+      let defaultCount = customCount || (isAnchor ? '' : (kind === 'literal' ? '' : '+'));
+      if (!defaultValue) {
+        if (kind === 'literal') defaultValue = 'cat';
+        else if (kind === 'set') defaultValue = 'a-z';
+        else if (kind === 'not-set') defaultValue = '\\r\\n';
+        else if (kind === 'alternative') defaultValue = 'cat|dog';
+      }
+      scratchBlocks.push({
+        id: nextScratchBlockId++,
+        kind,
+        value: defaultValue,
+        count: defaultCount,
+        min: 1,
+        max: 3,
+        capture: isAnchor ? false : capture
+      });
+      renderScratchBlocks();
+      const container = document.getElementById('scratch-blocks-container');
+      container?.lastElementChild?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    function loadScratchCombo(comboKey) {
+      scratchBlocks = [];
+      if (comboKey === 'key-val') {
+        scratchBlocks.push(
+          { id: nextScratchBlockId++, kind: 'line-start', value: '', count: '', capture: false },
+          { id: nextScratchBlockId++, kind: 'set', value: '^:：\\r\\n', count: '+', min: 1, max: 3, capture: true },
+          { id: nextScratchBlockId++, kind: 'set', value: ':：', count: '', capture: false },
+          { id: nextScratchBlockId++, kind: 'space', value: '', count: '*', capture: false },
+          { id: nextScratchBlockId++, kind: 'not-set', value: '\\r\\n', count: '+', capture: true },
+          { id: nextScratchBlockId++, kind: 'line-end', value: '', count: '', capture: false }
+        );
+      } else if (comboKey === 'date') {
+        scratchBlocks.push(
+          { id: nextScratchBlockId++, kind: 'digit', value: '', count: 'exact', min: 4, max: 4, capture: true },
+          { id: nextScratchBlockId++, kind: 'literal', value: '-', count: '', capture: false },
+          { id: nextScratchBlockId++, kind: 'digit', value: '', count: 'exact', min: 2, max: 2, capture: true },
+          { id: nextScratchBlockId++, kind: 'literal', value: '-', count: '', capture: false },
+          { id: nextScratchBlockId++, kind: 'digit', value: '', count: 'exact', min: 2, max: 2, capture: true }
+        );
+      } else if (comboKey === 'price') {
+        scratchBlocks.push(
+          { id: nextScratchBlockId++, kind: 'digit', value: '', count: 'range', min: 1, max: 6, capture: true },
+          { id: nextScratchBlockId++, kind: 'space', value: '', count: '?', capture: false },
+          { id: nextScratchBlockId++, kind: 'literal', value: 'บาท', count: '?', capture: false }
+        );
+      } else if (comboKey === 'bracket') {
+        scratchBlocks.push(
+          { id: nextScratchBlockId++, kind: 'literal', value: '(', count: '', capture: false },
+          { id: nextScratchBlockId++, kind: 'not-set', value: ')', count: '+', capture: true },
+          { id: nextScratchBlockId++, kind: 'literal', value: ')', count: '', capture: false }
+        );
+      }
+      renderScratchBlocks();
+      showToast('โหลดสูตรสำเร็จรูปแล้ว');
+    }
+
+    function updateScratchBlockValue(id, value) {
+      const block = scratchBlocks.find(b => b.id === id);
+      if (block) {
+        block.value = value;
+        updateScratchFormulaDisplay();
+      }
+    }
+
+    function updateScratchBlockCount(id, countType, minVal, maxVal) {
+      const block = scratchBlocks.find(b => b.id === id);
+      if (block) {
+        block.count = countType;
+        if (minVal !== undefined) block.min = Number(minVal);
+        if (maxVal !== undefined) block.max = Number(maxVal);
+        renderScratchBlocks();
+      }
+    }
+
+    function toggleScratchBlockCapture(id, checked) {
+      const block = scratchBlocks.find(b => b.id === id);
+      if (block) {
+        block.capture = checked;
+        renderScratchBlocks();
+      }
+    }
+
+    function moveScratchBlock(id, delta) {
+      const index = scratchBlocks.findIndex(b => b.id === id);
+      const targetIndex = index + delta;
+      if (index < 0 || targetIndex < 0 || targetIndex >= scratchBlocks.length) return;
+      const temp = scratchBlocks[index];
+      scratchBlocks[index] = scratchBlocks[targetIndex];
+      scratchBlocks[targetIndex] = temp;
+      renderScratchBlocks();
+    }
+
+    function removeScratchBlock(id) {
+      scratchBlocks = scratchBlocks.filter(b => b.id !== id);
+      renderScratchBlocks();
+    }
+
+    function clearScratchBlocks() {
+      scratchBlocks = [];
+      renderScratchBlocks();
+    }
+
+    function scratchBlockToRegex(piece) {
+      const escapeLiteral = val => [...String(val || '')].map(char => '.^$*+?()[]{}|\\'.includes(char) ? '\\' + char : char).join('');
+      const escapeSet = val => [...String(val || '')].map(char => ({'\\':'\\\\', ']':'\\]', '[':'\\[', '^':'\\^', '-':'\\-'}[char] || char)).join('');
+      
+      let base = '';
+      if (piece.kind === 'literal') base = escapeLiteral(piece.value);
+      else if (piece.kind === 'digit') base = '\\d';
+      else if (piece.kind === 'latin') base = '\\w';
+      else if (piece.kind === 'space') base = '[ \\t]';
+      else if (piece.kind === 'any') base = '.';
+      else if (piece.kind === 'set') base = `[${escapeSet(piece.value || 'a-z')}]`;
+      else if (piece.kind === 'not-set') base = `[^${escapeSet(piece.value || '\\r\\n')}]`;
+      else if (piece.kind === 'alternative') {
+        const opts = (piece.value || 'cat|dog').split('|').map(v => escapeLiteral(v.trim())).filter(Boolean);
+        base = `(?:${opts.join('|') || 'a|b'})`;
+      }
+      else if (piece.kind === 'line-start') return '^';
+      else if (piece.kind === 'line-end') return '$';
+
+      let countStr = '';
+      if (piece.count === '?' || piece.count === '+' || piece.count === '*') countStr = piece.count;
+      else if (piece.count === 'exact') countStr = `{${Math.max(0, Number(piece.min) || 1)}}`;
+      else if (piece.count === 'range') countStr = `{${Math.max(0, Number(piece.min) || 1)},${Math.max(Number(piece.min) || 1, Number(piece.max) || 3)}}`;
+
+      if (piece.kind === 'literal' && piece.value && piece.value.length > 1 && countStr) {
+        base = `(?:${base})`;
+      }
+
+      const combined = base + countStr;
+      return piece.capture ? `(${combined})` : combined;
+    }
+
+    function compileScratchRegex() {
+      if (!scratchBlocks.length) return '';
+      return scratchBlocks.map(scratchBlockToRegex).join('');
+    }
+
+    function updateScratchFormulaDisplay() {
+      const ribbon = document.getElementById('scratch-formula-ribbon');
+      if (!ribbon) return;
+      const pattern = compileScratchRegex();
+      if (!pattern) {
+        ribbon.innerHTML = '<span class="text-slate-500 italic">เพิ่มบล็อกด้านล่างเพื่อเริ่มสร้างนิพจน์...</span>';
+        return;
+      }
+      ribbon.textContent = `/${pattern}/gm`;
+    }
+
+    function renderScratchBlocks() {
+      const container = document.getElementById('scratch-blocks-container');
+      if (!container) return;
+      container.replaceChildren();
+
+      if (!scratchBlocks.length) {
+        const empty = document.createElement('div');
+        empty.className = 'p-8 rounded-3xl border-2 border-dashed border-white/10 text-center text-slate-400 space-y-2';
+        empty.innerHTML = `
+          <div class="text-3xl">🧩</div>
+          <div class="text-sm font-semibold text-slate-200">กระดานว่างเปล่า</div>
+          <p class="text-xs text-slate-400">กดเลือกชิ้นส่วนจากกล่องด้านซ้าย หรือเลือกสูตรสำเร็จรูปเพื่อเริ่มต่อบล็อก</p>
+        `;
+        container.append(empty);
+        updateScratchFormulaDisplay();
+        return;
+      }
+
+      const blockTheme = {
+        literal: { name: 'ข้อความตรงตัว (Literal)', color: 'bg-cyan-950/70 border-cyan-400/60 text-cyan-200', dot: 'bg-cyan-400', icon: '📝' },
+        digit: { name: 'ตัวเลข 0–9 (\\d)', color: 'bg-amber-950/70 border-amber-400/60 text-amber-200', dot: 'bg-amber-400', icon: '🔢' },
+        latin: { name: 'คำอังกฤษ/รหัส (\\w)', color: 'bg-indigo-950/70 border-indigo-400/60 text-indigo-200', dot: 'bg-indigo-400', icon: '🔤' },
+        space: { name: 'ช่องว่าง/Tab (\\s)', color: 'bg-slate-900/90 border-slate-400/50 text-slate-200', dot: 'bg-slate-300', icon: '␣' },
+        any: { name: 'อักขระใดก็ได้ (.)', color: 'bg-teal-950/70 border-teal-400/60 text-teal-200', dot: 'bg-teal-400', icon: '🌟' },
+        set: { name: 'หนึ่งตัวในชุด [...]', color: 'bg-emerald-950/70 border-emerald-400/60 text-emerald-200', dot: 'bg-emerald-400', icon: '🗂️' },
+        'not-set': { name: 'หนึ่งตัวที่ไม่อยู่ในชุด [^...]', color: 'bg-rose-950/70 border-rose-400/60 text-rose-200', dot: 'bg-rose-400', icon: '⛔' },
+        alternative: { name: 'ตัวเลือกคำ (A|B)', color: 'bg-purple-950/70 border-purple-400/60 text-purple-200', dot: 'bg-purple-400', icon: '🔀' },
+        'line-start': { name: 'เริ่มบรรทัด (^)', color: 'bg-sky-950/70 border-sky-400/60 text-sky-200', dot: 'bg-sky-400', icon: '⇤' },
+        'line-end': { name: 'ท้ายบรรทัด ($)', color: 'bg-sky-950/70 border-sky-400/60 text-sky-200', dot: 'bg-sky-400', icon: '⇥' }
+      };
+
+      let captureGroupCounter = 0;
+
+      scratchBlocks.forEach((block, index) => {
+        const theme = blockTheme[block.kind] || blockTheme.literal;
+        const isAnchor = ['line-start', 'line-end'].includes(block.kind);
+        if (block.capture && !isAnchor) captureGroupCounter++;
+
+        const card = document.createElement('div');
+        card.className = `scratch-block ${theme.color} space-y-2.5`;
+
+        // Card Top Row: Notch Icon, Title, Reorder & Delete Buttons
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between gap-2 flex-wrap';
+
+        const titleBox = document.createElement('div');
+        titleBox.className = 'flex items-center gap-2 min-w-0';
+        titleBox.innerHTML = `
+          <span class="text-sm">${theme.icon}</span>
+          <span class="text-xs font-bold tracking-wide">${index + 1}. ${theme.name}</span>
+          ${block.capture && !isAnchor ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-fuchsia-500/30 text-fuchsia-200 border border-fuchsia-400/40">กลุ่ม $${captureGroupCounter}</span>` : ''}
+        `;
+
+        const controls = document.createElement('div');
+        controls.className = 'flex items-center gap-1 shrink-0';
+
+        const btnUp = document.createElement('button');
+        btnUp.type = 'button';
+        btnUp.innerHTML = '▲';
+        btnUp.title = 'เลื่อนบล็อกขึ้น';
+        btnUp.disabled = index === 0;
+        btnUp.className = 'w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs flex items-center justify-center transition-all';
+        btnUp.onclick = () => moveScratchBlock(block.id, -1);
+
+        const btnDown = document.createElement('button');
+        btnDown.type = 'button';
+        btnDown.innerHTML = '▼';
+        btnDown.title = 'เลื่อนบล็อกลง';
+        btnDown.disabled = index === scratchBlocks.length - 1;
+        btnDown.className = 'w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs flex items-center justify-center transition-all';
+        btnDown.onclick = () => moveScratchBlock(block.id, 1);
+
+        const btnDel = document.createElement('button');
+        btnDel.type = 'button';
+        btnDel.innerHTML = '✕';
+        btnDel.title = 'ลบบล็อกนี้';
+        btnDel.className = 'w-6 h-6 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-200 text-xs flex items-center justify-center transition-all ml-1';
+        btnDel.onclick = () => removeScratchBlock(block.id);
+
+        controls.append(btnUp, btnDown, btnDel);
+        header.append(titleBox, controls);
+        card.append(header);
+
+        // Card Content Row: Inputs & Quantifier / Group toggles
+        const bodyRow = document.createElement('div');
+        bodyRow.className = 'flex flex-wrap items-center gap-2.5 pt-1';
+
+        // Value Input (for text / set / not-set / alt)
+        if (['literal', 'set', 'not-set', 'alternative'].includes(block.kind)) {
+          const valLabel = document.createElement('div');
+          valLabel.className = 'flex items-center gap-1.5 text-xs text-slate-300';
+          valLabel.innerHTML = `<span>${block.kind === 'literal' ? 'ข้อความ:' : block.kind === 'alternative' ? 'ตัวเลือก (คั่นด้วย |):' : 'ตัวอักษร:'}</span>`;
+          
+          const valInput = document.createElement('input');
+          valInput.type = 'text';
+          valInput.value = block.value;
+          valInput.placeholder = block.kind === 'literal' ? 'เช่น Location' : block.kind === 'alternative' ? 'cat|dog' : 'เช่น a-z หรือ \\r\\n';
+          valInput.className = 'scratch-pill-input min-w-[120px]';
+          valInput.oninput = (e) => updateScratchBlockValue(block.id, e.target.value);
+
+          valLabel.append(valInput);
+          bodyRow.append(valLabel);
+        }
+
+        // Quantifier Dropdown
+        if (!isAnchor) {
+          const countWrap = document.createElement('div');
+          countWrap.className = 'flex items-center gap-1.5 text-xs text-slate-300';
+          countWrap.innerHTML = '<span>จำนวน:</span>';
+
+          const countSelect = document.createElement('select');
+          countSelect.className = 'scratch-pill-input text-xs';
+          countSelect.innerHTML = `
+            <option value="" ${block.count === '' ? 'selected' : ''}>พอดี 1 ครั้ง (เป๊ะ)</option>
+            <option value="?" ${block.count === '?' ? 'selected' : ''}>0 หรือ 1 ครั้ง (? มีหรือไม่มี)</option>
+            <option value="+" ${block.count === '+' ? 'selected' : ''}>1 ครั้งขึ้นไป (+) [อย่างน้อย 1]</option>
+            <option value="*" ${block.count === '*' ? 'selected' : ''}>0 ครั้งขึ้นไป (*) [กี่ครั้งก็ได้]</option>
+            <option value="exact" ${block.count === 'exact' ? 'selected' : ''}>กำหนด n ตัวเป๊ะ {n}</option>
+            <option value="range" ${block.count === 'range' ? 'selected' : ''}>กำหนดช่วง {min, max}</option>
+          `;
+          countSelect.onchange = (e) => updateScratchBlockCount(block.id, e.target.value, block.min, block.max);
+          countWrap.append(countSelect);
+
+          // Number inputs if exact or range
+          if (block.count === 'exact') {
+            const numLabel = document.createElement('span');
+            numLabel.textContent = 'จำนวน:';
+            const numInput = document.createElement('input');
+            numInput.type = 'number';
+            numInput.min = '0';
+            numInput.max = '100';
+            numInput.value = block.min || 1;
+            numInput.className = 'scratch-num-input';
+            numInput.oninput = (e) => { block.min = Number(e.target.value); updateScratchFormulaDisplay(); };
+            countWrap.append(numLabel, numInput);
+          } else if (block.count === 'range') {
+            const minInput = document.createElement('input');
+            minInput.type = 'number';
+            minInput.min = '0';
+            minInput.max = '100';
+            minInput.value = block.min || 1;
+            minInput.className = 'scratch-num-input';
+            minInput.oninput = (e) => { block.min = Number(e.target.value); updateScratchFormulaDisplay(); };
+
+            const toLabel = document.createElement('span');
+            toLabel.textContent = 'ถึง';
+
+            const maxInput = document.createElement('input');
+            maxInput.type = 'number';
+            maxInput.min = '1';
+            maxInput.max = '100';
+            maxInput.value = block.max || 3;
+            maxInput.className = 'scratch-num-input';
+            maxInput.oninput = (e) => { block.max = Number(e.target.value); updateScratchFormulaDisplay(); };
+
+            countWrap.append(minInput, toLabel, maxInput);
+          }
+
+          bodyRow.append(countWrap);
+
+          // Capture Group Pill Toggle
+          const captureLabel = document.createElement('label');
+          captureLabel.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/70 border border-white/10 text-xs text-slate-300 cursor-pointer hover:border-cyan-400/40 transition-all';
+          
+          const captureCheck = document.createElement('input');
+          captureCheck.type = 'checkbox';
+          captureCheck.checked = !!block.capture;
+          captureCheck.className = 'accent-cyan-400 cursor-pointer';
+          captureCheck.onchange = (e) => toggleScratchBlockCapture(block.id, e.target.checked);
+
+          captureLabel.append(captureCheck, document.createTextNode('📦 เก็บกลุ่มจับ ($)'));
+          bodyRow.append(captureLabel);
+        }
+
+        card.append(bodyRow);
+        container.append(card);
+      });
+
+      updateScratchFormulaDisplay();
+    }
+
+    function applyScratchPatternToSandbox() {
+      const pattern = compileScratchRegex();
+      if (!pattern) {
+        showToast('กรุณาเพิ่มบล็อกในกระดานก่อนนำไปใช้');
+        return;
+      }
+      document.getElementById('sandbox-pattern').value = pattern;
+      if (!document.getElementById('flag-g').checked) document.getElementById('flag-g').checked = true;
+      if (!document.getElementById('flag-m').checked) document.getElementById('flag-m').checked = true;
+      updateFullLiteralDisplay();
+      triggerSandboxRun();
+      closeScratchBuilderModal();
+      showToast('ประกอบบล็อกสำเร็จ! นำนิพจน์เข้าสู่ Sandbox เรียบร้อย ✨');
+    }
+
+    function copyScratchPattern() {
+      const pattern = compileScratchRegex();
+      if (!pattern) {
+        showToast('ยังไม่มีนิพจน์สำหรับคัดลอก');
+        return;
+      }
+      copyToClipboard(pattern, 'คัดลอกนิพจน์จากกล่อง Scratch แล้ว!');
+    }
+
+    /* ==========================================================================
+       Sandbox View Modes (Mobile Sub-tabs & Desktop Fullscreen Mode)
+       ========================================================================== */
+    let sandboxViewMode = 'editor';
+    let sandboxDesktopMode = 'split';
+
+    function setSandboxViewMode(mode) {
+      sandboxViewMode = mode;
+      const editorCol = document.getElementById('sandbox-editor-column');
+      const previewCol = document.getElementById('sandbox-preview-column');
+      const btnEditor = document.getElementById('tab-btn-editor');
+      const btnPreview = document.getElementById('tab-btn-preview');
+
+      if (mode === 'editor') {
+        if (editorCol) { editorCol.classList.remove('hidden'); }
+        if (previewCol) {
+          previewCol.classList.add('hidden');
+          previewCol.classList.remove('block');
+        }
+        if (btnEditor) {
+          btnEditor.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-200 border border-cyan-400/40 shadow-sm';
+        }
+        if (btnPreview) {
+          btnPreview.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10';
+        }
+      } else {
+        if (editorCol) {
+          editorCol.classList.add('hidden');
+          editorCol.classList.remove('block');
+        }
+        if (previewCol) {
+          previewCol.classList.remove('hidden');
+          previewCol.classList.add('block');
+        }
+        if (btnEditor) {
+          btnEditor.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10';
+        }
+        if (btnPreview) {
+          btnPreview.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-200 border border-emerald-400/40 shadow-sm';
+        }
+        renderSandboxPreview();
+      }
+    }
+
+    function setSandboxDesktopMode(mode) {
+      sandboxDesktopMode = mode;
+      const editorCol = document.getElementById('sandbox-editor-column');
+      const previewCol = document.getElementById('sandbox-preview-column');
+      const frame = document.getElementById('sandbox-output-frame');
+      const btnSplit = document.getElementById('desktop-btn-split');
+      const btnFull = document.getElementById('desktop-btn-full-preview');
+      const expandLabel = document.getElementById('sandbox-preview-expand-label');
+
+      if (mode === 'split') {
+        if (editorCol) {
+          editorCol.classList.remove('lg:hidden');
+          editorCol.className = 'lg:col-span-6 xl:col-span-5 space-y-4';
+        }
+        if (previewCol) {
+          previewCol.className = 'lg:col-span-6 xl:col-span-4 space-y-4';
+        }
+        if (frame) {
+          frame.style.height = '260px';
+        }
+        if (btnSplit) {
+          btnSplit.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all';
+        }
+        if (btnFull) {
+          btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10 flex items-center gap-1.5 transition-all';
+        }
+        if (expandLabel) expandLabel.textContent = 'ขยายเต็มจอ';
+      } else {
+        if (editorCol) {
+          editorCol.classList.add('lg:hidden');
+        }
+        if (previewCol) {
+          previewCol.classList.remove('hidden');
+          previewCol.className = 'lg:col-span-12 xl:col-span-9 space-y-4';
+        }
+        if (frame) {
+          frame.style.height = '520px';
+        }
+        if (btnSplit) {
+          btnSplit.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10 flex items-center gap-1.5 transition-all';
+        }
+        if (btnFull) {
+          btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all';
+        }
+        if (expandLabel) expandLabel.textContent = 'ยุบกลับ';
+        renderSandboxPreview();
+      }
+    }
+
+    function toggleSandboxPreviewFullscreen() {
+      setSandboxDesktopMode(sandboxDesktopMode === 'split' ? 'full-preview' : 'split');
+    }
+
     function copySandboxOutput() {
       if(sandboxOutputRaw) copyToClipboard(sandboxOutputRaw,'คัดลอก HTML ผลลัพธ์แล้ว');
     }
@@ -3477,12 +4266,28 @@
       const groupsBox = document.getElementById('sandbox-groups-box');
       const timeText = document.getElementById('sandbox-time-text');
 
+      const updateSubtabBadge = (count, hasError = false) => {
+        const subtabBadge = document.getElementById('sandbox-subtab-badge');
+        if (!subtabBadge) return;
+        if (hasError) {
+          subtabBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/30 text-rose-200 border border-rose-400/30';
+          subtabBadge.textContent = 'error';
+        } else if (count > 0) {
+          subtabBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/30 text-emerald-200 border border-emerald-400/30';
+          subtabBadge.textContent = `${count} match`;
+        } else {
+          subtabBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400';
+          subtabBadge.textContent = '0 match';
+        }
+      };
+
       if (!input) {
         badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400';
         badge.textContent = 'รอข้อมูลทดสอบ';
         highlightBox.innerHTML = '<span class="text-slate-500 italic">กรอก Input Text เพื่อดูผล...</span>';
         renderPipelineGroups([], groupsBox);
         renderOutputCode(''); timeText.textContent = '0 ms';
+        updateSubtabBadge(0);
         return;
       }
 
@@ -3492,6 +4297,7 @@
         highlightBox.textContent = input;
         renderPipelineGroups([], groupsBox);
         renderOutputCode(input); timeText.textContent = '0 ms';
+        updateSubtabBadge(0);
         return;
       }
 
@@ -3538,9 +4344,11 @@
         badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/20 text-rose-300 border border-rose-500/30';
         badge.textContent = `หยุดที่กฎ ${ruleRuns.length + 1}: ${errorMessage}`;
         const note = document.createElement('p'); note.className = 'text-xs text-rose-300'; note.textContent = errorMessage; groupsBox.prepend(note);
+        updateSubtabBadge(0, true);
         return;
       }
       const totalMatches = ruleRuns.reduce((sum, run) => sum + run.matches.length, 0);
+      updateSubtabBadge(totalMatches);
       if (totalMatches) {
         badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
         badge.textContent = `พบ ${totalMatches} Match · ประมวลผล ${ruleRuns.length} Regex`;

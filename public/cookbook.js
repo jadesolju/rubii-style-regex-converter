@@ -623,7 +623,143 @@ async function runCookbook() {
     const css=bundle.cssField.value;if(css.length>20000) throw new Error('CSS ยาวเกินขอบเขตทดลอง');
     const safeCSS=css.replace(/<\/style/gi,'');
     const messageClass=bundle.targetField.value==='user'?'rubii-message-user':'rubii-message-character';
-    document.getElementById('cookbook-frame').srcdoc='<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src \'none\'; font-src \'none\'; form-action \'none\'; base-uri \'none\'"><style>body{background:#0f172a;color:#e2e8f0;font:15px/1.6 sans-serif;margin:16px;overflow-wrap:anywhere}.rubii-message-character,.rubii-message-user{padding:12px;border-radius:12px}'+safeCSS+'</style></head><body><main class="'+messageClass+'">'+sanitizeCookbookHTML(text)+'</main></body></html>';
+    const baseThemeCss = `
+      html { color-scheme: dark; }
+      body {
+        box-sizing: border-box; min-height: 100vh; margin: 0; padding: 14px;
+        background: #050b18; color: #e2e8f0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 13.5px; line-height: 1.6; overflow-wrap: anywhere;
+      }
+      main { min-height: 40px; }
+      .rubii-message-character {
+        background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 16px; padding: 14px 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+      }
+      .rubii-message-character::before {
+        content: 'Character Message Preview'; display: block; font-size: 10px; font-weight: 700;
+        color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; opacity: 0.85;
+      }
+      .rubii-message-user {
+        background: rgba(30, 27, 75, 0.65); border: 1px solid rgba(168, 85, 247, 0.25);
+        border-radius: 16px; padding: 14px 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+      }
+      .rubii-message-user::before {
+        content: 'User Message Preview'; display: block; font-size: 10px; font-weight: 700;
+        color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; opacity: 0.85;
+      }
+
+      /* --- Key-Value & Status Rows --- */
+      .model-status-row, .bracket-kv {
+        display: flex; justify-content: space-between; align-items: center; gap: 12px;
+        margin: 6px 0; padding: 8px 12px;
+        background: rgba(8, 18, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+      .model-status-row b, .model-status-row .key, .bracket-kv b {
+        color: #38bdf8; font-weight: 600; font-size: 12.5px; letter-spacing: 0.02em;
+      }
+      .model-status-row span, .model-status-row .val, .bracket-kv span {
+        color: #f1f5f9; font-weight: 500;
+      }
+
+      /* --- DateTime Badges --- */
+      .datetime-badge {
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 6px 14px; margin: 6px 0;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15));
+        border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 9999px;
+        color: #e0f2fe; font-size: 12px; font-weight: 500;
+        box-shadow: 0 2px 10px rgba(14, 165, 233, 0.15);
+      }
+      .datetime-badge .date { color: #38bdf8; font-weight: 600; }
+      .datetime-badge .time { color: #a5f3fc; opacity: 0.9; }
+      .datetime-badge .date::before { content: '📅 '; }
+      .datetime-badge .time::before { content: '🕒 '; }
+
+      /* --- Status Cards & Thought / Action --- */
+      .status-card, .scene-profile-card {
+        margin: 10px 0; padding: 12px 16px;
+        background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(147, 51, 234, 0.3);
+        border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      }
+      .status-body { white-space: pre-wrap; color: #e2e8f0; line-height: 1.6; }
+      .action {
+        color: #fde68a; font-style: italic; opacity: 0.95;
+        padding: 2px 4px;
+      }
+      .thought {
+        margin: 8px 0; padding: 6px 12px;
+        border-left: 3px dotted rgba(192, 132, 252, 0.6);
+        background: rgba(192, 132, 252, 0.06); border-radius: 0 8px 8px 0;
+        color: #d8b4fe; font-style: italic;
+      }
+
+      /* --- Chat & Messaging Components --- */
+      .cb-chathead { padding: 8px 12px; color: #a5f3fc; font-weight: 700; border-bottom: 1px solid #334155; margin-bottom: 8px; }
+      .cb-msg { padding: 10px 14px; margin: 8px 0; border-radius: 14px; max-width: 80%; white-space: pre-wrap; font-size: 13px; line-height: 1.5; }
+      .cb-msg small { display: block; font-size: 10px; opacity: 0.65; margin-top: 4px; text-align: right; }
+      .cb-in { background: #1e293b; color: #f8fafc; border: 1px solid rgba(255,255,255,0.08); margin-right: auto; }
+      .cb-out { background: linear-gradient(135deg, #4f46e5, #4338ca); color: #fff; margin-left: auto; box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3); }
+      .cb-livehead { padding: 10px 12px; border-bottom: 1px solid #334155; color: #f8fafc; font-weight: 600; }
+      .cb-livehead b { background: #e11d48; color: #fff; padding: 2px 7px; border-radius: 4px; margin-right: 8px; font-size: 10px; }
+      .cb-livechat { padding: 6px 10px; margin: 4px 0; background: rgba(15, 23, 42, 0.6); border-radius: 8px; font-size: 12.5px; }
+      .cb-livechat b { color: #38bdf8; margin-right: 6px; }
+      .cb-gift { padding: 8px 12px; margin: 6px 0; border-radius: 10px; background: linear-gradient(90deg, #9d174d, #c2410c); color: #fff; font-weight: 600; font-size: 12.5px; }
+      .cb-clock { text-align: center; font-size: 32px; font-weight: 300; color: #e2e8f0; margin: 8px 0; }
+      .cb-notice { padding: 12px 14px; background: #1e293b; border-radius: 12px; margin: 8px 0; border: 1px solid rgba(255,255,255,0.08); }
+      .cb-notice small { color: #94a3b8; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+      .cb-notice h3 { margin: 4px 0; font-size: 14px; color: #38bdf8; }
+      .cb-notice p { margin: 0; color: #cbd5e1; font-size: 12.5px; }
+      .cb-quest { padding: 10px 12px; color: #fde68a; font-weight: 700; border-bottom: 1px solid rgba(245, 158, 11, 0.3); margin-bottom: 6px; }
+      .cb-task { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12.5px; }
+      .cb-task b { font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 8px; background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+      .cb-task[data-state="ทำแล้ว"] b { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+      /* --- Headings, Brackets & Markdown --- */
+      .bracket-topic, .markdown-heading {
+        margin: 14px 0 8px; padding: 8px 14px;
+        border-left: 4px solid #a855f7; border-radius: 0 10px 10px 0;
+        background: linear-gradient(90deg, rgba(168, 85, 247, 0.2), transparent);
+        color: #f3e8ff; font-size: 15px; font-weight: 700;
+      }
+      .markdown-list-item, .premium-list-item {
+        display: flex; gap: 8px; align-items: flex-start;
+        margin: 6px 0; color: #e2e8f0; font-size: 13px;
+      }
+      .markdown-list-marker, .premium-list-star { color: #fbbf24; font-weight: 700; }
+      .markdown-blockquote {
+        margin: 10px 0; padding: 10px 16px;
+        border-left: 3px solid #818cf8; border-radius: 0 10px 10px 0;
+        background: rgba(99, 102, 241, 0.1); color: #c7d2fe; font-style: italic;
+      }
+      .markdown-code, .premium-code {
+        padding: 2px 7px; border-radius: 6px;
+        background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3);
+        color: #38bdf8; font-family: ui-monospace, monospace; font-size: 12px;
+      }
+
+      /* --- Premium Profile Components --- */
+      .premium-profile {
+        margin: 12px 0; padding: 16px;
+        background: linear-gradient(145deg, #0f172a, #1e1b4b);
+        border: 1px solid rgba(216, 180, 254, 0.3); border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      }
+      .premium-dialogue {
+        padding: 12px 16px; margin: 10px 0;
+        background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 12px; color: #faf5ff; font-size: 14px;
+      }
+      .premium-quote-mark { color: #facc15; font-size: 20px; font-weight: 700; margin-right: 6px; }
+      .premium-ooc {
+        padding: 10px 14px; margin: 8px 0;
+        background: rgba(19, 78, 74, 0.25); border: 1px solid rgba(45, 212, 191, 0.3);
+        border-radius: 10px; color: #ccfbf1; font-size: 12px;
+      }
+      .premium-ooc-label { display: block; font-size: 9px; font-weight: 700; color: #2dd4bf; letter-spacing: 0.1em; margin-bottom: 2px; }
+    `;
+    document.getElementById('cookbook-frame').srcdoc='<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data:; font-src data:; media-src data:; connect-src \'none\'; form-action \'none\'; base-uri \'none\'"><style>'+baseThemeCss+'\n'+safeCSS+'</style></head><body><main class="'+messageClass+'">'+sanitizeCookbookHTML(text)+'</main></body></html>';
     status.textContent='Raw Regex → Style tag → CSS · '+(counts.join(' • ')||'สูตรนี้ใช้ Style tag โดยไม่ต้องมี Regex')+' · ถ้า marker ไม่ตรงรูปแบบจะยังเหลือข้อความเดิม';
   }catch(e){if(revision===cookbookRevision) status.textContent='ตรวจไม่ได้: '+e.message;}
 }
