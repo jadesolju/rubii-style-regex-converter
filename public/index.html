@@ -1325,7 +1325,8 @@
 
   </div>
 
-  <!-- APPLICATION LOGIC SCRIPT (Dynamic 100% No Hardcode) -->
+  <!-- APPLICATION LOGIC SCRIPTS -->
+  <script src="/cookbook.js"></script>
   <script>
     // State Store
     let sandboxOutputRaw = '';
@@ -1426,19 +1427,19 @@
 
     // Initialize Application
     async function initApp() {
-      initRegexCheatsheet();
-      renderRegexCheatsheet();
-      renderBuilderPieces();
-      renderSandboxRegexRules();
-      renderSandboxStyleTags();
-      renderCategoryHub();
-      renderPracticePicker();
-      renderPatternStarterPicker();
-      renderCategoryFilters();
-      renderRecipesGrid();
-      renderLessonsOverview();
-      renderLessonsNav();
-      switchTab('lessons');
+      try { initRegexCheatsheet(); } catch (e) { console.warn('initRegexCheatsheet error', e); }
+      try { renderRegexCheatsheet(); } catch (e) { console.warn('renderRegexCheatsheet error', e); }
+      try { renderBuilderPieces(); } catch (e) { console.warn('renderBuilderPieces error', e); }
+      try { renderSandboxRegexRules(); } catch (e) { console.warn('renderSandboxRegexRules error', e); }
+      try { renderSandboxStyleTags(); } catch (e) { console.warn('renderSandboxStyleTags error', e); }
+      try { renderCategoryHub(); } catch (e) { console.warn('renderCategoryHub error', e); }
+      try { renderPracticePicker(); } catch (e) { console.warn('renderPracticePicker error', e); }
+      try { renderPatternStarterPicker(); } catch (e) { console.warn('renderPatternStarterPicker error', e); }
+      try { renderCategoryFilters(); } catch (e) { console.warn('renderCategoryFilters error', e); }
+      try { renderLessonsOverview(); } catch (e) { console.warn('renderLessonsOverview error', e); }
+      try { renderLessonsNav(); } catch (e) { console.warn('renderLessonsNav error', e); }
+      try { renderRecipesGrid(); } catch (e) { console.warn('renderRecipesGrid error', e); }
+      try { switchTab('lessons'); } catch (e) { console.warn('switchTab error', e); }
 
       try {
         // Parallel data fetch with cache-first and instant rendering
@@ -1452,7 +1453,8 @@
         checkApiHealth();
       } catch (err) {
         console.error('Initialization error:', err);
-        document.getElementById('api-status-text').textContent = 'ทำงานในโหมด Standalone';
+        const statusEl = document.getElementById('api-status-text');
+        if (statusEl) statusEl.textContent = 'ทำงานในโหมด Standalone';
       }
     }
 
@@ -1762,7 +1764,13 @@
 
     // Render Recipes & Patterns
     function renderRecipesGrid() {
-      renderCookbookLibrary();
+      if (typeof renderCookbookLibrary === 'function') {
+        try {
+          renderCookbookLibrary();
+        } catch (e) {
+          console.warn('renderCookbookLibrary error:', e);
+        }
+      }
       const container = document.getElementById('recipes-grid');
       if (!container) return;
       container.innerHTML = '';
@@ -2067,16 +2075,25 @@
       }
 
       if (list.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full py-16 text-center text-slate-400 glass-card rounded-3xl p-8">
-            <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <p class="text-base sm:text-lg font-medium text-slate-300">ไม่พบบทเรียนที่ตรงกับเงื่อนไขค้นหา</p>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">ลองเลือกขั้นการเรียนรู้อื่น หรือล้างคำค้นหาดูนะ</p>
-          </div>
-        `;
+        if (state.lessons.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full py-16 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
+              <div class="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin"></div>
+              <p class="text-sm font-medium text-slate-300">กำลังจัดเตรียมบทเรียน...</p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="col-span-full py-16 text-center text-slate-400 glass-card rounded-3xl p-8">
+              <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <p class="text-base sm:text-lg font-medium text-slate-300">ไม่พบบทเรียนที่ตรงกับเงื่อนไขค้นหา</p>
+              <p class="text-xs sm:text-sm text-slate-500 mt-1">ลองเลือกขั้นการเรียนรู้อื่น หรือล้างคำค้นหาดูนะ</p>
+            </div>
+          `;
+        }
         return;
       }
 
@@ -2989,9 +3006,11 @@
 
     function initRegexCheatsheet() {
       const sandbox = document.getElementById('view-sandbox');
+      if (!sandbox) return;
       if (sandbox.dataset.cheatsheetTrackingReady === 'true') return;
       sandbox.dataset.cheatsheetTrackingReady = 'true';
       const aside = document.getElementById('sandbox-cheatsheet-aside');
+      if (!aside) return;
       aside.addEventListener('click', event => {
         if (event.target === aside) toggleRegexCheatsheet(false);
       });
@@ -4883,6 +4902,5 @@
     // Run initialization on DOM load
     window.addEventListener('DOMContentLoaded', initApp);
   </script>
-  <script src="/cookbook.js"></script>
 </body>
 </html>
