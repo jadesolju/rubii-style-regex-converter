@@ -1,12 +1,19 @@
 {
   "version": 2,
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/index.html",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/v1/(.*)",
+      "destination": "/api/index"
     },
     {
-      "source": "/((?!api/index).*)",
+      "source": "/healthz",
       "destination": "/api/index"
     }
   ]
