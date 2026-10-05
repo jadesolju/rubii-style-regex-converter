@@ -446,7 +446,10 @@
         <!-- Chapter Cards Grid -->
         <div id="lessons-cards-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           <!-- Injected dynamically by renderLessonsOverview() -->
-          <div class="col-span-full py-12 text-center text-slate-400">กำลังโหลดบทเรียนทั้งหมด...</div>
+          <div class="col-span-full py-16 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
+            <div class="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin"></div>
+            <p class="text-sm font-medium text-slate-300">กำลังจัดเตรียมบทเรียน...</p>
+          </div>
         </div>
       </div>
 
@@ -1422,30 +1425,28 @@
     async function initApp() {
       initRegexCheatsheet();
       renderRegexCheatsheet();
-      try {
-        await Promise.all([
-          fetchPatterns(),
-          fetchRecipes(),
-          fetchLessons()
-        ]);
-        renderCategoryHub();
-        renderPracticePicker();
-        renderPatternStarterPicker();
-        renderBuilderPieces();
-        renderSandboxRegexRules();
-        renderSandboxStyleTags();
-        renderRegexCheatsheet();
-        renderCategoryFilters();
-        renderRecipesGrid();
-        renderLessonsOverview();
-        renderLessonsNav();
-        checkApiHealth();
+      renderBuilderPieces();
+      renderSandboxRegexRules();
+      renderSandboxStyleTags();
+      renderCategoryHub();
+      renderPracticePicker();
+      renderPatternStarterPicker();
+      renderCategoryFilters();
+      renderRecipesGrid();
+      renderLessonsOverview();
+      renderLessonsNav();
+      switchTab('lessons');
 
-        // Initialize Sandbox with primary Universal Key-Value pattern (/^([^:：\n]{1,100})[:：]\s*(.+)$/gm)
-        if (state.patterns.some(p => p.id === 'key-value-generic')) {
-          loadPractice('key-value-generic', 1);
-        }
-        switchTab('lessons');
+      try {
+        // Parallel data fetch with cache-first and instant rendering
+        fetchLessons();
+        fetchRecipes();
+        fetchPatterns().then(() => {
+          if (state.patterns.some(p => p.id === 'key-value-generic')) {
+            loadPractice('key-value-generic', 1);
+          }
+        });
+        checkApiHealth();
       } catch (err) {
         console.error('Initialization error:', err);
         document.getElementById('api-status-text').textContent = 'ทำงานในโหมด Standalone';
@@ -1489,17 +1490,27 @@
     // Fetch APIs with Cache-First & Background Revalidate (0ms Instant Load)
     async function fetchPatterns() {
       const cached = appClientCache.get('patterns');
-      if (cached) {
+      if (cached && Array.isArray(cached) && cached.length > 0) {
         state.patterns = cached;
         state.patterns.forEach(p => { if (p.category) state.categories.add(p.category); });
+        renderCategoryHub();
+        renderPracticePicker();
+        renderPatternStarterPicker();
+        renderCategoryFilters();
+        renderRecipesGrid();
       }
       try {
         const res = await fetch('/v1/patterns');
         const json = await res.json();
-        if (json.data) {
+        if (json.data && Array.isArray(json.data)) {
           state.patterns = json.data;
           state.patterns.forEach(p => { if (p.category) state.categories.add(p.category); });
           appClientCache.set('patterns', json.data);
+          renderCategoryHub();
+          renderPracticePicker();
+          renderPatternStarterPicker();
+          renderCategoryFilters();
+          renderRecipesGrid();
         }
       } catch (e) {
         if (!cached) console.warn('Fetch patterns error:', e);
@@ -1508,21 +1519,23 @@
 
     async function fetchRecipes() {
       const cached = appClientCache.get('recipes');
-      if (cached) {
+      if (cached && Array.isArray(cached) && cached.length > 0) {
         state.recipes = cached;
         state.recipes.forEach(r => { if (r.category) state.categories.add(r.category); });
         const badge = document.getElementById('badge-recipes-count');
         if (badge) badge.textContent = state.recipes.length;
+        renderRecipesGrid();
       }
       try {
         const res = await fetch('/v1/recipes');
         const json = await res.json();
-        if (json.data) {
+        if (json.data && Array.isArray(json.data)) {
           state.recipes = json.data;
           state.recipes.forEach(r => { if (r.category) state.categories.add(r.category); });
           const badge = document.getElementById('badge-recipes-count');
           if (badge) badge.textContent = state.recipes.length;
           appClientCache.set('recipes', json.data);
+          renderRecipesGrid();
         }
       } catch (e) {
         if (!cached) console.warn('Fetch recipes error:', e);
@@ -1532,19 +1545,23 @@
     async function fetchLessons() {
       const cacheKey = 'lessons_' + state.audience;
       const cached = appClientCache.get(cacheKey);
-      if (cached) {
+      if (cached && Array.isArray(cached) && cached.length > 0) {
         state.lessons = cached;
         const badge = document.getElementById('badge-lessons-count');
         if (badge) badge.textContent = state.lessons.length;
+        renderLessonsOverview();
+        renderLessonsNav();
       }
       try {
         const res = await fetch(`/v1/lessons?audience=${state.audience}`);
         const json = await res.json();
-        if (json.data) {
+        if (json.data && Array.isArray(json.data)) {
           state.lessons = json.data;
           const badge = document.getElementById('badge-lessons-count');
           if (badge) badge.textContent = state.lessons.length;
           appClientCache.set(cacheKey, json.data);
+          renderLessonsOverview();
+          renderLessonsNav();
         }
       } catch (e) {
         if (!cached) console.warn('Fetch lessons error:', e);
@@ -1687,8 +1704,22 @@
       });
     }
 
+    let visibleRecipesLimit = 6;
+    const RECIPES_PAGE_SIZE = 6;
+
+    function loadMoreRecipes() {
+      visibleRecipesLimit += RECIPES_PAGE_SIZE;
+      renderRecipesGrid();
+    }
+
+    function showAllRecipes() {
+      visibleRecipesLimit = 9999;
+      renderRecipesGrid();
+    }
+
     function filterCategory(cat) {
       state.selectedCategory = cat;
+      visibleRecipesLimit = 6;
       const labelEl = document.getElementById('current-active-cat-label');
       if (labelEl) {
         labelEl.textContent = categoryLabels[cat] || cat;
@@ -1706,6 +1737,7 @@
 
     function filterLevel(level) {
       state.selectedLevel = level;
+      visibleRecipesLimit = 6;
       document.querySelectorAll('.level-pill').forEach(btn => {
         if (btn.getAttribute('data-level') === level) {
           btn.className = "level-pill px-2.5 py-1 rounded-xl text-xs font-medium transition-all bg-indigo-500/20 text-indigo-300 border border-indigo-500/40";
@@ -1718,6 +1750,8 @@
 
     async function handleSearch(query) {
       state.searchQuery = (query || '').trim().toLowerCase();
+      visibleLessonsLimit = 4;
+      visibleRecipesLimit = 6;
       renderRecipesGrid();
       renderLessonsOverview();
       renderLessonsNav();
@@ -1745,6 +1779,7 @@
     function renderRecipesGrid() {
       renderCookbookLibrary();
       const container = document.getElementById('recipes-grid');
+      if (!container) return;
       container.innerHTML = '';
 
       // Combine recipes and standalone patterns
@@ -1790,7 +1825,9 @@
         return;
       }
 
-      list.forEach(pattern => {
+      const visibleList = list.slice(0, visibleRecipesLimit);
+
+      visibleList.forEach(pattern => {
         const lvl = levelConfig[pattern.level] || levelConfig.beginner;
         const card = document.createElement('div');
         card.className = "glass-card glass-card-hover rounded-3xl p-6 flex flex-col justify-between space-y-4";
@@ -1860,6 +1897,33 @@
         `;
         container.appendChild(card);
       });
+
+      // Lazy Chunk Loader Bar for Recipes
+      if (list.length > visibleRecipesLimit) {
+        const nextBatchCount = Math.min(RECIPES_PAGE_SIZE, list.length - visibleList.length);
+        const loadMoreDiv = document.createElement('div');
+        loadMoreDiv.className = 'col-span-full mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl glass-card border border-cyan-500/20 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-blue-950/40 shadow-xl';
+        loadMoreDiv.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+            <div>
+              <p class="text-xs sm:text-sm font-medium text-slate-200">
+                กำลังแสดง <span class="font-bold text-cyan-300">${visibleList.length}</span> จาก <span class="font-bold text-white">${list.length}</span> สูตร
+              </p>
+              <p class="text-[11px] text-slate-400">ระบบโหลดสูตรทีละส่วนเพื่อความเร็วและเบาเครื่อง</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2.5 w-full sm:w-auto">
+            <button onclick="loadMoreRecipes()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 active:scale-95">
+              <span>🍳 โหลดเพิ่มอีก ${nextBatchCount} สูตร</span>
+            </button>
+            <button onclick="showAllRecipes()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs sm:text-sm font-medium text-slate-300 hover:text-white border border-white/10 transition-all active:scale-95">
+              แสดงทั้งหมด (${list.length})
+            </button>
+          </div>
+        `;
+        container.appendChild(loadMoreDiv);
+      }
     }
 
     // Detail Modal for Pattern
@@ -1967,9 +2031,22 @@
 
     // Lesson Course Overview Hub & Reader Logic
     let selectedLessonStage = 'all';
+    let visibleLessonsLimit = 4;
+    const LESSONS_PAGE_SIZE = 4;
+
+    function loadMoreLessons() {
+      visibleLessonsLimit += LESSONS_PAGE_SIZE;
+      renderLessonsOverview();
+    }
+
+    function showAllLessons() {
+      visibleLessonsLimit = 9999;
+      renderLessonsOverview();
+    }
 
     function filterLessonStage(stage) {
       selectedLessonStage = stage;
+      visibleLessonsLimit = 4;
       document.querySelectorAll('#lessons-stage-filter-container button').forEach(btn => {
         if (btn.getAttribute('data-stage') === stage) {
           btn.className = "lesson-stage-pill active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm";
@@ -2026,7 +2103,9 @@
         'นำไปใช้กับแชต': { bg: 'from-emerald-500/15 via-teal-500/10 to-cyan-500/10', border: 'border-emerald-400/30', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
       };
 
-      list.forEach((lesson) => {
+      const visibleList = list.slice(0, visibleLessonsLimit);
+
+      visibleList.forEach((lesson) => {
         const style = stageStyles[lesson.courseStage] || { bg: 'from-slate-800/40 to-slate-900/40', border: 'border-white/10', badge: 'bg-white/10 text-slate-300 border-white/10' };
         const card = document.createElement('div');
         card.className = `glass-card glass-card-hover rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-4 border ${style.border} bg-gradient-to-br ${style.bg} transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-950/40 cursor-pointer group`;
@@ -2131,6 +2210,33 @@
 
         container.appendChild(card);
       });
+
+      // Lazy Chunk Loader Bar for Handbook
+      if (list.length > visibleLessonsLimit) {
+        const nextBatchCount = Math.min(LESSONS_PAGE_SIZE, list.length - visibleList.length);
+        const loadMoreDiv = document.createElement('div');
+        loadMoreDiv.className = 'col-span-full mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl glass-card border border-cyan-500/20 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-blue-950/40 shadow-xl';
+        loadMoreDiv.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+            <div>
+              <p class="text-xs sm:text-sm font-medium text-slate-200">
+                กำลังแสดง <span class="font-bold text-cyan-300">${visibleList.length}</span> จาก <span class="font-bold text-white">${list.length}</span> บทเรียน
+              </p>
+              <p class="text-[11px] text-slate-400">ระบบโหลดทีละส่วนเพื่อความเร็วลื่นไหลสูงสุด</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2.5 w-full sm:w-auto">
+            <button onclick="loadMoreLessons()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 active:scale-95">
+              <span>📖 โหลดเพิ่มอีก ${nextBatchCount} บท</span>
+            </button>
+            <button onclick="showAllLessons()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs sm:text-sm font-medium text-slate-300 hover:text-white border border-white/10 transition-all active:scale-95">
+              แสดงทั้งหมด (${list.length})
+            </button>
+          </div>
+        `;
+        container.appendChild(loadMoreDiv);
+      }
     }
 
     function openLesson(lessonId) {
