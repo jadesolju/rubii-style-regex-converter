@@ -22,17 +22,21 @@ const STRIPPED_HEADERS = new Set([
 
 function normalizeUrl(rawUrl: string | undefined): string {
   let url = rawUrl ?? "/";
-  if (url === "/api/index" || url === "/api" || url === "/api/") {
+  if (!url || url === "/" || url === "/api/index" || url === "/api" || url === "/api/") {
     return "/";
   }
   if (url.startsWith("/api/index?")) {
     const queryIndex = url.indexOf("?");
     const searchParams = new URLSearchParams(url.slice(queryIndex + 1));
+    const pathParam = searchParams.get("path");
     const matchedPath = searchParams.get("x-matched-path");
-    if (matchedPath) {
+    const resolvedPath = pathParam ?? matchedPath;
+    if (resolvedPath !== null && resolvedPath !== undefined) {
+      searchParams.delete("path");
       searchParams.delete("x-matched-path");
+      const cleanPath = resolvedPath === "" ? "/" : (resolvedPath.startsWith("/") ? resolvedPath : "/" + resolvedPath);
       const remainingQuery = searchParams.toString();
-      return matchedPath + (remainingQuery ? `?${remainingQuery}` : "");
+      return cleanPath + (remainingQuery ? `?${remainingQuery}` : "");
     }
     return "/" + url.slice(queryIndex);
   }
@@ -46,7 +50,12 @@ export default async function handler(req: any, res: any) {
 
   // Direct fast-path for static web assets (pre-compressed gzip, 0ms latency)
   if (method === "GET" || method === "HEAD") {
-    if (pathname === "/" || pathname === "/index.html") {
+    if (
+      pathname === "/" ||
+      pathname === "/index.html" ||
+      pathname === "/api/index" ||
+      pathname === "/api"
+    ) {
       res.statusCode = 200;
       res.setHeader("content-type", "text/html; charset=utf-8");
       res.setHeader("content-encoding", "gzip");
