@@ -1,4 +1,5 @@
 import Fastify, { type FastifyInstance } from "fastify";
+import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import openApi from "./openapi.json" with { type: "json" };
 import { getById, getCollection, getRecipeBundle, validateContent, type Lesson } from "./content.ts";
@@ -34,6 +35,7 @@ const errorSchema = {
 };
 
 const API_PREFIX = "/v1";
+const LESSON_ILLUSTRATIONS_DIR = new URL("../public/lessons/", import.meta.url);
 
 const listQuerySchema = {
   type: "object",
@@ -129,6 +131,18 @@ export function buildApp(enableLogging = true): FastifyInstance {
   });
   app.get("/mascot.jpg", async (_request, reply) => {
     return reply.type("image/jpeg").send(MASCOT_JPG);
+  });
+  app.get("/lessons/:id.png", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    if (!/^[a-z0-9-]+$/.test(id) || !getById("lessons", id)) {
+      return reply.callNotFound();
+    }
+    try {
+      return reply.type("image/png").send(readFileSync(new URL(`${id}.png`, LESSON_ILLUSTRATIONS_DIR)));
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return reply.callNotFound();
+      throw error;
+    }
   });
   app.get(`${API_PREFIX}/openapi.json`, async () => openApi);
 

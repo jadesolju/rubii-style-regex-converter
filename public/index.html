@@ -2102,7 +2102,8 @@
       ` : '';
 
       card.innerHTML = `
-        <div class="space-y-3 pb-5 border-b border-white/10">
+        <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_10rem] gap-4 sm:gap-6 items-center pb-5 border-b border-white/10">
+          <div class="space-y-3 min-w-0">
           <div class="flex flex-wrap items-center gap-2.5">
             ${lesson.courseStage ? `
               <span class="px-3.5 py-1 rounded-full text-xs sm:text-sm font-semibold bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm">
@@ -2118,6 +2119,8 @@
           </div>
           <h2 class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-slate-100 to-indigo-200 leading-tight">${escapeHtml(lesson.title)}</h2>
           <p class="text-base sm:text-lg text-slate-300 font-light leading-relaxed">${escapeHtml(lesson.summary)}</p>
+          </div>
+          <img src="/lessons/${encodeURIComponent(lesson.id)}.png" alt="ภาพประกอบบทเรียน: ${escapeHtml(lesson.title)}" width="240" height="138" loading="lazy" decoding="async" class="w-36 sm:w-40 max-h-32 justify-self-center object-contain">
         </div>
 
         ${overviewHtml}
