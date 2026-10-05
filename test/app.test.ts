@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { after, before, describe, it } from "node:test";
+import { afterAll as after, beforeAll as before, describe, it } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../src/app.ts";
 import patterns from "../content/patterns.json" with { type: "json" };

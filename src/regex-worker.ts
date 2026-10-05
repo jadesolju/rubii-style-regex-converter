@@ -1,4 +1,4 @@
-import { Worker } from "node:worker_threads";
+import vm from "node:vm";
 
 export type RegexTestInput = {
   pattern: string;
@@ -13,8 +13,7 @@ export type RegexTestResult = {
   truncated: boolean;
 };
 
-const workerSource = String.raw`
-const { parentPort, workerData } = require('node:worker_threads');
+const scriptSource = `
 const MAX_MATCHES = 100;
 const MAX_OUTPUT = 65536;
 function advanceStringIndex(text, index, unicode) {
@@ -57,65 +56,56 @@ function expandReplacement(template, match, input) {
   }
   return chunks.join('');
 }
-try {
-  const { pattern, flags, replacement, input } = workerData;
-  const regex = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g');
-  const matches = [];
-  const output = [];
-  let cursor = 0;
-  let outputSize = 0;
-  let truncated = false;
-  let match;
-  while ((match = regex.exec(input)) !== null) {
-    if (matches.length >= MAX_MATCHES) { truncated = true; break; }
-    const index = match.index;
-    const prefix = input.slice(cursor, index);
-    const replaced = expandReplacement(replacement, match, input);
-    outputSize += prefix.length + replaced.length;
-    if (outputSize > MAX_OUTPUT) throw new Error('OUTPUT_LIMIT');
-    output.push(prefix, replaced);
-    cursor = index + match[0].length;
-    matches.push({ match: match[0], captures: match.slice(1).map((value) => value ?? null), index });
-    if (match[0].length === 0) regex.lastIndex = advanceStringIndex(input, regex.lastIndex, regex.unicode);
-  }
-  output.push(input.slice(cursor));
-  const finalOutput = output.join('');
-  if (finalOutput.length > MAX_OUTPUT) throw new Error('OUTPUT_LIMIT');
-  parentPort.postMessage({ ok: true, result: { matches, output: finalOutput, truncated } });
-} catch (error) {
-  const message = String(error && error.message || error);
-  const code = message === 'OUTPUT_LIMIT' ? 'OUTPUT_LIMIT' : error instanceof SyntaxError ? 'INVALID_PATTERN' : 'WORKER_INTERNAL';
-  const errorType = error && error.constructor && error.constructor.name || typeof error;
-  parentPort.postMessage({ ok: false, error: code, errorType });
-}`;
+
+const { pattern, flags, replacement, input } = payload;
+const regex = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g');
+const matches = [];
+const output = [];
+let cursor = 0;
+let outputSize = 0;
+let truncated = false;
+let match;
+while ((match = regex.exec(input)) !== null) {
+  if (matches.length >= MAX_MATCHES) { truncated = true; break; }
+  const index = match.index;
+  const prefix = input.slice(cursor, index);
+  const replaced = expandReplacement(replacement, match, input);
+  outputSize += prefix.length + replaced.length;
+  if (outputSize > MAX_OUTPUT) throw new Error('OUTPUT_LIMIT');
+  output.push(prefix, replaced);
+  cursor = index + match[0].length;
+  matches.push({ match: match[0], captures: match.slice(1).map((value) => value ?? null), index });
+  if (match[0].length === 0) regex.lastIndex = advanceStringIndex(input, regex.lastIndex, regex.unicode);
+}
+output.push(input.slice(cursor));
+const finalOutput = output.join('');
+if (finalOutput.length > MAX_OUTPUT) throw new Error('OUTPUT_LIMIT');
+({ matches, output: finalOutput, truncated });
+`;
+
+const compiledScript = new vm.Script(scriptSource);
 
 export function runRegexTest(payload: RegexTestInput, timeoutMs = 250): Promise<RegexTestResult> {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(workerSource, { eval: true, workerData: payload, execArgv: [] });
-    const terminateOnTimeout = () => {
-      void worker.terminate();
-      reject(Object.assign(new Error("Regex execution timed out"), { code: "REGEX_TIMEOUT" }));
-    };
-    // Allow bounded startup time without charging it to regex execution.
-    let timer = setTimeout(terminateOnTimeout, 5000);
-    worker.once("online", () => {
-      clearTimeout(timer);
-      timer = setTimeout(terminateOnTimeout, timeoutMs);
-    });
-
-    worker.once("message", (message: { ok: boolean; result?: RegexTestResult; error?: string; errorType?: string }) => {
-      clearTimeout(timer);
-      void worker.terminate();
-      if (message.ok && message.result) resolve(message.result);
-      else reject(Object.assign(new Error("Regex execution failed"), { code: message.error ?? "WORKER_INTERNAL", cause: message.errorType }));
-    });
-    worker.once("error", () => {
-      clearTimeout(timer);
-      reject(Object.assign(new Error("Regex worker could not start"), { code: "REGEX_WORKER_FAILED" }));
-    });
-    worker.once("exit", (code) => {
-      clearTimeout(timer);
-      if (code !== 0) reject(new Error("Regex worker exited unexpectedly"));
-    });
+    try {
+      const context = vm.createContext({ payload });
+      const result = compiledScript.runInContext(context, { timeout: timeoutMs }) as RegexTestResult;
+      resolve(result);
+    } catch (error: any) {
+      if (error && (error.code === "ERR_SCRIPT_EXECUTION_TIMEOUT" || String(error).includes("timed out") || String(error.message).includes("timed out"))) {
+        reject(Object.assign(new Error("Regex execution timed out"), { code: "REGEX_TIMEOUT" }));
+        return;
+      }
+      const message = String(error && error.message || error);
+      if (message === "OUTPUT_LIMIT") {
+        reject(Object.assign(new Error("Regex output exceeds limit"), { code: "OUTPUT_LIMIT" }));
+        return;
+      }
+      if (error && (error.name === "SyntaxError" || error instanceof SyntaxError)) {
+        reject(Object.assign(new Error("Invalid regex pattern"), { code: "INVALID_PATTERN" }));
+        return;
+      }
+      reject(Object.assign(new Error("Regex execution failed"), { code: "WORKER_INTERNAL" }));
+    }
   });
 }
