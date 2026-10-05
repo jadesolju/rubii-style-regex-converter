@@ -2066,6 +2066,25 @@
         `;
       }
 
+      const inlineIllustrationSection = {
+        'regex-introduction': 2,
+        'regex-pattern-format': 0,
+        'regex-101-pattern-flags': 6,
+        'regex-101-start': 1,
+        'regex-building-blocks': 0,
+        'regex-101-choices': 1,
+        'regex-101-escape': 0,
+        'regex-101-boundaries': 1,
+        'regex-101-lines': 1,
+        'regex-captures-and-replacement': 1,
+        'regex-101-thai': 1,
+        'regex-101-debug': 0,
+        'regex-adjust-and-test': 2,
+        'regex-101-limits': 1,
+        'regex-rubii-scope-and-order': 0,
+        'regex-model-neutral-format': 1,
+        'regex-access-client-and-developer': 0
+      }[lesson.id];
       const sectionsHtml = lesson.sections ? lesson.sections.map((s, idx) => `
         <div class="glass-card rounded-3xl p-6 sm:p-7 space-y-4 border-white/10 hover:border-cyan-500/30 transition-all">
           <div class="flex items-center gap-3">
@@ -2075,6 +2094,11 @@
           <div class="space-y-2.5 pl-0.5">
             ${formatJournalText(s.body)}
           </div>
+          ${inlineIllustrationSection === idx ? `
+            <figure class="flex justify-center py-2">
+              <img src="/lessons/${encodeURIComponent(lesson.id)}.png" alt="ภาพประกอบแนวคิด: ${escapeHtml(s.heading)}" width="448" height="256" loading="lazy" decoding="async" class="w-56 sm:w-64 max-h-36 object-contain">
+            </figure>
+          ` : ''}
         </div>
       `).join('') : '';
 
