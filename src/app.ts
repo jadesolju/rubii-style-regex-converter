@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import openApi from "./openapi.json" with { type: "json" };
 import { getById, getCollection, getRecipeBundle, validateContent, type Lesson } from "./content.ts";
 import { runRegexTest, type RegexTestInput } from "./regex-worker.ts";
-import { INDEX_HTML, COOKBOOK_JS, MASCOT_JPG, BG_JPG } from "./embedded-assets.ts";
+import { INDEX_HTML, COOKBOOK_JS, MASCOT_JPG, BG_JPG, OG_IMAGE_PNG } from "./embedded-assets.ts";
 
 const errorSchema = {
   type: "object",
@@ -131,6 +131,9 @@ export function buildApp(enableLogging = true): FastifyInstance {
   });
   app.get("/mascot.jpg", async (_request, reply) => {
     return reply.type("image/jpeg").send(MASCOT_JPG);
+  });
+  app.get("/og-image.png", async (_request, reply) => {
+    return reply.type("image/png").send(OG_IMAGE_PNG);
   });
   app.get("/lessons/:id.png", async (request, reply) => {
     const { id } = request.params as { id: string };

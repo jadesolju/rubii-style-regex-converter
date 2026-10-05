@@ -4,6 +4,7 @@ import {
   COOKBOOK_JS_BUF,
   MASCOT_JPG,
   BG_JPG,
+  OG_IMAGE_PNG,
 } from "../src/embedded-assets.ts";
 
 const app = buildApp(false);
@@ -119,6 +120,14 @@ export default async function handler(req: any, res: any) {
         res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
         if (method === "HEAD") return res.end();
         return res.end(BG_JPG);
+      }
+      if (pathname === "/og-image.png") {
+        res.statusCode = 200;
+        res.setHeader("content-type", "image/png");
+        res.setHeader("content-length", OG_IMAGE_PNG.length);
+        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+        if (method === "HEAD") return res.end();
+        return res.end(OG_IMAGE_PNG);
       }
     }
 
