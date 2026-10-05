@@ -1465,31 +1465,90 @@
       }
     }
 
-    // Fetch APIs
+    // In-memory and sessionStorage Client Cache System
+    const appClientCache = {
+      get(key) {
+        try {
+          const item = sessionStorage.getItem('rubii_cache_' + key);
+          if (!item) return null;
+          const { data, exp } = JSON.parse(item);
+          if (Date.now() > exp) {
+            sessionStorage.removeItem('rubii_cache_' + key);
+            return null;
+          }
+          return data;
+        } catch (e) { return null; }
+      },
+      set(key, data, ttlMs = 15 * 60 * 1000) {
+        try {
+          sessionStorage.setItem('rubii_cache_' + key, JSON.stringify({ data, exp: Date.now() + ttlMs }));
+        } catch (e) { /* ignore storage quota */ }
+      }
+    };
+
+    // Fetch APIs with Cache-First & Background Revalidate (0ms Instant Load)
     async function fetchPatterns() {
-      const res = await fetch('/v1/patterns');
-      const json = await res.json();
-      state.patterns = json.data || [];
-      state.patterns.forEach(p => {
-        if (p.category) state.categories.add(p.category);
-      });
+      const cached = appClientCache.get('patterns');
+      if (cached) {
+        state.patterns = cached;
+        state.patterns.forEach(p => { if (p.category) state.categories.add(p.category); });
+      }
+      try {
+        const res = await fetch('/v1/patterns');
+        const json = await res.json();
+        if (json.data) {
+          state.patterns = json.data;
+          state.patterns.forEach(p => { if (p.category) state.categories.add(p.category); });
+          appClientCache.set('patterns', json.data);
+        }
+      } catch (e) {
+        if (!cached) console.warn('Fetch patterns error:', e);
+      }
     }
 
     async function fetchRecipes() {
-      const res = await fetch('/v1/recipes');
-      const json = await res.json();
-      state.recipes = json.data || [];
-      state.recipes.forEach(r => {
-        if (r.category) state.categories.add(r.category);
-      });
-      document.getElementById('badge-recipes-count').textContent = state.recipes.length;
+      const cached = appClientCache.get('recipes');
+      if (cached) {
+        state.recipes = cached;
+        state.recipes.forEach(r => { if (r.category) state.categories.add(r.category); });
+        const badge = document.getElementById('badge-recipes-count');
+        if (badge) badge.textContent = state.recipes.length;
+      }
+      try {
+        const res = await fetch('/v1/recipes');
+        const json = await res.json();
+        if (json.data) {
+          state.recipes = json.data;
+          state.recipes.forEach(r => { if (r.category) state.categories.add(r.category); });
+          const badge = document.getElementById('badge-recipes-count');
+          if (badge) badge.textContent = state.recipes.length;
+          appClientCache.set('recipes', json.data);
+        }
+      } catch (e) {
+        if (!cached) console.warn('Fetch recipes error:', e);
+      }
     }
 
     async function fetchLessons() {
-      const res = await fetch(`/v1/lessons?audience=${state.audience}`);
-      const json = await res.json();
-      state.lessons = json.data || [];
-      document.getElementById('badge-lessons-count').textContent = state.lessons.length;
+      const cacheKey = 'lessons_' + state.audience;
+      const cached = appClientCache.get(cacheKey);
+      if (cached) {
+        state.lessons = cached;
+        const badge = document.getElementById('badge-lessons-count');
+        if (badge) badge.textContent = state.lessons.length;
+      }
+      try {
+        const res = await fetch(`/v1/lessons?audience=${state.audience}`);
+        const json = await res.json();
+        if (json.data) {
+          state.lessons = json.data;
+          const badge = document.getElementById('badge-lessons-count');
+          if (badge) badge.textContent = state.lessons.length;
+          appClientCache.set(cacheKey, json.data);
+        }
+      } catch (e) {
+        if (!cached) console.warn('Fetch lessons error:', e);
+      }
     }
 
     // Tab Navigation
@@ -4480,6 +4539,44 @@
       let errorMessage = '';
       const ruleRuns = [];
 
+      function executeLocalRegexStep(pattern, flags, replacement, input) {
+        try {
+          const reg = new RegExp(pattern, flags);
+          const matches = [];
+          if (flags.includes('g')) {
+            let m;
+            let count = 0;
+            const matchReg = new RegExp(pattern, flags);
+            while ((m = matchReg.exec(input)) !== null && count < 500) {
+              matches.push({
+                match: m[0],
+                index: m.index,
+                groups: m.slice(1),
+                namedGroups: m.groups || {}
+              });
+              count++;
+              if (!matchReg.global || m.index === matchReg.lastIndex) {
+                matchReg.lastIndex++;
+              }
+            }
+          } else {
+            const m = input.match(reg);
+            if (m) {
+              matches.push({
+                match: m[0],
+                index: m.index ?? 0,
+                groups: m.slice(1),
+                namedGroups: m.groups || {}
+              });
+            }
+          }
+          const output = input.replace(reg, replacement);
+          return { ok: true, output, matches };
+        } catch (err) {
+          return { ok: false, error: err.message };
+        }
+      }
+
       try {
         for (let index = 0; index < rules.length; index++) {
           if (runId !== sandboxRunRevision) return;
@@ -4487,16 +4584,23 @@
           const label = rule.name?.trim() || `Regex ${index + 1}`;
           const limit = getRegexRequestLimit(rule.pattern, rule.flags, rule.replacement, currentText);
           if (limit) { errorMessage = `${label}: ${limit}`; break; }
-          const response = await fetch('/v1/regex/test', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pattern: rule.pattern, flags: rule.flags, replacement: rule.replacement, input: currentText })
-          });
-          const json = await response.json();
-          if (runId !== sandboxRunRevision) return;
-          if (!response.ok) { errorMessage = `${label}: ${formatRegexApiError(json.error)}`; break; }
-          const data = json.data;
-          ruleRuns.push({ label, input: currentText, matches: data.matches || [] });
-          currentText = data.output ?? currentText;
+          
+          const localResult = executeLocalRegexStep(rule.pattern, rule.flags, rule.replacement, currentText);
+          if (localResult.ok) {
+            ruleRuns.push({ label, input: currentText, matches: localResult.matches || [] });
+            currentText = localResult.output ?? currentText;
+          } else {
+            const response = await fetch('/v1/regex/test', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ pattern: rule.pattern, flags: rule.flags, replacement: rule.replacement, input: currentText })
+            });
+            const json = await response.json();
+            if (runId !== sandboxRunRevision) return;
+            if (!response.ok) { errorMessage = `${label}: ${formatRegexApiError(json.error)}`; break; }
+            const data = json.data;
+            ruleRuns.push({ label, input: currentText, matches: data.matches || [] });
+            currentText = data.output ?? currentText;
+          }
         }
       } catch (err) {
         console.error('Worker run failed:', err);

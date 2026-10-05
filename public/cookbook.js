@@ -625,6 +625,8 @@ async function createCustomCookbookRecipe() {
   }
 }
 
+const cookbookRecipeCache = new Map();
+
 async function openCookbook(id) {
   const revision = ++cookbookRevision;
   const { modal, content } = ensureCookbookModal();
@@ -638,16 +640,21 @@ async function openCookbook(id) {
     panel.className = 'space-y-4';
     content.append(panel);
   }
-  panel.innerHTML = '<div class="text-xs text-slate-400 py-6 text-center">กำลังโหลดข้อมูลสูตร...</div>';
 
   try {
     const customBundle = getCustomCookbookBundle(id);
     let bundle;
-    if (customBundle) bundle = JSON.parse(JSON.stringify(customBundle));
-    else {
+    if (customBundle) {
+      bundle = JSON.parse(JSON.stringify(customBundle));
+    } else if (cookbookRecipeCache.has(id)) {
+      bundle = JSON.parse(JSON.stringify(cookbookRecipeCache.get(id)));
+    } else {
+      panel.innerHTML = '<div class="text-xs text-slate-400 py-6 text-center">กำลังโหลดข้อมูลสูตร...</div>';
       const response = await fetch('/v1/recipes/' + encodeURIComponent(id) + '/export');
       if (!response.ok) throw new Error('โหลดสูตรไม่สำเร็จ');
-      ({ data: bundle } = await response.json());
+      const json = await response.json();
+      cookbookRecipeCache.set(id, json.data);
+      bundle = JSON.parse(JSON.stringify(json.data));
     }
     if (revision !== cookbookRevision) return;
     cookbookBundle = bundle;
@@ -1071,10 +1078,36 @@ function sanitizeCookbookHTML(html) {
   const box=document.createElement('div');for(const child of doc.body.childNodes) box.append(clean(child));return box.innerHTML;
 }
 
+function executeLocalCookbookPattern(pattern, flags, replacement, input) {
+  try {
+    const reg = new RegExp(pattern, flags);
+    const matches = [];
+    if (flags.includes('g')) {
+      let m;
+      let count = 0;
+      const matchReg = new RegExp(pattern, flags);
+      while ((m = matchReg.exec(input)) !== null && count < 500) {
+        matches.push(m[0]);
+        count++;
+        if (!matchReg.global || m.index === matchReg.lastIndex) {
+          matchReg.lastIndex++;
+        }
+      }
+    } else {
+      const m = input.match(reg);
+      if (m) matches.push(m[0]);
+    }
+    const output = input.replace(reg, replacement);
+    return { ok: true, output, matches };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 async function runCookbook() {
   const bundle=cookbookBundle;if(!bundle) return;
   const revision=++cookbookRevision;
-  const status=document.getElementById('cookbook-status');status.textContent='กำลังทดลองตามลำดับ…';
+  const status=document.getElementById('cookbook-status');status.textContent='กำลังประมวลผล…';
   document.getElementById('cookbook-frame').srcdoc='';
   document.getElementById('cookbook-raw').textContent='';document.getElementById('cookbook-expanded').textContent='';
   try {
@@ -1083,11 +1116,18 @@ async function runCookbook() {
       const p=bundle.patterns.find(p=>p.id===entry.id);
       const expression = parseCookbookRegexLiteral(p.expressionField.value);
       if(p.applyToField.value!=='all' && p.applyToField.value!==bundle.targetField.value) {counts.push(p.nameField.value+': ข้าม (เป้าหมายคนละประเภท)');continue;}
-      const response=await fetch('/v1/regex/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pattern:expression.pattern,flags:expression.flags,replacement:p.replacementField.value,input:text})});
-      const json=await response.json();if(revision!==cookbookRevision) return;
-      if(!response.ok) throw new Error(p.title+': '+(json.error?.message||'ทดลองไม่สำเร็จ'));
-      if(json.data.truncated) throw new Error('พบ match เกินขอบเขต ให้ลดข้อความทดลอง');
-      text=json.data.output;counts.push(p.title+': '+json.data.matches.length+' match');
+      
+      const localResult = executeLocalCookbookPattern(expression.pattern, expression.flags, p.replacementField.value, text);
+      if (localResult.ok) {
+        text = localResult.output;
+        counts.push(p.title + ': ' + localResult.matches.length + ' match');
+      } else {
+        const response=await fetch('/v1/regex/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pattern:expression.pattern,flags:expression.flags,replacement:p.replacementField.value,input:text})});
+        const json=await response.json();if(revision!==cookbookRevision) return;
+        if(!response.ok) throw new Error(p.title+': '+(json.error?.message||'ทดลองไม่สำเร็จ'));
+        if(json.data.truncated) throw new Error('พบ match เกินขอบเขต ให้ลดข้อความทดลอง');
+        text=json.data.output;counts.push(p.title+': '+json.data.matches.length+' match');
+      }
     }
     document.getElementById('cookbook-raw').textContent=text;
     for(const entry of bundle.recipe.ruleOrder.filter(r=>r.kind==='style')) {
