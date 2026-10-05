@@ -3812,16 +3812,32 @@
 
     function setSandboxViewMode(mode) {
       sandboxViewMode = mode;
+      const grid = document.getElementById('sandbox-playground-grid');
       const editorCol = document.getElementById('sandbox-editor-column');
       const previewCol = document.getElementById('sandbox-preview-column');
       const btnEditor = document.getElementById('tab-btn-editor');
       const btnPreview = document.getElementById('tab-btn-preview');
 
+      // If on wide/desktop screens, synchronize with desktop mode
+      if (window.innerWidth >= 1024) {
+        if (mode === 'editor') {
+          setSandboxDesktopMode('split');
+        } else {
+          setSandboxDesktopMode('full-preview');
+        }
+        return;
+      }
+
+      // Mobile / Tablet screens (< 1024px)
+      if (grid) grid.classList.remove('full-preview-mode');
       if (mode === 'editor') {
-        if (editorCol) { editorCol.classList.remove('hidden'); }
+        if (editorCol) {
+          editorCol.classList.remove('hidden');
+          editorCol.style.display = '';
+        }
         if (previewCol) {
           previewCol.classList.add('hidden');
-          previewCol.classList.remove('block');
+          previewCol.style.display = 'none';
         }
         if (btnEditor) {
           btnEditor.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-200 border border-cyan-400/40 shadow-sm';
@@ -3832,11 +3848,11 @@
       } else {
         if (editorCol) {
           editorCol.classList.add('hidden');
-          editorCol.classList.remove('block');
+          editorCol.style.display = 'none';
         }
         if (previewCol) {
           previewCol.classList.remove('hidden');
-          previewCol.classList.add('block');
+          previewCol.style.display = '';
         }
         if (btnEditor) {
           btnEditor.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10';
@@ -3857,6 +3873,8 @@
       const frame = document.getElementById('sandbox-output-frame');
       const btnSplit = document.getElementById('desktop-btn-split');
       const btnFull = document.getElementById('desktop-btn-full-preview');
+      const btnEditor = document.getElementById('tab-btn-editor');
+      const btnPreview = document.getElementById('tab-btn-preview');
       const expandLabel = document.getElementById('sandbox-preview-expand-label');
 
       if (mode === 'split') {
@@ -3885,6 +3903,12 @@
         if (btnFull) {
           btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10 flex items-center gap-1.5 transition-all';
         }
+        if (btnEditor) {
+          btnEditor.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-200 border border-cyan-400/40 shadow-sm';
+        }
+        if (btnPreview) {
+          btnPreview.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10';
+        }
         if (expandLabel) expandLabel.textContent = 'ขยายเต็มจอ';
       } else {
         // True 100% Fullscreen Preview across entire screen width
@@ -3910,6 +3934,12 @@
         }
         if (btnFull) {
           btnFull.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30 flex items-center gap-1.5 transition-all shadow-sm';
+        }
+        if (btnEditor) {
+          btnEditor.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-white/5 text-slate-400 hover:text-slate-200 border border-white/10';
+        }
+        if (btnPreview) {
+          btnPreview.className = 'flex-1 lg:flex-initial px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-200 border border-emerald-400/40 shadow-sm';
         }
         if (expandLabel) expandLabel.textContent = '✕ ยุบกลับ (Split)';
         renderSandboxPreview();
