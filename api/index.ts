@@ -2,8 +2,6 @@ import { buildApp } from "../src/app.ts";
 import {
   INDEX_HTML,
   COOKBOOK_JS,
-  INDEX_HTML_BUF,
-  COOKBOOK_JS_BUF,
   MASCOT_JPG,
   BG_JPG,
 } from "../src/embedded-assets.ts";
@@ -11,7 +9,7 @@ import {
 const app = buildApp();
 let isReady = false;
 
-const HOP_BY_HOP_HEADERS = new Set([
+const STRIPPED_HEADERS = new Set([
   "connection",
   "keep-alive",
   "transfer-encoding",
@@ -51,23 +49,20 @@ export default async function handler(req: any, res: any) {
     if (pathname === "/" || pathname === "/index.html") {
       res.statusCode = 200;
       res.setHeader("content-type", "text/html; charset=utf-8");
-      res.setHeader("content-length", INDEX_HTML_BUF.length);
       res.setHeader("cache-control", "public, max-age=3600, s-maxage=86400");
       if (method === "HEAD") return res.end();
-      return res.end(INDEX_HTML_BUF);
+      return res.end(INDEX_HTML, "utf8");
     }
     if (pathname === "/cookbook.js") {
       res.statusCode = 200;
       res.setHeader("content-type", "application/javascript; charset=utf-8");
-      res.setHeader("content-length", COOKBOOK_JS_BUF.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
-      return res.end(COOKBOOK_JS_BUF);
+      return res.end(COOKBOOK_JS, "utf8");
     }
     if (pathname === "/mascot.jpg") {
       res.statusCode = 200;
       res.setHeader("content-type", "image/jpeg");
-      res.setHeader("content-length", MASCOT_JPG.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
       return res.end(MASCOT_JPG);
@@ -75,7 +70,6 @@ export default async function handler(req: any, res: any) {
     if (pathname === "/bg.jpg") {
       res.statusCode = 200;
       res.setHeader("content-type", "image/jpeg");
-      res.setHeader("content-length", BG_JPG.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
       return res.end(BG_JPG);
@@ -101,12 +95,11 @@ export default async function handler(req: any, res: any) {
   const payloadBuffer = response.rawPayload ? Buffer.from(response.rawPayload) : Buffer.alloc(0);
 
   for (const [key, value] of Object.entries(response.headers)) {
-    if (value !== undefined && !HOP_BY_HOP_HEADERS.has(key.toLowerCase())) {
+    if (value !== undefined && !STRIPPED_HEADERS.has(key.toLowerCase())) {
       res.setHeader(key, value);
     }
   }
 
-  res.setHeader("content-length", payloadBuffer.length);
   res.statusCode = response.statusCode;
   if (method === "HEAD") {
     res.end();
