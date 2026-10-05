@@ -3,6 +3,25 @@ import { buildApp } from "../src/app.ts";
 const app = buildApp();
 let isReady = false;
 
+function normalizeUrl(rawUrl: string | undefined): string {
+  let url = rawUrl ?? "/";
+  if (url === "/api/index" || url === "/api" || url === "/api/") {
+    return "/";
+  }
+  if (url.startsWith("/api/index?")) {
+    const queryIndex = url.indexOf("?");
+    const searchParams = new URLSearchParams(url.slice(queryIndex + 1));
+    const matchedPath = searchParams.get("x-matched-path");
+    if (matchedPath) {
+      searchParams.delete("x-matched-path");
+      const remainingQuery = searchParams.toString();
+      return matchedPath + (remainingQuery ? `?${remainingQuery}` : "");
+    }
+    return "/" + url.slice(queryIndex);
+  }
+  return url;
+}
+
 export default async function handler(req: any, res: any) {
   if (!isReady) {
     await app.ready();
@@ -10,15 +29,7 @@ export default async function handler(req: any, res: any) {
   }
 
   const method = req.method ?? "GET";
-  let url = req.url ?? "/";
-
-  // Normalize Vercel rewrite destination
-  if (url === "/api/index" || url === "/api" || url === "/api/") {
-    url = "/";
-  } else if (url.startsWith("/api/index?")) {
-    url = "/" + url.slice("/api/index".length);
-  }
-
+  const url = normalizeUrl(req.url);
   const headers = req.headers ?? {};
   const payload = req.body !== undefined && req.body !== null ? req.body : undefined;
 
@@ -37,5 +48,9 @@ export default async function handler(req: any, res: any) {
   }
 
   res.statusCode = response.statusCode;
-  res.end(response.rawPayload);
+  if (method === "HEAD") {
+    res.end();
+  } else {
+    res.end(response.rawPayload);
+  }
 }
