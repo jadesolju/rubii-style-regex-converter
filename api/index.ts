@@ -30,7 +30,8 @@ export default async function handler(req: any, res: any) {
   });
 
   for (const [key, value] of Object.entries(response.headers)) {
-    if (value !== undefined) {
+    const lower = key.toLowerCase();
+    if (value !== undefined && lower !== "content-length" && lower !== "transfer-encoding") {
       res.setHeader(key, value);
     }
   }
