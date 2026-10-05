@@ -1,8 +1,7 @@
 import { buildApp } from "../src/app.ts";
 import {
-  INDEX_HTML,
-  INDEX_HTML_GZ,
-  COOKBOOK_JS_GZ,
+  INDEX_HTML_BUF,
+  COOKBOOK_JS_BUF,
   MASCOT_JPG,
   BG_JPG,
 } from "../src/embedded-assets.ts";
@@ -48,7 +47,7 @@ export default async function handler(req: any, res: any) {
   const url = normalizeUrl(req.url);
   const pathname = url.split("?")[0];
 
-  // Direct fast-path for static web assets (pre-compressed gzip, 0ms latency)
+  // Direct fast-path for static web assets (Buffer delivery, 0ms latency)
   if (method === "GET" || method === "HEAD") {
     if (
       pathname === "/" ||
@@ -58,20 +57,18 @@ export default async function handler(req: any, res: any) {
     ) {
       res.statusCode = 200;
       res.setHeader("content-type", "text/html; charset=utf-8");
-      res.setHeader("content-encoding", "gzip");
-      res.setHeader("content-length", INDEX_HTML_GZ.length);
+      res.setHeader("content-length", INDEX_HTML_BUF.length);
       res.setHeader("cache-control", "public, max-age=3600, s-maxage=86400");
       if (method === "HEAD") return res.end();
-      return res.end(INDEX_HTML_GZ);
+      return res.end(INDEX_HTML_BUF);
     }
     if (pathname === "/cookbook.js") {
       res.statusCode = 200;
       res.setHeader("content-type", "application/javascript; charset=utf-8");
-      res.setHeader("content-encoding", "gzip");
-      res.setHeader("content-length", COOKBOOK_JS_GZ.length);
+      res.setHeader("content-length", COOKBOOK_JS_BUF.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
-      return res.end(COOKBOOK_JS_GZ);
+      return res.end(COOKBOOK_JS_BUF);
     }
     if (pathname === "/mascot.jpg") {
       res.statusCode = 200;
