@@ -1,5 +1,12 @@
 import { buildApp } from "../src/app.ts";
-import { INDEX_HTML, COOKBOOK_JS, MASCOT_JPG, BG_JPG } from "../src/embedded-assets.ts";
+import {
+  INDEX_HTML,
+  COOKBOOK_JS,
+  INDEX_HTML_BUF,
+  COOKBOOK_JS_BUF,
+  MASCOT_JPG,
+  BG_JPG,
+} from "../src/embedded-assets.ts";
 
 const app = buildApp();
 let isReady = false;
@@ -44,20 +51,23 @@ export default async function handler(req: any, res: any) {
     if (pathname === "/" || pathname === "/index.html") {
       res.statusCode = 200;
       res.setHeader("content-type", "text/html; charset=utf-8");
+      res.setHeader("content-length", INDEX_HTML_BUF.length);
       res.setHeader("cache-control", "public, max-age=3600, s-maxage=86400");
       if (method === "HEAD") return res.end();
-      return res.end(INDEX_HTML);
+      return res.end(INDEX_HTML_BUF);
     }
     if (pathname === "/cookbook.js") {
       res.statusCode = 200;
       res.setHeader("content-type", "application/javascript; charset=utf-8");
+      res.setHeader("content-length", COOKBOOK_JS_BUF.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
-      return res.end(COOKBOOK_JS);
+      return res.end(COOKBOOK_JS_BUF);
     }
     if (pathname === "/mascot.jpg") {
       res.statusCode = 200;
       res.setHeader("content-type", "image/jpeg");
+      res.setHeader("content-length", MASCOT_JPG.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
       return res.end(MASCOT_JPG);
@@ -65,6 +75,7 @@ export default async function handler(req: any, res: any) {
     if (pathname === "/bg.jpg") {
       res.statusCode = 200;
       res.setHeader("content-type", "image/jpeg");
+      res.setHeader("content-length", BG_JPG.length);
       res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
       if (method === "HEAD") return res.end();
       return res.end(BG_JPG);
@@ -87,16 +98,19 @@ export default async function handler(req: any, res: any) {
     payload,
   });
 
+  const payloadBuffer = response.rawPayload ? Buffer.from(response.rawPayload) : Buffer.alloc(0);
+
   for (const [key, value] of Object.entries(response.headers)) {
     if (value !== undefined && !HOP_BY_HOP_HEADERS.has(key.toLowerCase())) {
       res.setHeader(key, value);
     }
   }
 
+  res.setHeader("content-length", payloadBuffer.length);
   res.statusCode = response.statusCode;
   if (method === "HEAD") {
     res.end();
   } else {
-    res.end(response.rawPayload);
+    res.end(payloadBuffer);
   }
 }
