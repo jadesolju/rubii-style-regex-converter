@@ -1,7 +1,19 @@
 import { buildApp } from "../src/app.ts";
+import { INDEX_HTML, COOKBOOK_JS, MASCOT_JPG, BG_JPG } from "../src/embedded-assets.ts";
 
 const app = buildApp();
 let isReady = false;
+
+const HOP_BY_HOP_HEADERS = new Set([
+  "connection",
+  "keep-alive",
+  "transfer-encoding",
+  "content-length",
+  "te",
+  "trailer",
+  "trailers",
+  "upgrade",
+]);
 
 function normalizeUrl(rawUrl: string | undefined): string {
   let url = rawUrl ?? "/";
@@ -23,13 +35,48 @@ function normalizeUrl(rawUrl: string | undefined): string {
 }
 
 export default async function handler(req: any, res: any) {
+  const method = req.method ?? "GET";
+  const url = normalizeUrl(req.url);
+  const pathname = url.split("?")[0];
+
+  // Direct fast-path for static web assets (0ms response, zero overhead)
+  if (method === "GET" || method === "HEAD") {
+    if (pathname === "/" || pathname === "/index.html") {
+      res.statusCode = 200;
+      res.setHeader("content-type", "text/html; charset=utf-8");
+      res.setHeader("cache-control", "public, max-age=3600, s-maxage=86400");
+      if (method === "HEAD") return res.end();
+      return res.end(INDEX_HTML);
+    }
+    if (pathname === "/cookbook.js") {
+      res.statusCode = 200;
+      res.setHeader("content-type", "application/javascript; charset=utf-8");
+      res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+      if (method === "HEAD") return res.end();
+      return res.end(COOKBOOK_JS);
+    }
+    if (pathname === "/mascot.jpg") {
+      res.statusCode = 200;
+      res.setHeader("content-type", "image/jpeg");
+      res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+      if (method === "HEAD") return res.end();
+      return res.end(MASCOT_JPG);
+    }
+    if (pathname === "/bg.jpg") {
+      res.statusCode = 200;
+      res.setHeader("content-type", "image/jpeg");
+      res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+      if (method === "HEAD") return res.end();
+      return res.end(BG_JPG);
+    }
+  }
+
+  // API and dynamic routes via Fastify
   if (!isReady) {
     await app.ready();
     isReady = true;
   }
 
-  const method = req.method ?? "GET";
-  const url = normalizeUrl(req.url);
   const headers = req.headers ?? {};
   const payload = req.body !== undefined && req.body !== null ? req.body : undefined;
 
@@ -41,8 +88,7 @@ export default async function handler(req: any, res: any) {
   });
 
   for (const [key, value] of Object.entries(response.headers)) {
-    const lower = key.toLowerCase();
-    if (value !== undefined && lower !== "content-length" && lower !== "transfer-encoding") {
+    if (value !== undefined && !HOP_BY_HOP_HEADERS.has(key.toLowerCase())) {
       res.setHeader(key, value);
     }
   }
