@@ -16,6 +16,14 @@ export type Lesson = {
   title: string;
   summary: string;
   tldr?: string;
+  overview?: {
+    topic: string;
+    analogy?: string;
+    goals: string[];
+    prerequisite?: string;
+    minutes?: number;
+    terms?: Array<{ term: string; meaning: string }>;
+  };
   intro?: string;
   context?: {
     who?: string;

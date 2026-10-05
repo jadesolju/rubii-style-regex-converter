@@ -1842,12 +1842,7 @@
       // 11. Flags when standing at item start: e.g. "g ค้นหรือ...", "i ไม่แยก...", "m เปลี่ยน...", "s ทำให้...", "u เปิด...", "y จับตรง...", "d เพิ่ม..."
       escaped = escaped.replace(/(^|\s|\b)([gimsuycd])(?=\s+(?:ค้น|ไม่แยก|เปลี่ยน|ทำให้|เปิด|จับตรง|เพิ่ม|รองรับ))/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-violet-500/20 text-violet-300 border border-violet-500/35">flag $2</span>');
 
-      // 12. Keywords & Technical terms
-      escaped = escaped.replace(/\b(Regex)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-bold text-xs sm:text-sm bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</span>');
-      escaped = escaped.replace(/\b(pattern|Pattern)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs sm:text-sm bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">$1</span>');
-      escaped = escaped.replace(/\b(field|key)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs sm:text-sm bg-sky-500/20 text-sky-300 border border-sky-500/30">$1</span>');
-      escaped = escaped.replace(/\b(Markdown|bullet)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs sm:text-sm bg-purple-500/20 text-purple-300 border border-purple-500/30">$1</span>');
-      escaped = escaped.replace(/\b(Match|Output|Replacement|lastIndex|indices|Sandbox|Unicode)\b/g, '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs sm:text-sm font-semibold bg-slate-800 text-slate-200 border border-slate-700/60">$1</span>');
+      // 12. Plain English words stay as normal text so Thai sentences read smoothly
 
       return escaped;
     }
@@ -1879,6 +1874,36 @@
 
       const card = document.getElementById('lesson-content-card');
       const audienceNote = lesson.audienceNotes?.[state.audience] || '';
+
+      // 0. Plain-language overview: what this lesson is about, goals, prerequisite, glossary
+      const ov = lesson.overview;
+      const overviewHtml = ov ? `
+        <div class="glass-card rounded-3xl p-6 sm:p-7 border-emerald-400/25 bg-gradient-to-br from-emerald-950/30 via-slate-950/50 to-cyan-950/30 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="text-emerald-300 font-bold text-sm sm:text-base">บทนี้พูดถึงอะไร</div>
+            ${ov.minutes ? `<span class="px-3 py-1 rounded-full text-xs sm:text-sm bg-white/5 text-slate-300 border border-white/10">ใช้เวลาอ่านประมาณ ${ov.minutes} นาที</span>` : ''}
+          </div>
+          <p class="text-base sm:text-lg text-slate-100 leading-loose font-normal">${escapeHtml(ov.topic)}</p>
+          ${ov.analogy ? `<p class="text-sm sm:text-base text-slate-300 leading-relaxed pl-4 border-l-2 border-emerald-400/40"><span class="font-semibold text-emerald-200">เปรียบให้เห็นภาพ: </span>${escapeHtml(ov.analogy)}</p>` : ''}
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-2xl bg-slate-950/50 border border-white/5 p-4 sm:p-5 space-y-2.5">
+              <div class="text-sm sm:text-base font-semibold text-cyan-300">จบบทนี้คุณจะทำได้</div>
+              <ul class="space-y-2">
+                ${(ov.goals || []).map(g => `<li class="flex items-start gap-2.5 text-sm sm:text-base text-slate-200 leading-relaxed"><svg class="w-4 h-4 text-cyan-400 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>${escapeHtml(g)}</span></li>`).join('')}
+              </ul>
+              ${ov.prerequisite ? `<p class="pt-2 text-xs sm:text-sm text-slate-400 leading-relaxed"><span class="font-semibold text-slate-300">ก่อนอ่านบทนี้: </span>${escapeHtml(ov.prerequisite)}</p>` : ''}
+            </div>
+            ${ov.terms && ov.terms.length ? `
+              <div class="rounded-2xl bg-slate-950/50 border border-white/5 p-4 sm:p-5 space-y-2.5">
+                <div class="text-sm sm:text-base font-semibold text-amber-300">คำศัพท์ที่จะเจอในบทนี้</div>
+                <dl class="space-y-2.5">
+                  ${ov.terms.map(t => `<div><dt class="text-sm sm:text-base font-semibold text-slate-100">${escapeHtml(t.term)}</dt><dd class="text-sm sm:text-base text-slate-300 leading-relaxed">${escapeHtml(t.meaning)}</dd></div>`).join('')}
+                </dl>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      ` : '';
 
       // 1. TL;DR Quick Takeaway Card
       const tldrHtml = lesson.tldr ? `
@@ -2137,6 +2162,7 @@
           <p class="text-base sm:text-lg text-slate-300 font-light leading-relaxed">${escapeHtml(lesson.summary)}</p>
         </div>
 
+        ${overviewHtml}
         ${tldrHtml}
         ${introHtml}
         ${contextGridHtml}
