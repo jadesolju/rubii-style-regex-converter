@@ -307,9 +307,19 @@ export function buildApp(enableLogging = true): FastifyInstance {
     }
   });
 
-  app.setNotFoundHandler((request, reply) => reply.code(404).send({
-    error: { code: "NOT_FOUND", message: "Route not found", requestId: request.id },
-  }));
+  app.setNotFoundHandler(async (request, reply) => {
+    if (request.url.startsWith("/v1/") || request.url === "/healthz") {
+      return reply.code(404).send({
+        error: { code: "NOT_FOUND", message: "Route not found", requestId: request.id },
+      });
+    }
+    try {
+      const html = await loadStatic("index.html");
+      return reply.type("text/html; charset=utf-8").send(html);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
+    }
+  });
 
   return app;
 }
