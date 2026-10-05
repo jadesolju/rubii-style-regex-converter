@@ -1748,31 +1748,13 @@
       renderRecipesGrid();
     }
 
-    async function handleSearch(query) {
+    function handleSearch(query) {
       state.searchQuery = (query || '').trim().toLowerCase();
       visibleLessonsLimit = 4;
       visibleRecipesLimit = 6;
       renderRecipesGrid();
       renderLessonsOverview();
       renderLessonsNav();
-      if (state.searchQuery) {
-        clearTimeout(state.searchDebounceTimer);
-        state.searchDebounceTimer = setTimeout(async () => {
-          try {
-            const res = await fetch('/v1/search?term=' + encodeURIComponent(state.searchQuery));
-            if (res.ok) {
-              const json = await res.json();
-              if (json.data) {
-                renderRecipesGrid();
-                renderLessonsOverview();
-                renderLessonsNav();
-              }
-            }
-          } catch (e) {
-            console.warn('Search API sync error:', e);
-          }
-        }, 150);
-      }
     }
 
     // Render Recipes & Patterns

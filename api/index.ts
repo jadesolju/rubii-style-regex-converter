@@ -93,7 +93,9 @@ export default async function handler(req: any, res: any) {
         res.statusCode = 200;
         res.setHeader("content-type", "text/html; charset=utf-8");
         res.setHeader("content-length", INDEX_HTML_BUF.length);
-        res.setHeader("cache-control", "public, max-age=3600, s-maxage=86400");
+        res.setHeader("cache-control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800");
+        res.setHeader("cdn-cache-control", "public, s-maxage=86400, stale-while-revalidate=604800");
+        res.setHeader("vercel-cdn-cache-control", "public, s-maxage=86400, stale-while-revalidate=604800");
         if (method === "HEAD") return res.end();
         return res.end(INDEX_HTML_BUF);
       }
@@ -101,7 +103,9 @@ export default async function handler(req: any, res: any) {
         res.statusCode = 200;
         res.setHeader("content-type", "application/javascript; charset=utf-8");
         res.setHeader("content-length", COOKBOOK_JS_BUF.length);
-        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800, immutable");
+        res.setHeader("cdn-cache-control", "public, s-maxage=604800, immutable");
+        res.setHeader("vercel-cdn-cache-control", "public, s-maxage=604800, immutable");
         if (method === "HEAD") return res.end();
         return res.end(COOKBOOK_JS_BUF);
       }
@@ -109,7 +113,9 @@ export default async function handler(req: any, res: any) {
         res.statusCode = 200;
         res.setHeader("content-type", "image/jpeg");
         res.setHeader("content-length", MASCOT_JPG.length);
-        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800, immutable");
+        res.setHeader("cdn-cache-control", "public, s-maxage=604800, immutable");
+        res.setHeader("vercel-cdn-cache-control", "public, s-maxage=604800, immutable");
         if (method === "HEAD") return res.end();
         return res.end(MASCOT_JPG);
       }
@@ -117,7 +123,9 @@ export default async function handler(req: any, res: any) {
         res.statusCode = 200;
         res.setHeader("content-type", "image/jpeg");
         res.setHeader("content-length", BG_JPG.length);
-        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800, immutable");
+        res.setHeader("cdn-cache-control", "public, s-maxage=604800, immutable");
+        res.setHeader("vercel-cdn-cache-control", "public, s-maxage=604800, immutable");
         if (method === "HEAD") return res.end();
         return res.end(BG_JPG);
       }
@@ -125,7 +133,9 @@ export default async function handler(req: any, res: any) {
         res.statusCode = 200;
         res.setHeader("content-type", "image/png");
         res.setHeader("content-length", OG_IMAGE_PNG.length);
-        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800");
+        res.setHeader("cache-control", "public, max-age=86400, s-maxage=604800, immutable");
+        res.setHeader("cdn-cache-control", "public, s-maxage=604800, immutable");
+        res.setHeader("vercel-cdn-cache-control", "public, s-maxage=604800, immutable");
         if (method === "HEAD") return res.end();
         return res.end(OG_IMAGE_PNG);
       }

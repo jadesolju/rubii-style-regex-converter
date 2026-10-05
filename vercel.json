@@ -1,6 +1,60 @@
 {
   "version": 2,
   "framework": null,
+  "headers": [
+    {
+      "source": "/v1/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, s-maxage=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "public, s-maxage=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/healthz",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=60, s-maxage=300"
+        }
+      ]
+    },
+    {
+      "source": "/lessons/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=604800, immutable"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, s-maxage=604800, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|ico|js|css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=604800, immutable"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, s-maxage=604800, immutable"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/v1/(.*)",

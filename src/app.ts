@@ -98,6 +98,21 @@ export function buildApp(enableLogging = true): FastifyInstance {
   });
   let activeRegexWorkers = 0;
 
+  app.addHook("onSend", async (request, reply) => {
+    if (request.method === "GET" || request.method === "HEAD") {
+      if (reply.statusCode >= 200 && reply.statusCode < 300 && !reply.hasHeader("cache-control")) {
+        if (request.url.startsWith("/v1/") || request.url.startsWith("/healthz")) {
+          reply.header("Cache-Control", "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800");
+          reply.header("CDN-Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
+          reply.header("Vercel-CDN-Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
+        } else if (/\.(png|jpg|jpeg|webp|svg|ico|js|css)$/.test(request.url)) {
+          reply.header("Cache-Control", "public, max-age=86400, s-maxage=604800, immutable");
+          reply.header("CDN-Cache-Control", "public, s-maxage=604800, immutable");
+        }
+      }
+    }
+  });
+
   app.setErrorHandler((error, request, reply) => {
     const validation = (error as Error & {
       validation?: Array<{
