@@ -1,10 +1,9 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import openApi from "./openapi.json" with { type: "json" };
 import { getById, getCollection, getRecipeBundle, validateContent, type Lesson } from "./content.ts";
 import { runRegexTest, type RegexTestInput } from "./regex-worker.ts";
+import { INDEX_HTML, COOKBOOK_JS, MASCOT_JPG, BG_JPG } from "./embedded-assets.ts";
 
 const errorSchema = {
   type: "object",
@@ -121,76 +120,32 @@ export function buildApp(enableLogging = true): FastifyInstance {
     });
   });
 
-  const loadStatic = async (name: string) => {
-    for (const candidate of [join(process.cwd(), "public", name), join(process.cwd(), "dist", name), join(process.cwd(), name)]) {
-      try {
-        return await readFile(candidate);
-      } catch {}
-    }
-    throw new Error(`File ${name} not found`);
-  };
-
   app.get("/healthz", async () => ({ status: "ok", contentVersion: "0.1.0" }));
   app.get("/cookbook.js", async (_request, reply) => {
-    try {
-      const script = await loadStatic("cookbook.js");
-      return reply.type("application/javascript; charset=utf-8").send(script);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Script not found" } });
-    }
+    return reply.type("application/javascript; charset=utf-8").send(COOKBOOK_JS);
   });
   app.get("/bg.jpg", async (_request, reply) => {
-    try {
-      const img = await loadStatic("bg.jpg");
-      return reply.type("image/jpeg").send(img);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Background image not found" } });
-    }
+    return reply.type("image/jpeg").send(BG_JPG);
   });
   app.get("/mascot.jpg", async (_request, reply) => {
-    try {
-      const img = await loadStatic("mascot.jpg");
-      return reply.type("image/jpeg").send(img);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Mascot image not found" } });
-    }
+    return reply.type("image/jpeg").send(MASCOT_JPG);
   });
   app.get(`${API_PREFIX}/openapi.json`, async () => openApi);
 
   app.get("/", async (_request, reply) => {
-    try {
-      const html = await loadStatic("index.html");
-      return reply.type("text/html; charset=utf-8").send(html);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
-    }
+    return reply.type("text/html; charset=utf-8").send(INDEX_HTML);
   });
 
   app.get("/index.html", async (_request, reply) => {
-    try {
-      const html = await loadStatic("index.html");
-      return reply.type("text/html; charset=utf-8").send(html);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
-    }
+    return reply.type("text/html; charset=utf-8").send(INDEX_HTML);
   });
 
   app.get("/api/index", async (_request, reply) => {
-    try {
-      const html = await loadStatic("index.html");
-      return reply.type("text/html; charset=utf-8").send(html);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
-    }
+    return reply.type("text/html; charset=utf-8").send(INDEX_HTML);
   });
 
   app.get("/api", async (_request, reply) => {
-    try {
-      const html = await loadStatic("index.html");
-      return reply.type("text/html; charset=utf-8").send(html);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
-    }
+    return reply.type("text/html; charset=utf-8").send(INDEX_HTML);
   });
 
   app.get(`${API_PREFIX}/search`, {
@@ -313,12 +268,7 @@ export function buildApp(enableLogging = true): FastifyInstance {
         error: { code: "NOT_FOUND", message: "Route not found", requestId: request.id },
       });
     }
-    try {
-      const html = await loadStatic("index.html");
-      return reply.type("text/html; charset=utf-8").send(html);
-    } catch {
-      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
-    }
+    return reply.type("text/html; charset=utf-8").send(INDEX_HTML);
   });
 
   return app;
