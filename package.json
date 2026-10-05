@@ -10,7 +10,7 @@
     "dev": "node --env-file-if-exists=.env src/server.ts",
     "test": "node --test test/app.test.ts",
     "typecheck": "tsc --noEmit",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && node -e \"require('fs').cpSync('public', 'dist', {recursive: true})\"",
     "start": "node --env-file-if-exists=.env dist/src/server.js"
   },
   "dependencies": {

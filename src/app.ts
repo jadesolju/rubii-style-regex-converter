@@ -121,14 +121,27 @@ export function buildApp(enableLogging = true): FastifyInstance {
     });
   });
 
+  const loadStatic = async (name: string) => {
+    for (const candidate of [join(process.cwd(), "public", name), join(process.cwd(), "dist", name), join(process.cwd(), name)]) {
+      try {
+        return await readFile(candidate);
+      } catch {}
+    }
+    throw new Error(`File ${name} not found`);
+  };
+
   app.get("/healthz", async () => ({ status: "ok", contentVersion: "0.1.0" }));
   app.get("/cookbook.js", async (_request, reply) => {
-    const script = await readFile(join(process.cwd(), "public", "cookbook.js"), "utf8");
-    return reply.type("application/javascript; charset=utf-8").send(script);
+    try {
+      const script = await loadStatic("cookbook.js");
+      return reply.type("application/javascript; charset=utf-8").send(script);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Script not found" } });
+    }
   });
   app.get("/bg.jpg", async (_request, reply) => {
     try {
-      const img = await readFile(join(process.cwd(), "public", "bg.jpg"));
+      const img = await loadStatic("bg.jpg");
       return reply.type("image/jpeg").send(img);
     } catch {
       return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Background image not found" } });
@@ -136,7 +149,7 @@ export function buildApp(enableLogging = true): FastifyInstance {
   });
   app.get("/mascot.jpg", async (_request, reply) => {
     try {
-      const img = await readFile(join(process.cwd(), "public", "mascot.jpg"));
+      const img = await loadStatic("mascot.jpg");
       return reply.type("image/jpeg").send(img);
     } catch {
       return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Mascot image not found" } });
@@ -146,7 +159,7 @@ export function buildApp(enableLogging = true): FastifyInstance {
 
   app.get("/", async (_request, reply) => {
     try {
-      const html = await readFile(join(process.cwd(), "public", "index.html"), "utf8");
+      const html = await loadStatic("index.html");
       return reply.type("text/html; charset=utf-8").send(html);
     } catch {
       return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
@@ -155,7 +168,7 @@ export function buildApp(enableLogging = true): FastifyInstance {
 
   app.get("/index.html", async (_request, reply) => {
     try {
-      const html = await readFile(join(process.cwd(), "public", "index.html"), "utf8");
+      const html = await loadStatic("index.html");
       return reply.type("text/html; charset=utf-8").send(html);
     } catch {
       return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
