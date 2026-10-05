@@ -274,4 +274,6 @@ export function buildApp(enableLogging = true): FastifyInstance {
   return app;
 }
 
-export default buildApp;
+const app = buildApp();
+
+export default app;
