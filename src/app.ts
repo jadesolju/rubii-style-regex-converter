@@ -175,6 +175,24 @@ export function buildApp(enableLogging = true): FastifyInstance {
     }
   });
 
+  app.get("/api/index", async (_request, reply) => {
+    try {
+      const html = await loadStatic("index.html");
+      return reply.type("text/html; charset=utf-8").send(html);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
+    }
+  });
+
+  app.get("/api", async (_request, reply) => {
+    try {
+      const html = await loadStatic("index.html");
+      return reply.type("text/html; charset=utf-8").send(html);
+    } catch {
+      return reply.code(404).send({ error: { code: "NOT_FOUND", message: "Web interface not found" } });
+    }
+  });
+
   app.get(`${API_PREFIX}/search`, {
     schema: { querystring: searchQuerySchema },
   }, async (request) => {

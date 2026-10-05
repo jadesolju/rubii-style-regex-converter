@@ -10,7 +10,15 @@ export default async function handler(req: any, res: any) {
   }
 
   const method = req.method ?? "GET";
-  const url = req.url ?? "/";
+  let url = req.url ?? "/";
+
+  // Normalize Vercel rewrite destination
+  if (url === "/api/index" || url === "/api" || url === "/api/") {
+    url = "/";
+  } else if (url.startsWith("/api/index?")) {
+    url = "/" + url.slice("/api/index".length);
+  }
+
   const headers = req.headers ?? {};
   const payload = req.body !== undefined && req.body !== null ? req.body : undefined;
 
