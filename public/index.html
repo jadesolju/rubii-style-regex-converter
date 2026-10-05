@@ -1798,71 +1798,29 @@
       });
     }
 
+    // Natural-language text: only inline code (`...`), bold and italic are styled.
+    // Regex symbols and English words stay as plain text so Thai sentences read like an article.
     function highlightRegexTokens(str) {
       if (!str) return '';
       let escaped = escapeHtml(str);
-
-      // 1. Markdown bold, italic, code
-      escaped = escaped.replace(/`([^`]+)`/g, '<code class="px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1</code>');
-      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-cyan-200">$1</strong>');
+      escaped = escaped.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded-md code-font text-[0.9em] font-semibold bg-cyan-500/15 text-cyan-300">$1</code>');
+      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-cyan-200">$1</strong>');
       escaped = escaped.replace(/(?<!\*)\*([^*\s][^*]*[^*\s])\*(?!\*)/g, '<em class="italic text-indigo-200">$1</em>');
-
-      // 2. Arrows
-      escaped = escaped.replace(/(-&gt;|→|=&gt;)/g, '<span class="inline-flex items-center text-cyan-400 font-bold px-1 text-sm sm:text-base">→</span>');
-
-      // 3. Quotes: “...”, "...", '...', ‘...’
-      escaped = escaped.replace(/(“|”|&quot;)([^“”"&]+)(“|”|&quot;)/g, '<span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs sm:text-sm font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">“$2”</span>');
-      escaped = escaped.replace(/(‘|’|&#039;)([^‘’'&#]+)(‘|’|&#039;)/g, '<span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs sm:text-sm font-medium text-amber-200 bg-amber-500/15 border border-amber-500/30">‘$2’</span>');
-
-      // 4. Literal regexes with slashes: /pattern/flags or /^📅...$/gm
-      escaped = escaped.replace(/(^|\s)(\/[^\/\s]+\/[gimsu]*)(\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2.5 py-0.5 rounded-lg code-font text-xs sm:text-sm font-bold bg-indigo-500/25 text-indigo-200 border border-indigo-500/40">$2</span>$3');
-
-      // 5. Character Sets & Inverted Sets: [abc], [a-z], [^0-9], [0-9], [:：], [^()\n]{1,60}
-      escaped = escaped.replace(/(\[\^?[^\]]+\](?:\{[^}]+\})?)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">$1</span>');
-
-      // 6. Escaped sets and characters: \d, \w, \s, \D, \W, \S, \n, \b, \B, \D/\W/\S, \bcat\b, \(, \)
-      escaped = escaped.replace(/(\\bcat\\b|\\D\/\\W\/\\S|\\[dwsnDbWSbB]|\\[pP]\{[^}]+\}|\\\(|\\\))/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/35">$1</span>');
-
-      // 7. Key-Value patterns: e.g. Location: ..., Time: ..., Mood: ..., Affection: 92
-      escaped = escaped.replace(/\b(Location|Time|Mood|Affection|Key|field|pattern|Format)[:：]\s*(\.{3}|[A-Za-z0-9_ -]+)?/gi, (match, k, v) => {
-        return `<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30">${k}: ${v || ''}</span>`;
-      });
-
-      // 8. Capturing groups & backreferences: (\d{2}), (\d{1,3}), (?:...), $1, $2, $1/$2, $2/$1
-      escaped = escaped.replace(/(\((?:\?:)?[^)]+\)|\$[1-9&](?:\/\$[1-9&])?)/g, '<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/35">$1</span>');
-
-      // 9. Quantifiers & Repetitions: {4}, {3,8}, {1,60}, {1,3}, {n}, {min,max}, standalone +, *, ?
-      escaped = escaped.replace(/(^|\s)(\{\d+(?:,\d*)?\}\??)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
-      escaped = escaped.replace(/(^|\s)([\+\*\?])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/35">$2</span>');
-
-      // 10. Anchors / Boundaries / Operators: ^, $, ^/$, |, cat|dog
-      escaped = escaped.replace(/(^|\s)(\^\/\$|cat\|dog)(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
-      escaped = escaped.replace(/(^|\s)([\^$|])(?=\s|$|[.,;])/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/35">$2</span>');
-
-      // 11. Flags when standing at item start: e.g. "g ค้นหรือ...", "i ไม่แยก...", "m เปลี่ยน...", "s ทำให้...", "u เปิด...", "y จับตรง...", "d เพิ่ม..."
-      escaped = escaped.replace(/(^|\s|\b)([gimsuycd])(?=\s+(?:ค้น|ไม่แยก|เปลี่ยน|ทำให้|เปิด|จับตรง|เพิ่ม|รองรับ))/g, '$1<span class="inline-flex items-center px-2 py-0.5 rounded-md code-font text-xs sm:text-sm font-bold bg-violet-500/20 text-violet-300 border border-violet-500/35">flag $2</span>');
-
-      // 12. Plain English words stay as normal text so Thai sentences read smoothly
-
       return escaped;
     }
 
+    // Lesson body: flowing paragraphs (and plain list lines) instead of boxed bullet cards
     function formatJournalText(text) {
       if (!text) return '';
-      const items = text.split(/\n|;\s*(?=[\\a-zA-Z0-9\[\(\$\+\*\?^\/“"'])/);
+      const items = text.split(/\n|;\s*(?=[\\a-zA-Z0-9\[\(\$\+\*\?^\/“"'•])/);
       return items.map((item) => {
         item = item.trim();
         if (!item) return '';
-        const highlighted = highlightRegexTokens(item);
-        return `
-          <div class="flex items-start gap-3.5 py-3 px-4 rounded-2xl bg-slate-950/50 border border-white/5 hover:border-cyan-500/30 transition-all text-sm sm:text-base text-slate-200">
-            <!-- Cute BuJo Star SVG Bullet -->
-            <svg class="w-4 h-4 text-cyan-400 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-            </svg>
-            <div class="flex-1 leading-relaxed font-normal">${highlighted}</div>
-          </div>
-        `;
+        const isListLine = /^(?:•|-|\d+\.)\s/.test(item);
+        const body = highlightRegexTokens(item.replace(/^•\s*/, ''));
+        return isListLine
+          ? `<p class="pl-5 text-base sm:text-lg text-slate-200 leading-loose font-normal">${body}</p>`
+          : `<p class="text-base sm:text-lg text-slate-200 leading-loose font-normal">${body}</p>`;
       }).join('');
     }
 
@@ -2165,7 +2123,6 @@
         ${overviewHtml}
         ${tldrHtml}
         ${introHtml}
-        ${contextGridHtml}
         ${beforeAfterHtml}
 
         ${audienceNote ? `
