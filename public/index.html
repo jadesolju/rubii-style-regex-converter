@@ -1447,7 +1447,7 @@
         fetchRecipes();
         fetchPatterns().then(() => {
           if (state.patterns.some(p => p.id === 'key-value-generic')) {
-            loadPractice('key-value-generic', 1);
+            loadPractice('key-value-generic', 1, false);
           }
         });
         checkApiHealth();
@@ -2875,7 +2875,7 @@
       copyToClipboard(literal, 'คัดลอกนิพจน์แบบเต็ม /.../flags สำหรับ Rubii แล้ว!');
     }
 
-    function sendToSandbox(patternEnc, flagsEnc, replacementEnc, inputEnc) {
+    function sendToSandbox(patternEnc, flagsEnc, replacementEnc, inputEnc, shouldSwitchTab = true) {
       const pattern = decodeURIComponent(patternEnc);
       const flags = decodeURIComponent(flagsEnc);
       const replacement = decodeURIComponent(replacementEnc);
@@ -2898,9 +2898,11 @@
       updateFullLiteralDisplay();
       updateRegexCheatsheetTarget();
       renderRegexCheatsheet();
-      switchTab('sandbox');
+      if (shouldSwitchTab) {
+        switchTab('sandbox');
+        showToast('ส่งสูตรไปยังห้องทดลองแล้ว!');
+      }
       runRegexWorkerTest();
-      showToast('ส่งสูตรไปยังห้องทดลองแล้ว!');
     }
 
     function renderPatternGuide() {
@@ -4460,7 +4462,7 @@
       frame.srcdoc=`<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; media-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'"><style>${baseThemeCss}\n${safeCSS}</style></head><body><main class="rubii-message-${target}">${safeHTML}</main></body></html>`;
     }
 
-    function loadPractice(id, index = 0) {
+    function loadPractice(id, index = 0, shouldSwitchTab = true) {
       const p = state.patterns.find(p => p.id === id);
       if (!p) return;
       const exampleIndex = (index >= 0 && index < p.examples.length) ? index : 0;
@@ -4468,7 +4470,7 @@
       const lvl = levelConfig[p.level] || levelConfig.beginner;
 
       document.getElementById('practice-picker').value = id;
-      sendToSandbox(encodeURIComponent(p.pattern), encodeURIComponent(p.flags || ''), encodeURIComponent(p.replacement || ''), encodeURIComponent(e.input));
+      sendToSandbox(encodeURIComponent(p.pattern), encodeURIComponent(p.flags || ''), encodeURIComponent(p.replacement || ''), encodeURIComponent(e.input), shouldSwitchTab);
 
       const guide = document.getElementById('practice-guide');
       guide.innerHTML = `
