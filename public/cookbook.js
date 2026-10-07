@@ -445,7 +445,93 @@ const COOKBOOK_BLUEPRINTS = [
     <span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;display:inline-block;" title="Online"></span>
   </div>
 </div>`
-  }
+  },
+  {
+    "id": "bp-instagram-story",
+    "category": "social",
+    "categoryLabel": "📱 โซเชียล & สตอรี่",
+    "title": "Instagram Story",
+    "summary": "การ์ดสตอรี่ Instagram พร้อมรูปภาพ GIF พิกัด และข้อความตอบกลับ",
+    "tags": [
+      "Instagram",
+      "Story",
+      "GIF"
+    ],
+    "tag": "instagram-story",
+    "template": "<div style=\"background:rgba(255,255,255,0.09);backdrop-filter:blur(35px);-webkit-backdrop-filter:blur(35px);border:1.5px solid rgba(255,255,255,0.38);border-radius:48px;padding:18px 16px;max-width:420px;margin:12px auto;min-height:520px;display:flex;flex-direction:column;justify-content:space-between;font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"display:flex;gap:4px;margin-bottom:12px;\"><div style=\"flex:1;height:2.5px;background:rgba(255,255,255,0.85);border-radius:2px;\"></div><div style=\"flex:1;height:2.5px;background:rgba(255,255,255,0.3);border-radius:2px;\"></div></div><div style=\"display:flex;justify-content:space-between;align-items:center;padding:0 4px;\"><div style=\"display:flex;align-items:center;gap:8px;\"><div style=\"width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;color:#ffffff!important;font-size:10px;\">ST</div><div style=\"color:#ffffff!important;font-size:12px;\">{{char}} <span style=\"opacity:0.65;font-size:10px;\">2 ชม.</span></div></div><span style=\"color:#ffffff!important;font-size:14px;opacity:0.8;\">✕</span></div><div style=\"background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.22);border-radius:28px;flex:1;margin:14px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;\"><div style=\"background:rgba(255,255,255,0.18);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);border-radius:18px;padding:8px 14px;margin-bottom:12px;\"><span style=\"color:#ffffff!important;font-size:11px;\">📍 (สถานที่: พิกัดสตอรี่)</span></div><img src=\"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eWw0dWV5MjBsNTE4NXE1aXQyaTZvamU2cWNsMW8xZGxmcjJlbHh0ZSZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/v0VoVGS0KrJZf1Yz6L/giphy.gif\" alt=\"Story GIF\" style=\"display:block;width:100%;max-height:220px;object-fit:cover;border-radius:20px;margin:0 auto 12px;border:1px solid rgba(255,255,255,0.3);box-shadow:0 8px 24px rgba(0,0,0,0.15);\"><div style=\"color:#ffffff!important;font-size:13px;line-height:1.6;margin-bottom:8px;\">$1</div><div style=\"color:#ffffff!important;font-size:11px;opacity:0.8;\">💭 ความคิดในใจ: (สิ่งที่ {{char}} คิดตอนอัปสตอรี่นี้)</div></div><div style=\"display:flex;gap:10px;align-items:center;\"><div style=\"flex:1;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.35);border-radius:24px;padding:10px 14px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.65;\">ส่งข้อความตอบกลับสตอรี่...</span></div><span style=\"color:#ffffff!important;font-size:16px;\">🤍</span><span style=\"color:#ffffff!important;font-size:16px;\">↗️</span></div></div>",
+    "css": "",
+    "html": "<div style=\"background:rgba(255,255,255,0.09);backdrop-filter:blur(35px);-webkit-backdrop-filter:blur(35px);border:1.5px solid rgba(255,255,255,0.38);border-radius:48px;padding:18px 16px;max-width:420px;margin:12px auto;min-height:520px;display:flex;flex-direction:column;justify-content:space-between;font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"display:flex;gap:4px;margin-bottom:12px;\"><div style=\"flex:1;height:2.5px;background:rgba(255,255,255,0.85);border-radius:2px;\"></div><div style=\"flex:1;height:2.5px;background:rgba(255,255,255,0.3);border-radius:2px;\"></div></div><div style=\"display:flex;justify-content:space-between;align-items:center;padding:0 4px;\"><div style=\"display:flex;align-items:center;gap:8px;\"><div style=\"width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;color:#ffffff!important;font-size:10px;\">ST</div><div style=\"color:#ffffff!important;font-size:12px;\">{{char}} <span style=\"opacity:0.65;font-size:10px;\">2 ชม.</span></div></div><span style=\"color:#ffffff!important;font-size:14px;opacity:0.8;\">✕</span></div><div style=\"background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.22);border-radius:28px;flex:1;margin:14px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;\"><div style=\"background:rgba(255,255,255,0.18);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);border-radius:18px;padding:8px 14px;margin-bottom:12px;\"><span style=\"color:#ffffff!important;font-size:11px;\">📍 (สถานที่: พิกัดสตอรี่)</span></div><img src=\"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eWw0dWV5MjBsNTE4NXE1aXQyaTZvamU2cWNsMW8xZGxmcjJlbHh0ZSZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/v0VoVGS0KrJZf1Yz6L/giphy.gif\" alt=\"Story GIF\" style=\"display:block;width:100%;max-height:220px;object-fit:cover;border-radius:20px;margin:0 auto 12px;border:1px solid rgba(255,255,255,0.3);box-shadow:0 8px 24px rgba(0,0,0,0.15);\"><div style=\"color:#ffffff!important;font-size:13px;line-height:1.6;margin-bottom:8px;\">✨ (ข้อความหรือรูปภาพที่ลงใน Story เช่น ภาพเซลฟี่ ร่องรอย หรือสิ่งที่กำลังทำ)</div><div style=\"color:#ffffff!important;font-size:11px;opacity:0.8;\">💭 ความคิดในใจ: (สิ่งที่ {{char}} คิดตอนอัปสตอรี่นี้)</div></div><div style=\"display:flex;gap:10px;align-items:center;\"><div style=\"flex:1;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.35);border-radius:24px;padding:10px 14px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.65;\">ส่งข้อความตอบกลับสตอรี่...</span></div><span style=\"color:#ffffff!important;font-size:16px;\">🤍</span><span style=\"color:#ffffff!important;font-size:16px;\">↗️</span></div></div>",
+    "example": "<instagram-story>✨ (ข้อความหรือรูปภาพที่ลงใน Story เช่น ภาพเซลฟี่ ร่องรอย หรือสิ่งที่กำลังทำ)</instagram-story>"
+  },
+  {
+    "id": "bp-google-search-history",
+    "category": "search",
+    "categoryLabel": "🔎 ค้นหาและเบราว์เซอร์",
+    "title": "Google Search & History",
+    "summary": "การ์ดจำลองหน้าค้นหา Google พร้อมประวัติการค้นหาล่าสุดของตัวละคร",
+    "tags": [
+      "Google",
+      "Search",
+      "History"
+    ],
+    "tag": "google-search-history",
+    "template": "<div style=\"background:rgba(255,255,255,0.1);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1.5px solid rgba(255,255,255,0.38);border-radius:44px;padding:26px 20px;max-width:420px;margin:12px auto;box-shadow:0 20px 45px rgba(0,0,0,0.2);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"text-align:center;margin-bottom:20px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/wordmark.svg\" alt=\"Google\" style=\"height:36px;display:inline-block;\"></div><div style=\"background:rgba(255,255,255,0.16);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.4);border-radius:28px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:18px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg\" alt=\"G\" width=\"18\" height=\"18\" style=\"display:block;\"><span style=\"color:#ffffff!important;font-size:13px;flex:1;opacity:0.9;\">$1</span><span style=\"color:#ffffff!important;font-size:14px;opacity:0.8;\">🎙️</span></div><div style=\"background:rgba(255,255,255,0.12);border-radius:22px;padding:14px 16px;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.15);\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.85;\">🕒 ประวัติการค้นหาล่าสุดของ {{char}}</span><span style=\"color:#ffffff!important;font-size:10px;opacity:0.65;\">ล้างประวัติ</span></div><div style=\"display:flex;flex-direction:column;gap:10px;\"><div style=\"display:flex;align-items:center;justify-content:space-between;\"><div style=\"display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">🕒</span><span style=\"color:#ffffff!important;font-size:12px;\">วิธีแก้เขินเวลาอยู่ใกล้ {{user}}</span></div><span style=\"color:#ffffff!important;font-size:11px;opacity:0.6;\">✕</span></div><div style=\"display:flex;align-items:center;justify-content:space-between;\"><div style=\"display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">🕒</span><span style=\"color:#ffffff!important;font-size:12px;\">ร้านอาหารบรรยากาศดี แถว 📍 (สถานที่)</span></div><span style=\"color:#ffffff!important;font-size:11px;opacity:0.6;\">✕</span></div><div style=\"display:flex;align-items:center;justify-content:space-between;\"><div style=\"display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">🕒</span><span style=\"color:#ffffff!important;font-size:12px;\">💭 ความคิดในใจ: (คำค้นหาลับเฉพาะตัวของ {{char}})</span></div><span style=\"color:#ffffff!important;font-size:11px;opacity:0.6;\">✕</span></div></div></div></div>",
+    "css": "",
+    "html": "<div style=\"background:rgba(255,255,255,0.1);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1.5px solid rgba(255,255,255,0.38);border-radius:44px;padding:26px 20px;max-width:420px;margin:12px auto;box-shadow:0 20px 45px rgba(0,0,0,0.2);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"text-align:center;margin-bottom:20px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/wordmark.svg\" alt=\"Google\" style=\"height:36px;display:inline-block;\"></div><div style=\"background:rgba(255,255,255,0.16);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.4);border-radius:28px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:18px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg\" alt=\"G\" width=\"18\" height=\"18\" style=\"display:block;\"><span style=\"color:#ffffff!important;font-size:13px;flex:1;opacity:0.9;\">วิธีทำให้ {{user}} ประทับใจ...</span><span style=\"color:#ffffff!important;font-size:14px;opacity:0.8;\">🎙️</span></div><div style=\"background:rgba(255,255,255,0.12);border-radius:22px;padding:14px 16px;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.15);\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.85;\">🕒 ประวัติการค้นหาล่าสุดของ {{char}}</span><span style=\"color:#ffffff!important;font-size:10px;opacity:0.65;\">ล้างประวัติ</span></div><div style=\"display:flex;flex-direction:column;gap:10px;\"><div style=\"display:flex;align-items:center;justify-content:space-between;\"><div style=\"display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">🕒</span><span style=\"color:#ffffff!important;font-size:12px;\">วิธีแก้เขินเวลาอยู่ใกล้ {{user}}</span></div><span style=\"color:#ffffff!important;font-size:11px;opacity:0.6;\">✕</span></div><div style=\"display:flex;align-items:center;justify-content:space-between;\"><div style=\"display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">🕒</span><span style=\"color:#ffffff!important;font-size:12px;\">ร้านอาหารบรรยากาศดี แถว 📍 (สถานที่)</span></div><span style=\"color:#ffffff!important;font-size:11px;opacity:0.6;\">✕</span></div><div style=\"display:flex;align-items:center;justify-content:space-between;\"><div style=\"display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">🕒</span><span style=\"color:#ffffff!important;font-size:12px;\">💭 ความคิดในใจ: (คำค้นหาลับเฉพาะตัวของ {{char}})</span></div><span style=\"color:#ffffff!important;font-size:11px;opacity:0.6;\">✕</span></div></div></div></div>",
+    "example": "<google-search-history>วิธีทำให้ {{user}} ประทับใจ...</google-search-history>"
+  },
+  {
+    "id": "bp-google-trends",
+    "category": "search",
+    "categoryLabel": "🔎 ค้นหาและเบราว์เซอร์",
+    "title": "Google Trends Realtime",
+    "summary": "การ์ดกระแสนิยมและการค้นหายอดนิยม Google Trends ประจำวัน",
+    "tags": [
+      "Google",
+      "Trends",
+      "Search"
+    ],
+    "tag": "google-trends",
+    "template": "<div style=\"background:rgba(255,255,255,0.09);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1.5px solid rgba(255,255,255,0.36);border-radius:44px;padding:22px 18px;max-width:420px;margin:12px auto;box-shadow:0 20px 45px rgba(0,0,0,0.2);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:0 4px;\"><div style=\"display:flex;align-items:center;gap:8px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg\" alt=\"Google\" width=\"22\" height=\"22\" style=\"display:block;\"><span style=\"color:#ffffff!important;font-size:13px;\">Google Trends</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">อัปเดตเรียลไทม์</span></div><div style=\"background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:12px;opacity:0.7;\">🔍</span><span style=\"color:#ffffff!important;font-size:12px;opacity:0.65;\">ค้นหาหัวข้อหรือคำค้นหา...</span></div><div style=\"background:rgba(255,255,255,0.12);border-radius:22px;padding:14px 16px;\"><div style=\"color:#ffffff!important;font-size:11px;opacity:0.85;margin-bottom:10px;\">📈 การค้นหายอดนิยมประจำวัน</div><div style=\"display:flex;flex-direction:column;gap:10px;\"><div style=\"display:flex;justify-content:space-between;align-items:center;\"><div style=\"display:flex;align-items:center;gap:10px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">1</span><span style=\"color:#ffffff!important;font-size:12px;\">$1</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">+500K</span></div><div style=\"display:flex;justify-content:space-between;align-items:center;\"><div style=\"display:flex;align-items:center;gap:10px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">2</span><span style=\"color:#ffffff!important;font-size:12px;\">🌅 สถานการณ์: (ประเด็นร้อนที่คนกำลังค้นหา)</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">+200K</span></div><div style=\"display:flex;justify-content:space-between;align-items:center;\"><div style=\"display:flex;align-items:center;gap:10px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">3</span><span style=\"color:#ffffff!important;font-size:12px;\">📢 เรื่องเล่าข่าวฉาน: (กระแสข่าววงในที่ถูกแชร์)</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">+100K</span></div></div></div></div>",
+    "css": "",
+    "html": "<div style=\"background:rgba(255,255,255,0.09);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1.5px solid rgba(255,255,255,0.36);border-radius:44px;padding:22px 18px;max-width:420px;margin:12px auto;box-shadow:0 20px 45px rgba(0,0,0,0.2);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:0 4px;\"><div style=\"display:flex;align-items:center;gap:8px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg\" alt=\"Google\" width=\"22\" height=\"22\" style=\"display:block;\"><span style=\"color:#ffffff!important;font-size:13px;\">Google Trends</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">อัปเดตเรียลไทม์</span></div><div style=\"background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;\"><span style=\"color:#ffffff!important;font-size:12px;opacity:0.7;\">🔍</span><span style=\"color:#ffffff!important;font-size:12px;opacity:0.65;\">ค้นหาหัวข้อหรือคำค้นหา...</span></div><div style=\"background:rgba(255,255,255,0.12);border-radius:22px;padding:14px 16px;\"><div style=\"color:#ffffff!important;font-size:11px;opacity:0.85;margin-bottom:10px;\">📈 การค้นหายอดนิยมประจำวัน</div><div style=\"display:flex;flex-direction:column;gap:10px;\"><div style=\"display:flex;justify-content:space-between;align-items:center;\"><div style=\"display:flex;align-items:center;gap:10px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">1</span><span style=\"color:#ffffff!important;font-size:12px;\">ข่าวลือล่าสุด {{char}} กับ {{user}}</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">+500K</span></div><div style=\"display:flex;justify-content:space-between;align-items:center;\"><div style=\"display:flex;align-items:center;gap:10px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">2</span><span style=\"color:#ffffff!important;font-size:12px;\">🌅 สถานการณ์: (ประเด็นร้อนที่คนกำลังค้นหา)</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">+200K</span></div><div style=\"display:flex;justify-content:space-between;align-items:center;\"><div style=\"display:flex;align-items:center;gap:10px;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.7;\">3</span><span style=\"color:#ffffff!important;font-size:12px;\">📢 เรื่องเล่าข่าวฉาน: (กระแสข่าววงในที่ถูกแชร์)</span></div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.7;\">+100K</span></div></div></div></div>",
+    "example": "<google-trends>ข่าวลือล่าสุด {{char}} กับ {{user}}</google-trends>"
+  },
+  {
+    "id": "bp-safari-start-page",
+    "category": "search",
+    "categoryLabel": "🔎 ค้นหาและเบราว์เซอร์",
+    "title": "Safari Start Page",
+    "summary": "หน้าเริ่มต้น Safari พร้อมรายการโปรด Favorites และประวัติการค้นหา",
+    "tags": [
+      "Safari",
+      "Browser",
+      "Favorites"
+    ],
+    "tag": "safari-start-page",
+    "template": "<div style=\"background:rgba(255,255,255,0.1);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1.5px solid rgba(255,255,255,0.4);border-radius:46px;padding:22px 18px;max-width:420px;margin:12px auto;box-shadow:0 20px 45px rgba(0,0,0,0.2);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:0 6px;\"><div style=\"display:flex;align-items:center;gap:8px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/safari/default.svg\" alt=\"Safari\" width=\"26\" height=\"26\" style=\"display:block;\"><span style=\"color:#ffffff!important;font-size:16px;\">Safari Start</span></div><span style=\"color:#ffffff!important;font-size:12px;opacity:0.8;\">แก้ไข</span></div><div style=\"background:rgba(255,255,255,0.12);border-radius:24px;padding:14px 16px;margin-bottom:14px;\"><div style=\"color:#ffffff!important;font-size:11px;opacity:0.85;margin-bottom:10px;\">⭐ ไซต์ที่เข้าชมบ่อย (Favorites)</div><div style=\"display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;text-align:center;\"><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">📱</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">โซเชียล</span></div><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">🔒</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">เว็บส่วนตัว</span></div><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">🛍️</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">ช้อปปิ้ง</span></div><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">💬</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">แชตลับ</span></div></div></div><div style=\"background:rgba(255,255,255,0.12);border-radius:22px;padding:12px 16px;margin-bottom:16px;\"><div style=\"color:#ffffff!important;font-size:11px;opacity:0.85;margin-bottom:8px;\">🕒 ประวัติการค้นหาล่าสุด</div><div style=\"color:#ffffff!important;font-size:12px;line-height:1.6;\">• $1<br>• วิธีปกปิดร่องรอยบนร่างกาย<br>• สถานที่เที่ยวลับ ๆ ใน กรุงเทพฯ</div></div><div style=\"background:rgba(255,255,255,0.18);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.4);border-radius:26px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.8;\">aA</span><span style=\"color:#ffffff!important;font-size:12px;\">safari-search.internal</span><span style=\"color:#ffffff!important;font-size:12px;opacity:0.8;\">🔄</span></div></div>",
+    "css": "",
+    "html": "<div style=\"background:rgba(255,255,255,0.1);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1.5px solid rgba(255,255,255,0.4);border-radius:46px;padding:22px 18px;max-width:420px;margin:12px auto;box-shadow:0 20px 45px rgba(0,0,0,0.2);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:0 6px;\"><div style=\"display:flex;align-items:center;gap:8px;\"><img src=\"https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/safari/default.svg\" alt=\"Safari\" width=\"26\" height=\"26\" style=\"display:block;\"><span style=\"color:#ffffff!important;font-size:16px;\">Safari Start</span></div><span style=\"color:#ffffff!important;font-size:12px;opacity:0.8;\">แก้ไข</span></div><div style=\"background:rgba(255,255,255,0.12);border-radius:24px;padding:14px 16px;margin-bottom:14px;\"><div style=\"color:#ffffff!important;font-size:11px;opacity:0.85;margin-bottom:10px;\">⭐ ไซต์ที่เข้าชมบ่อย (Favorites)</div><div style=\"display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;text-align:center;\"><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">📱</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">โซเชียล</span></div><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">🔒</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">เว็บส่วนตัว</span></div><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">🛍️</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">ช้อปปิ้ง</span></div><div style=\"background:rgba(255,255,255,0.15);border-radius:16px;padding:10px 4px;\"><div style=\"font-size:14px;margin-bottom:2px;\">💬</div><span style=\"color:#ffffff!important;font-size:10px;opacity:0.85;\">แชตลับ</span></div></div></div><div style=\"background:rgba(255,255,255,0.12);border-radius:22px;padding:12px 16px;margin-bottom:16px;\"><div style=\"color:#ffffff!important;font-size:11px;opacity:0.85;margin-bottom:8px;\">🕒 ประวัติการค้นหาล่าสุด</div><div style=\"color:#ffffff!important;font-size:12px;line-height:1.6;\">• ซื้อของขวัญอะไรให้ {{user}} ดี<br>• วิธีปกปิดร่องรอยบนร่างกาย<br>• สถานที่เที่ยวลับ ๆ ใน กรุงเทพฯ</div></div><div style=\"background:rgba(255,255,255,0.18);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.4);border-radius:26px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;\"><span style=\"color:#ffffff!important;font-size:11px;opacity:0.8;\">aA</span><span style=\"color:#ffffff!important;font-size:12px;\">safari-search.internal</span><span style=\"color:#ffffff!important;font-size:12px;opacity:0.8;\">🔄</span></div></div>",
+    "example": "<safari-start-page>ซื้อของขวัญอะไรให้ {{user}} ดี</safari-start-page>"
+  },
+  {
+    "id": "bp-cafe-receipt",
+    "category": "receipts",
+    "categoryLabel": "☕ ใบเสร็จคาเฟ่",
+    "title": "Maison Glass Cafe Receipt",
+    "summary": "ใบเสร็จคาเฟ่/ร้านอาหารสไตล์โมเดิร์น พร้อมรายการอาหารและยอดรวม",
+    "tags": [
+      "Cafe",
+      "Receipt",
+      "Slip"
+    ],
+    "tag": "cafe-receipt",
+    "template": "<div style=\"background:rgba(255,255,255,0.94);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(0,0,0,0.06);border-radius:36px;padding:26px 18px 20px 18px;max-width:340px;margin:12px auto;box-shadow:0 16px 36px rgba(0,0,0,0.05);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"text-align:center;margin-bottom:12px;\"><div style=\"color:#1d1d1f!important;font-size:15px;font-weight:600;\">Maison Glass Cafe</div><div style=\"color:#86868b!important;font-size:10px;margin-top:2px;\">📍 (สถานที่: พิกัดร้านที่ไปเดต)</div><div style=\"color:#86868b!important;font-size:10px;\">โต๊ะ 04 • วันนี้ 20:30 น.</div></div><div style=\"border-top:1px dashed rgba(0,0,0,0.12);border-bottom:1px dashed rgba(0,0,0,0.12);padding:12px 0;margin-bottom:12px;line-height:1.7;\"><div style=\"display:flex;justify-content:space-between;color:#1d1d1f!important;font-size:12px;\"><span>$1</span><span>฿180.00</span></div><div style=\"display:flex;justify-content:space-between;color:#1d1d1f!important;font-size:12px;\"><span>Truffle Pasta x2</span><span>฿780.00</span></div><div style=\"display:flex;justify-content:space-between;color:#1d1d1f!important;font-size:12px;\"><span>Special Wine Pairing x2</span><span>฿1,600.00</span></div><div style=\"display:flex;justify-content:space-between;color:#86868b!important;font-size:11px;\"><span>Service Charge 10%</span><span>฿256.00</span></div></div><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;\"><span style=\"color:#1d1d1f!important;font-size:13px;font-weight:600;\">ยอดรวมทั้งสิ้น</span><span style=\"color:#1d1d1f!important;font-size:24px;font-weight:700;\">฿2,816.00</span></div><div style=\"background:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.05);border-radius:18px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;\"><div style=\"color:#2c2c2e!important;font-size:10px;line-height:1.4;\">ชำระเงินเรียบร้อยแล้ว<br>เรียกเก็บเงิน: {{char}}</div><div style=\"width:36px;height:36px;background:rgba(0,0,0,0.05);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#1d1d1f!important;font-size:14px;\">🧾</div></div></div>",
+    "css": "",
+    "html": "<div style=\"background:rgba(255,255,255,0.94);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(0,0,0,0.06);border-radius:36px;padding:26px 18px 20px 18px;max-width:340px;margin:12px auto;box-shadow:0 16px 36px rgba(0,0,0,0.05);font-family:-apple-system,BlinkMacSystemFont,sans-serif;\"><div style=\"text-align:center;margin-bottom:12px;\"><div style=\"color:#1d1d1f!important;font-size:15px;font-weight:600;\">Maison Glass Cafe</div><div style=\"color:#86868b!important;font-size:10px;margin-top:2px;\">📍 (สถานที่: พิกัดร้านที่ไปเดต)</div><div style=\"color:#86868b!important;font-size:10px;\">โต๊ะ 04 • วันนี้ 20:30 น.</div></div><div style=\"border-top:1px dashed rgba(0,0,0,0.12);border-bottom:1px dashed rgba(0,0,0,0.12);padding:12px 0;margin-bottom:12px;line-height:1.7;\"><div style=\"display:flex;justify-content:space-between;color:#1d1d1f!important;font-size:12px;\"><span>Iced Vanilla Latte x1</span><span>฿180.00</span></div><div style=\"display:flex;justify-content:space-between;color:#1d1d1f!important;font-size:12px;\"><span>Truffle Pasta x2</span><span>฿780.00</span></div><div style=\"display:flex;justify-content:space-between;color:#1d1d1f!important;font-size:12px;\"><span>Special Wine Pairing x2</span><span>฿1,600.00</span></div><div style=\"display:flex;justify-content:space-between;color:#86868b!important;font-size:11px;\"><span>Service Charge 10%</span><span>฿256.00</span></div></div><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;\"><span style=\"color:#1d1d1f!important;font-size:13px;font-weight:600;\">ยอดรวมทั้งสิ้น</span><span style=\"color:#1d1d1f!important;font-size:24px;font-weight:700;\">฿2,816.00</span></div><div style=\"background:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.05);border-radius:18px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;\"><div style=\"color:#2c2c2e!important;font-size:10px;line-height:1.4;\">ชำระเงินเรียบร้อยแล้ว<br>เรียกเก็บเงิน: {{char}}</div><div style=\"width:36px;height:36px;background:rgba(0,0,0,0.05);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#1d1d1f!important;font-size:14px;\">🧾</div></div></div>",
+    "example": "<cafe-receipt>Iced Vanilla Latte x1</cafe-receipt>"
+  },
+
 ];
 
 function sendBlueprintToSandbox(bp) {
@@ -474,9 +560,9 @@ async function createRecipeFromBlueprint(bp) {
       id: `custom-bp-${suffix}`,
       title: bp.title.replace(/^[^\wก-๙]+/, '').trim(),
       summary: bp.summary,
-      category: 'dialogue',
-      openingExample: bp.html,
-      settingInstructions: [`ครอบส่วนที่ต้องการตกแต่งด้วย <${bp.tag}> และ </${bp.tag}>`, `ใช้ CSS และโครงสร้าง HTML สำเร็จรูปสำหรับแสดงผล`],
+      category: bp.category || 'dialogue',
+      openingExample: bp.example || bp.html,
+      settingInstructions: [bp.example ? `ใส่ข้อมูลที่ต้องการแสดงระหว่าง <${bp.tag}> และ </${bp.tag}>` : `ครอบส่วนที่ต้องการตกแต่งด้วย <${bp.tag}> และ </${bp.tag}>`, `ใช้ HTML Template และ CSS ที่แก้ไขได้ในหน้าต่าง Quick edit`],
       sourceRefs: []
     };
     bundle.styles = [{
@@ -591,9 +677,85 @@ function renderCookbookLibrary() {
           🎨 คลังกล่องสไตล์ & Blueprint สำเร็จรูป (Cookbook UI Blueprint Kits)
         </h3>
       </div>
-      <p class="text-xs text-slate-400 mt-0.5">รวมกล่องหัวข้อ, ศูนย์แจ้งเตือน, สลิปโอนเงิน, แถบสถานะตัวละคร และ Footer พร้อมคัดลอกหรือเปิดทดลองใน Sandbox</p>
+      <p class="text-xs text-slate-400 mt-0.5">รวม Google, Safari, Story, สลิปและใบเสร็จคาเฟ่ พร้อมคัดลอก Raw HTML หรือเปิด Quick edit</p>
     </div>
   `;
+
+  bpSection.append(bpHdr);
+  const bpControls = document.createElement('div');
+  bpControls.className = 'flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between';
+  const bpHelp = document.createElement('p');
+  bpHelp.className = 'text-xs text-slate-400';
+  bpHelp.textContent = 'เลือกดูตัวอย่าง กด Quick edit เพื่อแก้ HTML/CSS และดูผล หรือคัดลอก HTML ไปวางได้เลย';
+  const categoryLabel = document.createElement('label');
+  categoryLabel.className = 'flex items-center gap-2 text-xs text-slate-300';
+  categoryLabel.append(document.createTextNode('หมวดตัวอย่าง'));
+  const categorySelect = document.createElement('select');
+  categorySelect.className = 'glass-input min-w-48 rounded-xl px-3 py-2 text-xs';
+  categorySelect.setAttribute('aria-label', 'กรองหมวดหมู่ UI Blueprint');
+  categorySelect.add(new Option('ทุกหมวด', 'all'));
+  const blueprintCategories = new Map(COOKBOOK_BLUEPRINTS.map(bp => [bp.category, bp.categoryLabel]));
+  for (const [value, label] of blueprintCategories) categorySelect.add(new Option(label, value));
+  categorySelect.value = activeBlueprintCategory;
+  categorySelect.addEventListener('change', () => {
+    activeBlueprintCategory = categorySelect.value;
+    renderCookbookLibrary();
+  });
+  categoryLabel.append(categorySelect);
+  bpControls.append(bpHelp, categoryLabel);
+  bpSection.append(bpControls);
+
+  const blueprintGrid = document.createElement('div');
+  blueprintGrid.className = 'grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3';
+  const query = typeof state !== 'undefined' ? String(state.searchQuery || '').toLocaleLowerCase('th').trim() : '';
+  const visibleBlueprints = COOKBOOK_BLUEPRINTS.filter(bp => {
+    const categoryMatch = activeBlueprintCategory === 'all' || bp.category === activeBlueprintCategory;
+    const queryMatch = !query || `${bp.title} ${bp.summary} ${(bp.tags || []).join(' ')}`.toLocaleLowerCase('th').includes(query);
+    return categoryMatch && queryMatch;
+  });
+  for (const bp of visibleBlueprints) {
+    const card = document.createElement('article');
+    card.className = 'min-w-0 rounded-2xl border border-white/10 bg-slate-950/45 p-4 shadow-sm transition hover:border-cyan-400/30';
+    const title = document.createElement('h4');
+    title.className = 'text-sm font-semibold leading-snug text-slate-100';
+    title.textContent = bp.title;
+    const category = document.createElement('p');
+    category.className = 'mt-1 text-[11px] text-cyan-200/80';
+    category.textContent = bp.categoryLabel;
+    const summary = document.createElement('p');
+    summary.className = 'mt-2 min-h-10 text-xs leading-relaxed text-slate-400';
+    summary.textContent = bp.summary;
+    const actions = document.createElement('div');
+    actions.className = 'mt-4 flex flex-wrap gap-2 border-t border-white/5 pt-3';
+    const edit = document.createElement('button');
+    edit.type = 'button';
+    edit.className = 'rounded-xl border border-cyan-300/25 bg-cyan-500/15 px-3 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-500/25';
+    edit.textContent = 'ดูตัวอย่าง · Quick edit';
+    edit.onclick = () => createRecipeFromBlueprint(bp);
+    const copyHtml = document.createElement('button');
+    copyHtml.type = 'button';
+    copyHtml.className = 'rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-200 transition hover:bg-white/10';
+    copyHtml.textContent = 'คัดลอก Raw HTML';
+    copyHtml.onclick = () => copyToClipboard(bp.html, 'คัดลอก Raw HTML แล้ว');
+    const copyCss = document.createElement('button');
+    copyCss.type = 'button';
+    copyCss.className = 'rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-200 transition hover:bg-white/10';
+    copyCss.textContent = 'คัดลอก CSS';
+    copyCss.onclick = () => copyToClipboard(bp.css || '', bp.css ? 'คัดลอก CSS แล้ว' : 'ตัวอย่างนี้ใช้ Inline CSS ใน HTML');
+    actions.append(edit, copyHtml, copyCss);
+    card.append(title, category, summary, actions);
+    blueprintGrid.append(card);
+  }
+  if (!visibleBlueprints.length) {
+    const empty = document.createElement('p');
+    empty.className = 'col-span-full rounded-2xl border border-white/10 bg-slate-950/30 p-5 text-center text-xs text-slate-400';
+    empty.textContent = 'ไม่พบ Blueprint ในหมวดหรือคำค้นหานี้';
+    blueprintGrid.append(empty);
+  }
+  bpSection.append(blueprintGrid);
+  panel.append(bpSection);
+}
+
 async function createCustomCookbookRecipe() {
   const button = document.getElementById('cookbook-create-button');
   if (button) { button.disabled = true; button.textContent = 'กำลังสร้างสูตร…'; }
@@ -922,6 +1084,14 @@ async function openCookbook(id) {
     panel.append(debugDetails);
 
     await runCookbook();
+  } catch (error) {
+    if (revision !== cookbookRevision) return;
+    panel.replaceChildren();
+    const errorMessage = document.createElement('p');
+    errorMessage.className = 'rounded-xl border border-rose-400/20 bg-rose-500/10 p-4 text-sm text-rose-200';
+    errorMessage.textContent = error.message || 'เปิดสูตรไม่สำเร็จ';
+    panel.append(errorMessage);
+  }
 }
 
 
@@ -1065,13 +1235,18 @@ function moveCustomCookbookPattern(bundle, id, delta, rerender) {
 
 function sanitizeCookbookHTML(html) {
   const doc=new DOMParser().parseFromString(html,'text/html');
-  const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','MAIN','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','CODE','PRE','BR','HR','BLOCKQUOTE','DETAILS','SUMMARY','UL','OL','LI','DEL','TABLE','THEAD','TBODY','TR','TH','TD']);
+  const allowed=new Set(['DIV','SPAN','SECTION','ARTICLE','HEADER','FOOTER','MAIN','P','B','I','EM','STRONG','SMALL','H1','H2','H3','H4','CODE','PRE','BR','HR','BLOCKQUOTE','DETAILS','SUMMARY','UL','OL','LI','DEL','TABLE','THEAD','TBODY','TR','TH','TD','IMG']);
   const clean=(node)=>{
     if(node.nodeType===Node.TEXT_NODE) return document.createTextNode(node.textContent);
     if(node.nodeType!==Node.ELEMENT_NODE) return document.createTextNode('');
     if(!allowed.has(node.tagName)) return document.createTextNode(node.textContent);
     const result=document.createElement(node.tagName.toLowerCase());
     for(const a of ['class','data-state','style','open','title']) if(node.hasAttribute(a)) result.setAttribute(a,node.getAttribute(a));
+    if(node.tagName==='IMG') {
+      const src=node.getAttribute('src')||'';
+      try { const url=new URL(src,location.href); if(url.protocol==='https:' || (url.protocol==='data:' && /^data:image\/(png|gif|jpeg|webp|svg\+xml);/i.test(src))) result.setAttribute('src',url.href); } catch {}
+      for(const a of ['alt','width','height']) if(node.hasAttribute(a)) result.setAttribute(a,node.getAttribute(a));
+    }
     if(node.tagName==='CODE') { result.textContent=node.innerHTML; return result; }
     for(const child of node.childNodes) result.append(clean(child));return result;
   };
@@ -1324,7 +1499,7 @@ async function runCookbook() {
         box-shadow: 0 6px 24px rgba(0,0,0,0.35);
       }
     `;
-    document.getElementById('cookbook-frame').srcdoc='<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data:; font-src data:; media-src data:; connect-src \'none\'; form-action \'none\'; base-uri \'none\'"><style>'+baseThemeCss+'\n'+safeCSS+'</style></head><body><main class="'+messageClass+'">'+sanitizeCookbookHTML(text)+'</main></body></html>';
+    document.getElementById('cookbook-frame').srcdoc='<!doctype html><html lang="th"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src https: data:; font-src data:; media-src https: data:; connect-src \'none\'; form-action \'none\'; base-uri \'none\'"><style>'+baseThemeCss+'\n'+safeCSS+'</style></head><body><main class="'+messageClass+'">'+sanitizeCookbookHTML(text)+'</main></body></html>';
     status.textContent='Raw Regex → Style tag → CSS · '+(counts.join(' • ')||'สูตรนี้ใช้ Style tag โดยไม่ต้องมี Regex')+' · ถ้า marker ไม่ตรงรูปแบบจะยังเหลือข้อความเดิม';
   }catch(e){if(revision===cookbookRevision) status.textContent='ตรวจไม่ได้: '+e.message;}
 }
